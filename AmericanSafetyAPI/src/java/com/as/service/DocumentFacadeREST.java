@@ -92,26 +92,26 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
         }
     }
 
-//    @POST
-//    @Override
-//    @Consumes({"application/xml", "application/json"})
-//    public void create(Document entity) {
-//        super.create(entity);
-//    }
-//    @PUT
-//    @Path("{id}")
-//    @Consumes({"application/xml", "application/json"})
-//    public void edit(@PathParam("id") PathSegment id, Document entity) {
-//        super.edit(entity);
-//    }
-//
-//    @DELETE
-//    @Path("{id}")
-//    public void remove(@PathParam("id") PathSegment id) {
-//        com.as.DocumentPK key = getPrimaryKey(id);
-//        super.remove(super.find(key));
-//    }
-//
+    @POST
+    @Override
+    @Consumes({"application/xml", "application/json"})
+    public void create(Document entity) {
+        super.create(entity);
+    }
+    @PUT
+    @Path("{id}")
+    @Consumes({"application/xml", "application/json"})
+    public void edit(@PathParam("id") PathSegment id, Document entity) {
+        super.edit(entity);
+    }
+
+    @DELETE
+    @Path("{id}")
+    public void remove(@PathParam("id") PathSegment id) {
+        com.as.DocumentPK key = getPrimaryKey(id);
+        super.remove(super.find(key));
+    }
+
     @GET
     @Path("{id}")
     @Produces("application/json")
@@ -119,20 +119,20 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
         com.as.DocumentPK key = getPrimaryKey(id);
         return super.find(key);
     }
-//
-//    @GET
-//    @Override
-//    @Produces({"application/xml", "application/json"})
-//    public List<Document> findAll() {
-//        return super.findAll();
-//    }
-//
-//    @GET
-//    @Path("{from}/{to}")
-//    @Produces({"application/xml", "application/json"})
-//    public List<Document> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-//        return super.findRange(new int[]{from, to});
-//    }
+
+    @GET
+    @Override
+    @Produces({"application/xml", "application/json"})
+    public List<Document> findAll() {
+        return super.findAll();
+    }
+
+    @GET
+    @Path("{from}/{to}")
+    @Produces({"application/xml", "application/json"})
+    public List<Document> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
+        return super.findRange(new int[]{from, to});
+    }
 
     @GET
     @Path("count")
