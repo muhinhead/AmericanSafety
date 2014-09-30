@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.as;
 
 import java.io.Serializable;
@@ -17,7 +11,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -31,28 +27,34 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author nick
+ * @author Nick Mukhin
  */
 @Entity
 @Table(name = "quote")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Quote.findAll", query = "SELECT q FROM Quote q"),
-    @NamedQuery(name = "Quote.findByQuoteId", query = "SELECT q FROM Quote q WHERE q.quoteId = :quoteId"),
+    @NamedQuery(name = "Quote.findByQuoteID", query = "SELECT q FROM Quote q WHERE q.quoteID = :quoteID"),
     @NamedQuery(name = "Quote.findByLocation", query = "SELECT q FROM Quote q WHERE q.location = :location"),
     @NamedQuery(name = "Quote.findByContactor", query = "SELECT q FROM Quote q WHERE q.contactor = :contactor"),
     @NamedQuery(name = "Quote.findByRigTankEq", query = "SELECT q FROM Quote q WHERE q.rigTankEq = :rigTankEq"),
     @NamedQuery(name = "Quote.findByDiscount", query = "SELECT q FROM Quote q WHERE q.discount = :discount"),
     @NamedQuery(name = "Quote.findByTaxProc", query = "SELECT q FROM Quote q WHERE q.taxProc = :taxProc"),
+    @NamedQuery(name = "Quote.findByPoType", query = "SELECT q FROM Quote q WHERE q.poType = :poType"),
+    @NamedQuery(name = "Quote.findByPoNumber", query = "SELECT q FROM Quote q WHERE q.poNumber = :poNumber"),
+    @NamedQuery(name = "Quote.findByDateIn", query = "SELECT q FROM Quote q WHERE q.dateIn = :dateIn"),
     @NamedQuery(name = "Quote.findByUpdatedAt", query = "SELECT q FROM Quote q WHERE q.updatedAt = :updatedAt"),
     @NamedQuery(name = "Quote.findByCreatedAt", query = "SELECT q FROM Quote q WHERE q.createdAt = :createdAt")})
 public class Quote implements Serializable {
+    @Lob
+    @Column(name = "signature")
+    private byte[] signature;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "quote_id")
-    private Integer quoteId;
+    private Integer quoteID;
     @Size(max = 255)
     @Column(name = "location")
     private String location;
@@ -67,9 +69,16 @@ public class Quote implements Serializable {
     private BigDecimal discount;
     @Column(name = "tax_proc")
     private BigDecimal taxProc;
-    @Lob
-    @Column(name = "signature")
-    private byte[] signature;
+    @Size(max = 12)
+    @Column(name = "po_type")
+    private String poType;
+    @Size(max = 32)
+    @Column(name = "po_number")
+    private String poNumber;
+    @Column(name = "date_in")
+    @Temporal(TemporalType.DATE)
+    private Date dateIn;
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "updated_at")
@@ -80,28 +89,35 @@ public class Quote implements Serializable {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quoteId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quoteID")
     private Collection<Quoteitem> quoteitemCollection;
+    @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
+    @ManyToOne(optional = false)
+    private Customer customerID;
+
+    @JoinColumn(name = "created_by", referencedColumnName = "user_id")
+    @ManyToOne(optional = false)
+    private User createdBY;
 
     public Quote() {
     }
 
-    public Quote(Integer quoteId) {
-        this.quoteId = quoteId;
+    public Quote(Integer quoteID) {
+        this.quoteID = quoteID;
     }
 
-    public Quote(Integer quoteId, Date updatedAt, Date createdAt) {
-        this.quoteId = quoteId;
+    public Quote(Integer quoteID, Date updatedAt, Date createdAt) {
+        this.quoteID = quoteID;
         this.updatedAt = updatedAt;
         this.createdAt = createdAt;
     }
 
-    public Integer getQuoteId() {
-        return quoteId;
+    public Integer getQuoteID() {
+        return quoteID;
     }
 
-    public void setQuoteId(Integer quoteId) {
-        this.quoteId = quoteId;
+    public void setQuoteID(Integer quoteID) {
+        this.quoteID = quoteID;
     }
 
     public String getLocation() {
@@ -144,13 +160,30 @@ public class Quote implements Serializable {
         this.taxProc = taxProc;
     }
 
-    public byte[] getSignature() {
-        return signature;
+    public String getPoType() {
+        return poType;
     }
 
-    public void setSignature(byte[] signature) {
-        this.signature = signature;
+    public void setPoType(String poType) {
+        this.poType = poType;
     }
+
+    public String getPoNumber() {
+        return poNumber;
+    }
+
+    public void setPoNumber(String poNumber) {
+        this.poNumber = poNumber;
+    }
+
+    public Date getDateIn() {
+        return dateIn;
+    }
+
+    public void setDateIn(Date dateIn) {
+        this.dateIn = dateIn;
+    }
+
 
     public Date getUpdatedAt() {
         return updatedAt;
@@ -180,7 +213,7 @@ public class Quote implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (quoteId != null ? quoteId.hashCode() : 0);
+        hash += (quoteID != null ? quoteID.hashCode() : 0);
         return hash;
     }
 
@@ -191,7 +224,7 @@ public class Quote implements Serializable {
             return false;
         }
         Quote other = (Quote) object;
-        if ((this.quoteId == null && other.quoteId != null) || (this.quoteId != null && !this.quoteId.equals(other.quoteId))) {
+        if ((this.quoteID == null && other.quoteID != null) || (this.quoteID != null && !this.quoteID.equals(other.quoteID))) {
             return false;
         }
         return true;
@@ -199,7 +232,42 @@ public class Quote implements Serializable {
 
     @Override
     public String toString() {
-        return "com.as.Quote[ quoteId=" + quoteId + " ]";
+        return "com.as.Quote[ quoteID=" + quoteID + " ]";
     }
-    
+
+    /**
+     * @return the customerID
+     */
+    public Customer getCustomerID() {
+        return customerID;
+    }
+
+    /**
+     * @param customerID the customerID to set
+     */
+    public void setCustomerID(Customer customerID) {
+        this.customerID = customerID;
+    }
+
+    /**
+     * @return the createdBY
+     */
+    public User getCreatedBY() {
+        return createdBY;
+    }
+
+    /**
+     * @param createdBY the createdBY to set
+     */
+    public void setCreatedBY(User createdBY) {
+        this.createdBY = createdBY;
+    }
+
+    public byte[] getSignature() {
+        return signature;
+    }
+
+    public void setSignature(byte[] signature) {
+        this.signature = signature;
+    }
 }

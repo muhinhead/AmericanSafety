@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.as.service;
 
 import com.as.Invoice;
@@ -36,14 +35,14 @@ public class InvoiceFacadeREST extends AbstractFacade<Invoice> {
 
     @POST
     @Override
-    @Consumes("application/json")
+    @Consumes({"application/xml", "application/json"})
     public void create(Invoice entity) {
         super.create(entity);
     }
 
     @PUT
     @Path("{id}")
-    @Consumes("application/json")
+    @Consumes({"application/xml", "application/json"})
     public void edit(@PathParam("id") Integer id, Invoice entity) {
         super.edit(entity);
     }
@@ -56,21 +55,21 @@ public class InvoiceFacadeREST extends AbstractFacade<Invoice> {
 
     @GET
     @Path("{id}")
-    @Produces("application/json")
+    @Produces({"application/xml", "application/json"})
     public Invoice find(@PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
     @Override
-    @Produces("application/json")
+    @Produces({"application/xml", "application/json"})
     public List<Invoice> findAll() {
         return super.findAll();
     }
 
     @GET
     @Path("{from}/{to}")
-    @Produces("application/json")
+    @Produces({"application/xml", "application/json"})
     public List<Invoice> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }

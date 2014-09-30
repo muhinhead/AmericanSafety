@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.as;
 
 import java.io.Serializable;
@@ -34,7 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Orderitem.findAll", query = "SELECT o FROM Orderitem o"),
-    @NamedQuery(name = "Orderitem.findByOrderitemId", query = "SELECT o FROM Orderitem o WHERE o.orderitemId = :orderitemId"),
+    @NamedQuery(name = "Orderitem.findByOrderitemID", query = "SELECT o FROM Orderitem o WHERE o.orderitemID = :orderitemID"),
     @NamedQuery(name = "Orderitem.findByQty", query = "SELECT o FROM Orderitem o WHERE o.qty = :qty"),
     @NamedQuery(name = "Orderitem.findByPrice", query = "SELECT o FROM Orderitem o WHERE o.price = :price"),
     @NamedQuery(name = "Orderitem.findByUpdatedAt", query = "SELECT o FROM Orderitem o WHERE o.updatedAt = :updatedAt"),
@@ -45,7 +44,7 @@ public class Orderitem implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "orderitem_id")
-    private Integer orderitemId;
+    private Integer orderitemID;
     @Basic(optional = false)
     @NotNull
     @Column(name = "qty")
@@ -65,31 +64,31 @@ public class Orderitem implements Serializable {
     private Date createdAt;
     @JoinColumn(name = "item_id", referencedColumnName = "item_id")
     @ManyToOne(optional = false)
-    private Item itemId;
+    private Item itemID;
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     @ManyToOne(optional = false)
-    private Order1 orderId;
+    private Order1 orderID;
 
     public Orderitem() {
     }
 
-    public Orderitem(Integer orderitemId) {
-        this.orderitemId = orderitemId;
+    public Orderitem(Integer orderitemID) {
+        this.orderitemID = orderitemID;
     }
 
-    public Orderitem(Integer orderitemId, int qty, Date updatedAt, Date createdAt) {
-        this.orderitemId = orderitemId;
+    public Orderitem(Integer orderitemID, int qty, Date updatedAt, Date createdAt) {
+        this.orderitemID = orderitemID;
         this.qty = qty;
         this.updatedAt = updatedAt;
         this.createdAt = createdAt;
     }
 
-    public Integer getOrderitemId() {
-        return orderitemId;
+    public Integer getOrderitemID() {
+        return orderitemID;
     }
 
-    public void setOrderitemId(Integer orderitemId) {
-        this.orderitemId = orderitemId;
+    public void setOrderitemID(Integer orderitemID) {
+        this.orderitemID = orderitemID;
     }
 
     public int getQty() {
@@ -124,26 +123,26 @@ public class Orderitem implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Item getItemId() {
-        return itemId;
+    public Item getItemID() {
+        return itemID;
     }
 
-    public void setItemId(Item itemId) {
-        this.itemId = itemId;
+    public void setItemID(Item itemID) {
+        this.itemID = itemID;
     }
 
-    public Order1 getOrderId() {
-        return orderId;
+    public Order1 getOrderID() {
+        return orderID;
     }
 
-    public void setOrderId(Order1 orderId) {
-        this.orderId = orderId;
+    public void setOrderID(Order1 orderID) {
+        this.orderID = orderID;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (orderitemId != null ? orderitemId.hashCode() : 0);
+        hash += (orderitemID != null ? orderitemID.hashCode() : 0);
         return hash;
     }
 
@@ -154,7 +153,7 @@ public class Orderitem implements Serializable {
             return false;
         }
         Orderitem other = (Orderitem) object;
-        if ((this.orderitemId == null && other.orderitemId != null) || (this.orderitemId != null && !this.orderitemId.equals(other.orderitemId))) {
+        if ((this.orderitemID == null && other.orderitemID != null) || (this.orderitemID != null && !this.orderitemID.equals(other.orderitemID))) {
             return false;
         }
         return true;
@@ -162,7 +161,7 @@ public class Orderitem implements Serializable {
 
     @Override
     public String toString() {
-        return "com.as.Orderitem[ orderitemId=" + orderitemId + " ]";
+        return "com.as.Orderitem[ orderitemID=" + orderitemID + " ]";
     }
     
 }

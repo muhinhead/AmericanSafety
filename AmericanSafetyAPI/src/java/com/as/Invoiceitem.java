@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.as;
 
 import java.io.Serializable;
@@ -34,7 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Invoiceitem.findAll", query = "SELECT i FROM Invoiceitem i"),
-    @NamedQuery(name = "Invoiceitem.findByInvoiceitemId", query = "SELECT i FROM Invoiceitem i WHERE i.invoiceitemId = :invoiceitemId"),
+    @NamedQuery(name = "Invoiceitem.findByInvoiceitemID", query = "SELECT i FROM Invoiceitem i WHERE i.invoiceitemID = :invoiceitemID"),
     @NamedQuery(name = "Invoiceitem.findByQty", query = "SELECT i FROM Invoiceitem i WHERE i.qty = :qty"),
     @NamedQuery(name = "Invoiceitem.findByPrice", query = "SELECT i FROM Invoiceitem i WHERE i.price = :price"),
     @NamedQuery(name = "Invoiceitem.findByUpdatedAt", query = "SELECT i FROM Invoiceitem i WHERE i.updatedAt = :updatedAt"),
@@ -45,7 +44,7 @@ public class Invoiceitem implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "invoiceitem_id")
-    private Integer invoiceitemId;
+    private Integer invoiceitemID;
     @Basic(optional = false)
     @NotNull
     @Column(name = "qty")
@@ -65,31 +64,31 @@ public class Invoiceitem implements Serializable {
     private Date createdAt;
     @JoinColumn(name = "invoice_id", referencedColumnName = "invoice_id")
     @ManyToOne(optional = false)
-    private Invoice invoiceId;
+    private Invoice invoiceID;
     @JoinColumn(name = "item_id", referencedColumnName = "item_id")
     @ManyToOne(optional = false)
-    private Item itemId;
+    private Item itemID;
 
     public Invoiceitem() {
     }
 
-    public Invoiceitem(Integer invoiceitemId) {
-        this.invoiceitemId = invoiceitemId;
+    public Invoiceitem(Integer invoiceitemID) {
+        this.invoiceitemID = invoiceitemID;
     }
 
-    public Invoiceitem(Integer invoiceitemId, int qty, Date updatedAt, Date createdAt) {
-        this.invoiceitemId = invoiceitemId;
+    public Invoiceitem(Integer invoiceitemID, int qty, Date updatedAt, Date createdAt) {
+        this.invoiceitemID = invoiceitemID;
         this.qty = qty;
         this.updatedAt = updatedAt;
         this.createdAt = createdAt;
     }
 
-    public Integer getInvoiceitemId() {
-        return invoiceitemId;
+    public Integer getInvoiceitemID() {
+        return invoiceitemID;
     }
 
-    public void setInvoiceitemId(Integer invoiceitemId) {
-        this.invoiceitemId = invoiceitemId;
+    public void setInvoiceitemID(Integer invoiceitemID) {
+        this.invoiceitemID = invoiceitemID;
     }
 
     public int getQty() {
@@ -124,26 +123,26 @@ public class Invoiceitem implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Invoice getInvoiceId() {
-        return invoiceId;
+    public Invoice getInvoiceID() {
+        return invoiceID;
     }
 
-    public void setInvoiceId(Invoice invoiceId) {
-        this.invoiceId = invoiceId;
+    public void setInvoiceID(Invoice invoiceID) {
+        this.invoiceID = invoiceID;
     }
 
-    public Item getItemId() {
-        return itemId;
+    public Item getItemID() {
+        return itemID;
     }
 
-    public void setItemId(Item itemId) {
-        this.itemId = itemId;
+    public void setItemID(Item itemID) {
+        this.itemID = itemID;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (invoiceitemId != null ? invoiceitemId.hashCode() : 0);
+        hash += (invoiceitemID != null ? invoiceitemID.hashCode() : 0);
         return hash;
     }
 
@@ -154,7 +153,7 @@ public class Invoiceitem implements Serializable {
             return false;
         }
         Invoiceitem other = (Invoiceitem) object;
-        if ((this.invoiceitemId == null && other.invoiceitemId != null) || (this.invoiceitemId != null && !this.invoiceitemId.equals(other.invoiceitemId))) {
+        if ((this.invoiceitemID == null && other.invoiceitemID != null) || (this.invoiceitemID != null && !this.invoiceitemID.equals(other.invoiceitemID))) {
             return false;
         }
         return true;
@@ -162,7 +161,7 @@ public class Invoiceitem implements Serializable {
 
     @Override
     public String toString() {
-        return "com.as.Invoiceitem[ invoiceitemId=" + invoiceitemId + " ]";
+        return "com.as.Invoiceitem[ invoiceitemID=" + invoiceitemID + " ]";
     }
     
 }

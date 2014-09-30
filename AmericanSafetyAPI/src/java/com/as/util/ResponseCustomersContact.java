@@ -45,6 +45,7 @@ public class ResponseCustomersContact implements Serializable {
         setContactEmail(original.getEmail());
         setContactName(original.getFirstName());
         setConctactSurname(original.getLastName());
+        setContactPhone(original.getPhone());
     }
 
     @Override

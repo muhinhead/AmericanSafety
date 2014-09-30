@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.as.service;
 
 import com.as.Quote;
@@ -36,14 +35,14 @@ public class QuoteFacadeREST extends AbstractFacade<Quote> {
 
     @POST
     @Override
-    @Consumes("application/json")
+    @Consumes({"application/xml", "application/json"})
     public void create(Quote entity) {
         super.create(entity);
     }
 
     @PUT
     @Path("{id}")
-    @Consumes("application/json")
+    @Consumes({"application/xml", "application/json"})
     public void edit(@PathParam("id") Integer id, Quote entity) {
         super.edit(entity);
     }
@@ -56,21 +55,21 @@ public class QuoteFacadeREST extends AbstractFacade<Quote> {
 
     @GET
     @Path("{id}")
-    @Produces("application/json")
+    @Produces({"application/xml", "application/json"})
     public Quote find(@PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
     @Override
-    @Produces("application/json")
+    @Produces({"application/xml", "application/json"})
     public List<Quote> findAll() {
         return super.findAll();
     }
 
     @GET
     @Path("{from}/{to}")
-    @Produces("application/json")
+    @Produces({"application/xml", "application/json"})
     public List<Quote> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }

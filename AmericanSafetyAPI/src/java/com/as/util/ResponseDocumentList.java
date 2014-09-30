@@ -1,6 +1,6 @@
 package com.as.util;
 
-import com.as.Customer;
+import com.as.Document;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
@@ -14,28 +14,30 @@ import javax.persistence.Id;
  * @author Nick Mukhin
  */
 @Entity
-public class ResponseCustomerList implements Serializable {
+public class ResponseDocumentList implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private List<ResponseCustomer> response;
+    private List<ResponseDocument> response;
     private String[] errMsg;
 
-    public ResponseCustomerList() {
-        response = new ArrayList<ResponseCustomer>();
-        errMsg = null;
+    public ResponseDocumentList() {
     }
 
-    public ResponseCustomerList(List<Customer> custList, String[] errList) {
-        if (custList != null) {
-            response = new ArrayList<ResponseCustomer>(custList.size());
-            for (Customer cust : custList) {
-                response.add(new ResponseCustomer(cust));
+    public ResponseDocumentList(List<Document> doclist, String[] errmsg) {
+        if (doclist != null) {
+            response = new ArrayList<ResponseDocument>(doclist.size());
+            for (Document doc : doclist) {
+                ResponseDocument rd = new ResponseDocument();
+                rd.setStartRangeTime(doc.getDateIn());
+                rd.setFinishRangeTime(doc.getDateOut());
+                rd.setDocumentType(doc.getDocumentPK().getDocType());
+                rd.setSetPO(doc.getPoNumber() == null);
             }
         } else {
-            setErrMsg(errList);
+            errMsg = errmsg;
         }
     }
 
@@ -57,10 +59,10 @@ public class ResponseCustomerList implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ResponseCustomerList)) {
+        if (!(object instanceof ResponseDocumentList)) {
             return false;
         }
-        ResponseCustomerList other = (ResponseCustomerList) object;
+        ResponseDocumentList other = (ResponseDocumentList) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -69,20 +71,20 @@ public class ResponseCustomerList implements Serializable {
 
     @Override
     public String toString() {
-        return "com.as.util.ResponseCustomerList[ id=" + id + " ]";
+        return "com.as.util.ResponseDocumentList[ id=" + id + " ]";
     }
 
     /**
      * @return the response
      */
-    public List<ResponseCustomer> getResponse() {
+    public List<ResponseDocument> getResponse() {
         return response;
     }
 
     /**
      * @param response the response to set
      */
-    public void setResponse(List<ResponseCustomer> response) {
+    public void setResponse(List<ResponseDocument> response) {
         this.response = response;
     }
 

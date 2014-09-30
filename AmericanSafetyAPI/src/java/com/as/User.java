@@ -7,8 +7,10 @@
 package com.as;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,12 +18,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,7 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
-    @NamedQuery(name = "User.findByUserId", query = "SELECT u FROM User u WHERE u.userID = :userID"),
+    @NamedQuery(name = "User.findByUserID", query = "SELECT u FROM User u WHERE u.userID = :userID"),
     @NamedQuery(name = "User.findByFirstName", query = "SELECT u FROM User u WHERE u.firstName = :firstName"),
     @NamedQuery(name = "User.findByLastName", query = "SELECT u FROM User u WHERE u.lastName = :lastName"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
@@ -82,6 +86,13 @@ public class User implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdBY")
+    private Collection<Quote> quoteCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdBY")
+    private Collection<Invoice> invoiceCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdBY")
+    private Collection<Order1> order1Collection;
+
     public User() {
     }
 
@@ -99,11 +110,11 @@ public class User implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Integer getUserId() {
+    public Integer getUserID() {
         return userID;
     }
 
-    public void setUserId(Integer userID) {
+    public void setUserID(Integer userID) {
         this.userID = userID;
     }
 
@@ -186,6 +197,33 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.as.User[ userID=" + userID + " ]";
+    }
+
+    @XmlTransient
+    public Collection<Quote> getQuoteCollection() {
+        return quoteCollection;
+    }
+
+    public void setQuoteCollection(Collection<Quote> quoteCollection) {
+        this.quoteCollection = quoteCollection;
+    }
+
+    @XmlTransient
+    public Collection<Invoice> getInvoiceCollection() {
+        return invoiceCollection;
+    }
+
+    public void setInvoiceCollection(Collection<Invoice> invoiceCollection) {
+        this.invoiceCollection = invoiceCollection;
+    }
+
+    @XmlTransient
+    public Collection<Order1> getOrder1Collection() {
+        return order1Collection;
+    }
+
+    public void setOrder1Collection(Collection<Order1> order1Collection) {
+        this.order1Collection = order1Collection;
     }
     
 }

@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.as;
 
 import java.io.Serializable;
@@ -34,7 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Quoteitem.findAll", query = "SELECT q FROM Quoteitem q"),
-    @NamedQuery(name = "Quoteitem.findByQuoteitemId", query = "SELECT q FROM Quoteitem q WHERE q.quoteitemId = :quoteitemId"),
+    @NamedQuery(name = "Quoteitem.findByQuoteitemID", query = "SELECT q FROM Quoteitem q WHERE q.quoteitemID = :quoteitemID"),
     @NamedQuery(name = "Quoteitem.findByQty", query = "SELECT q FROM Quoteitem q WHERE q.qty = :qty"),
     @NamedQuery(name = "Quoteitem.findByPrice", query = "SELECT q FROM Quoteitem q WHERE q.price = :price"),
     @NamedQuery(name = "Quoteitem.findByUpdatedAt", query = "SELECT q FROM Quoteitem q WHERE q.updatedAt = :updatedAt"),
@@ -45,7 +44,7 @@ public class Quoteitem implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "quoteitem_id")
-    private Integer quoteitemId;
+    private Integer quoteitemID;
     @Basic(optional = false)
     @NotNull
     @Column(name = "qty")
@@ -65,31 +64,31 @@ public class Quoteitem implements Serializable {
     private Date createdAt;
     @JoinColumn(name = "item_id", referencedColumnName = "item_id")
     @ManyToOne(optional = false)
-    private Item itemId;
+    private Item itemID;
     @JoinColumn(name = "quote_id", referencedColumnName = "quote_id")
     @ManyToOne(optional = false)
-    private Quote quoteId;
+    private Quote quoteID;
 
     public Quoteitem() {
     }
 
-    public Quoteitem(Integer quoteitemId) {
-        this.quoteitemId = quoteitemId;
+    public Quoteitem(Integer quoteitemID) {
+        this.quoteitemID = quoteitemID;
     }
 
-    public Quoteitem(Integer quoteitemId, int qty, Date updatedAt, Date createdAt) {
-        this.quoteitemId = quoteitemId;
+    public Quoteitem(Integer quoteitemID, int qty, Date updatedAt, Date createdAt) {
+        this.quoteitemID = quoteitemID;
         this.qty = qty;
         this.updatedAt = updatedAt;
         this.createdAt = createdAt;
     }
 
-    public Integer getQuoteitemId() {
-        return quoteitemId;
+    public Integer getQuoteitemID() {
+        return quoteitemID;
     }
 
-    public void setQuoteitemId(Integer quoteitemId) {
-        this.quoteitemId = quoteitemId;
+    public void setQuoteitemID(Integer quoteitemID) {
+        this.quoteitemID = quoteitemID;
     }
 
     public int getQty() {
@@ -124,26 +123,26 @@ public class Quoteitem implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Item getItemId() {
-        return itemId;
+    public Item getItemID() {
+        return itemID;
     }
 
-    public void setItemId(Item itemId) {
-        this.itemId = itemId;
+    public void setItemID(Item itemID) {
+        this.itemID = itemID;
     }
 
-    public Quote getQuoteId() {
-        return quoteId;
+    public Quote getQuoteID() {
+        return quoteID;
     }
 
-    public void setQuoteId(Quote quoteId) {
-        this.quoteId = quoteId;
+    public void setQuoteID(Quote quoteID) {
+        this.quoteID = quoteID;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (quoteitemId != null ? quoteitemId.hashCode() : 0);
+        hash += (quoteitemID != null ? quoteitemID.hashCode() : 0);
         return hash;
     }
 
@@ -154,7 +153,7 @@ public class Quoteitem implements Serializable {
             return false;
         }
         Quoteitem other = (Quoteitem) object;
-        if ((this.quoteitemId == null && other.quoteitemId != null) || (this.quoteitemId != null && !this.quoteitemId.equals(other.quoteitemId))) {
+        if ((this.quoteitemID == null && other.quoteitemID != null) || (this.quoteitemID != null && !this.quoteitemID.equals(other.quoteitemID))) {
             return false;
         }
         return true;
@@ -162,7 +161,7 @@ public class Quoteitem implements Serializable {
 
     @Override
     public String toString() {
-        return "com.as.Quoteitem[ quoteitemId=" + quoteitemId + " ]";
+        return "com.as.Quoteitem[ quoteitemID=" + quoteitemID + " ]";
     }
     
 }

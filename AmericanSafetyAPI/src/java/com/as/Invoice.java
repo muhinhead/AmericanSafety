@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.as;
 
 import java.io.Serializable;
@@ -17,7 +11,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -31,28 +27,35 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author nick
+ * @author Nick Mukhin 
  */
 @Entity
 @Table(name = "invoice")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Invoice.findAll", query = "SELECT i FROM Invoice i"),
-    @NamedQuery(name = "Invoice.findByInvoiceId", query = "SELECT i FROM Invoice i WHERE i.invoiceId = :invoiceId"),
+    @NamedQuery(name = "Invoice.findByInvoiceID", query = "SELECT i FROM Invoice i WHERE i.invoiceID = :invoiceID"),
     @NamedQuery(name = "Invoice.findByLocation", query = "SELECT i FROM Invoice i WHERE i.location = :location"),
     @NamedQuery(name = "Invoice.findByContactor", query = "SELECT i FROM Invoice i WHERE i.contactor = :contactor"),
     @NamedQuery(name = "Invoice.findByRigTankEq", query = "SELECT i FROM Invoice i WHERE i.rigTankEq = :rigTankEq"),
     @NamedQuery(name = "Invoice.findByDiscount", query = "SELECT i FROM Invoice i WHERE i.discount = :discount"),
     @NamedQuery(name = "Invoice.findByTaxProc", query = "SELECT i FROM Invoice i WHERE i.taxProc = :taxProc"),
+    @NamedQuery(name = "Invoice.findByDateIn", query = "SELECT i FROM Invoice i WHERE i.dateIn = :dateIn"),
+    @NamedQuery(name = "Invoice.findByDateOut", query = "SELECT i FROM Invoice i WHERE i.dateOut = :dateOut"),
+    @NamedQuery(name = "Invoice.findByPoType", query = "SELECT i FROM Invoice i WHERE i.poType = :poType"),
+    @NamedQuery(name = "Invoice.findByPoNumber", query = "SELECT i FROM Invoice i WHERE i.poNumber = :poNumber"),
     @NamedQuery(name = "Invoice.findByUpdatedAt", query = "SELECT i FROM Invoice i WHERE i.updatedAt = :updatedAt"),
     @NamedQuery(name = "Invoice.findByCreatedAt", query = "SELECT i FROM Invoice i WHERE i.createdAt = :createdAt")})
 public class Invoice implements Serializable {
+    @Lob
+    @Column(name = "signature")
+    private byte[] signature;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "invoice_id")
-    private Integer invoiceId;
+    private Integer invoiceID;
     @Size(max = 255)
     @Column(name = "location")
     private String location;
@@ -67,9 +70,20 @@ public class Invoice implements Serializable {
     private BigDecimal discount;
     @Column(name = "tax_proc")
     private BigDecimal taxProc;
-    @Lob
-    @Column(name = "signature")
-    private byte[] signature;
+    
+    @Column(name = "date_in")
+    @Temporal(TemporalType.DATE)
+    private Date dateIn;
+    @Column(name = "date_out")
+    @Temporal(TemporalType.DATE)
+    private Date dateOut;
+    
+    @Size(max = 12)
+    @Column(name = "po_type")
+    private String poType;
+    @Size(max = 32)
+    @Column(name = "po_number")
+    private String poNumber;
     @Basic(optional = false)
     @NotNull
     @Column(name = "updated_at")
@@ -80,28 +94,37 @@ public class Invoice implements Serializable {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "invoiceId")
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "invoiceID")
     private Collection<Invoiceitem> invoiceitemCollection;
+    
+    @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
+    @ManyToOne(optional = false)
+    private Customer customerID;
 
+    @JoinColumn(name = "created_by", referencedColumnName = "user_id")
+    @ManyToOne(optional = false)
+    private User createdBY;
+    
     public Invoice() {
     }
 
-    public Invoice(Integer invoiceId) {
-        this.invoiceId = invoiceId;
+    public Invoice(Integer invoiceID) {
+        this.invoiceID = invoiceID;
     }
 
-    public Invoice(Integer invoiceId, Date updatedAt, Date createdAt) {
-        this.invoiceId = invoiceId;
+    public Invoice(Integer invoiceID, Date updatedAt, Date createdAt) {
+        this.invoiceID = invoiceID;
         this.updatedAt = updatedAt;
         this.createdAt = createdAt;
     }
 
-    public Integer getInvoiceId() {
-        return invoiceId;
+    public Integer getInvoiceID() {
+        return invoiceID;
     }
 
-    public void setInvoiceId(Integer invoiceId) {
-        this.invoiceId = invoiceId;
+    public void setInvoiceID(Integer invoiceID) {
+        this.invoiceID = invoiceID;
     }
 
     public String getLocation() {
@@ -144,12 +167,37 @@ public class Invoice implements Serializable {
         this.taxProc = taxProc;
     }
 
-    public byte[] getSignature() {
-        return signature;
+    public Date getDateIn() {
+        return dateIn;
     }
 
-    public void setSignature(byte[] signature) {
-        this.signature = signature;
+    public void setDateIn(Date dateIn) {
+        this.dateIn = dateIn;
+    }
+
+    public Date getDateOut() {
+        return dateOut;
+    }
+
+    public void setDateOut(Date dateOut) {
+        this.dateOut = dateOut;
+    }
+
+
+    public String getPoType() {
+        return poType;
+    }
+
+    public void setPoType(String poType) {
+        this.poType = poType;
+    }
+
+    public String getPoNumber() {
+        return poNumber;
+    }
+
+    public void setPoNumber(String poNumber) {
+        this.poNumber = poNumber;
     }
 
     public Date getUpdatedAt() {
@@ -180,7 +228,7 @@ public class Invoice implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (invoiceId != null ? invoiceId.hashCode() : 0);
+        hash += (invoiceID != null ? invoiceID.hashCode() : 0);
         return hash;
     }
 
@@ -191,7 +239,7 @@ public class Invoice implements Serializable {
             return false;
         }
         Invoice other = (Invoice) object;
-        if ((this.invoiceId == null && other.invoiceId != null) || (this.invoiceId != null && !this.invoiceId.equals(other.invoiceId))) {
+        if ((this.invoiceID == null && other.invoiceID != null) || (this.invoiceID != null && !this.invoiceID.equals(other.invoiceID))) {
             return false;
         }
         return true;
@@ -199,7 +247,43 @@ public class Invoice implements Serializable {
 
     @Override
     public String toString() {
-        return "com.as.Invoice[ invoiceId=" + invoiceId + " ]";
+        return "com.as.Invoice[ invoiceID=" + invoiceID + " ]";
     }
-    
+
+    /**
+     * @return the customerID
+     */
+    public Customer getCustomerID() {
+        return customerID;
+    }
+
+    /**
+     * @param customerID the customerID to set
+     */
+    public void setCustomerID(Customer customerID) {
+        this.customerID = customerID;
+    }
+
+    /**
+     * @return the createdBY
+     */
+    public User getCreatedBY() {
+        return createdBY;
+    }
+
+    /**
+     * @param createdBY the createdBY to set
+     */
+    public void setCreatedBY(User createdBY) {
+        this.createdBY = createdBY;
+    }
+
+    public byte[] getSignature() {
+        return signature;
+    }
+
+    public void setSignature(byte[] signature) {
+        this.signature = signature;
+    }
+
 }

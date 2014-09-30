@@ -32,6 +32,7 @@ public class ApplicationConfig extends Application {
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(com.as.service.ContactFacadeREST.class);
         resources.add(com.as.service.CustomerFacadeREST.class);
+        resources.add(com.as.service.DocumentFacadeREST.class);
         resources.add(com.as.service.InvoiceFacadeREST.class);
         resources.add(com.as.service.InvoiceitemFacadeREST.class);
         resources.add(com.as.service.ItemFacadeREST.class);

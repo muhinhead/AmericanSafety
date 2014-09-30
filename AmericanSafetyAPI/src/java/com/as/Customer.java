@@ -1,14 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.as;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,8 +13,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -70,6 +61,15 @@ public class Customer implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerID")
     private Collection<Contact> contactCollection;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerID")
+    private Collection<Quote> quoteCollection;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerID")
+    private Collection<Order1> orderCollection;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerID")
+    private Collection<Invoice> invoiceCollection;
+
     public Customer() {
     }
 
@@ -82,11 +82,11 @@ public class Customer implements Serializable {
         this.customerName = customerName;
     }
 
-    public Integer getCustomerId() {
+    public Integer getCustomerID() {
         return customerID;
     }
 
-    public void setCustomerId(Integer customerID) {
+    public void setCustomerID(Integer customerID) {
         this.customerID = customerID;
     }
 
@@ -156,6 +156,48 @@ public class Customer implements Serializable {
     @Override
     public String toString() {
         return "com.as.Customer[ customerID=" + customerID + " ]";
+    }
+
+    /**
+     * @return the quoteCollection
+     */
+    public Collection<Quote> getQuoteCollection() {
+        return quoteCollection;
+    }
+
+    /**
+     * @param quoteCollection the quoteCollection to set
+     */
+    public void setQuoteCollection(Collection<Quote> quoteCollection) {
+        this.quoteCollection = quoteCollection;
+    }
+
+    /**
+     * @return the orderCollection
+     */
+    public Collection<Order1> getOrderCollection() {
+        return orderCollection;
+    }
+
+    /**
+     * @param orderCollection the orderCollection to set
+     */
+    public void setOrderCollection(Collection<Order1> orderCollection) {
+        this.orderCollection = orderCollection;
+    }
+
+    /**
+     * @return the invoiceCollection
+     */
+    public Collection<Invoice> getInvoiceCollection() {
+        return invoiceCollection;
+    }
+
+    /**
+     * @param invoiceCollection the invoiceCollection to set
+     */
+    public void setInvoiceCollection(Collection<Invoice> invoiceCollection) {
+        this.invoiceCollection = invoiceCollection;
     }
     
 }

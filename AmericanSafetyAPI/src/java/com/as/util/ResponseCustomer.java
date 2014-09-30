@@ -36,7 +36,7 @@ public class ResponseCustomer implements Serializable {
     }
 
     public ResponseCustomer(Customer cust) {
-        setCustomerID(cust.getCustomerId());
+        setCustomerID(cust.getCustomerID());
         setCustomerName(cust.getCustomerName());
         setCustomerAddress(cust.getCustomerAddress());
         if (cust.getContactCollection() != null) {
