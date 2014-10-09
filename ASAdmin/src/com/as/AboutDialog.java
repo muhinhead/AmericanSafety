@@ -30,7 +30,7 @@ public class AboutDialog extends PopupDialog {
     }
 
     @Override
-    protected Color getHeaderBackground() {
+    protected Object getHeaderBackground() {
         return null;//new Color(102, 125, 158);
     }
 
@@ -40,7 +40,7 @@ public class AboutDialog extends PopupDialog {
         JPanel main = new TexturedPanel(BACKGROUNDIMAGE);
         getContentPane().add(main, BorderLayout.CENTER);
         ImagePanel img = new ImagePanel(Util.loadImage(BACKGROUNDIMAGE));
-        this.setMinimumSize(new Dimension(img.getWidth(), img.getHeight() + 25));
+        this.setMinimumSize(new Dimension(img.getWidth(), img.getHeight() + 17));
         closeBtn = new JButton(closeAction = new AbstractAction("Ok") {
             public void actionPerformed(ActionEvent e) {
                 dispose();

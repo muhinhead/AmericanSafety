@@ -28,8 +28,11 @@ public abstract class PopupDialog extends JDialog {
         setVisible(true);
     }
 
-    protected Color getHeaderBackground() {
-        return new Color(48,147,0);
+//    protected Object getHeaderBackground() {
+//        return new Color(48,147,0);
+//    }
+    protected Object getHeaderBackground() {
+        return "dialog_hdr.png";//ASAdmin.HDR_COLOR;
     }
     
     protected Color getHeaderForeground() {
@@ -38,10 +41,17 @@ public abstract class PopupDialog extends JDialog {
     
     protected void fillContent() {
         getContentPane().setLayout(new BorderLayout(10, 10));
-        Color bg = getHeaderBackground();
-        if (bg != null) {
-            JPanel headerPanel = new JPanel();
-            headerPanel.setBackground(bg);
+        JPanel headerPanel;
+        if (getHeaderBackground() != null) {
+            if(getHeaderBackground() instanceof Color) {
+                Color bg = (Color)getHeaderBackground();
+                headerPanel = new JPanel();
+                headerPanel.setBackground(bg);
+            } else if(getHeaderBackground() instanceof String) {
+                headerPanel = new TexturedPanel(new FlowLayout(), (String)getHeaderBackground());
+            } else {
+                headerPanel = new JPanel();
+            }
             headerLabel = new JLabel(getTitle(), SwingConstants.CENTER);
             headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD, 18));
             headerLabel.setForeground(getHeaderForeground());

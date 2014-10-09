@@ -1,5 +1,6 @@
 package com.as;
 
+import com.as.orm.User;
 import com.as.remote.IMessageSender;
 import java.awt.event.ActionEvent;
 import java.rmi.RemoteException;
@@ -31,30 +32,62 @@ public class UsersGrid extends GeneralGridPanel {
 
     @Override
     protected AbstractAction addAction() {
-        return new AbstractAction("Add",new ImageIcon("images/add.png")) {
+        return new AbstractAction("Add", new ImageIcon("images/add.png")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                EditUserDialog ed = new EditUserDialog("New User", null);
+                if (EditUserDialog.okPressed) {
+                    User user = (User) ed.getEditPanel().getDbObject();
+                    refresh(user.getUserId());
+                }
             }
         };
     }
 
     @Override
     protected AbstractAction editAction() {
-        return new AbstractAction("Edit",new ImageIcon("images/edit.png")) {
+        return new AbstractAction("Edit", new ImageIcon("images/edit.png")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                int id = getSelectedID();
+                if (id != 0) {
+                    try {
+                        User user = (User) exchanger.loadDbObjectOnID(User.class, id);
+                        new EditUserDialog("Edit User", user);
+                        if (EditUserDialog.okPressed) {
+                            refresh();
+                        }
+                    } catch (RemoteException ex) {
+                        ASAdmin.logAndShowMessage(ex);
+                    }
+                }
             }
         };
     }
 
     @Override
     protected AbstractAction delAction() {
-        return new AbstractAction("Del",new ImageIcon("images/delete.png")) {
+        return new AbstractAction("Del", new ImageIcon("images/delete.png")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                int id = getSelectedID();
+                if (id != 0) {
+                    try {
+                        User user = (User) exchanger.loadDbObjectOnID(User.class, id);
+                        if (user != null) {
+                            if (id == 1) {
+                                GeneralFrame.errMessageBox("Attention!",
+                                        "You can't to dismiss the chief administrator!");
+                            } else if (GeneralFrame.yesNo("Attention!",
+                                    "Do you want to delete this user?") == JOptionPane.YES_OPTION) {
+                                exchanger.deleteObject(user);
+                                refresh();
+                            }
+                        }
+                    } catch (RemoteException ex) {
+                        ASAdmin.logAndShowMessage(ex);
+                    }
+                }
             }
         };
     }

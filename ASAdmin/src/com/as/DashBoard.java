@@ -47,7 +47,6 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
     private static final String DOCUMENTS = "DOCUMENTS";
     public static DashBoard ourInstance;
     private static IMessageSender exchanger;
-//    private static AdminsFrame adminsFrame;
     protected JPanel main;
     private JPanel superMain;
     protected JPanel controlsPanel;
@@ -55,8 +54,6 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
     private int dashHeight;
     private static final String BACKGROUNDIMAGE = "list_bg.png";
     private ToggleToolBarButton usersButton;
-//    private ToolBarButton auditsButton;
-//    private ToolBarButton pushesButton;
     private ToggleToolBarButton setupButton;
     private GeneralGridPanel usersGrid = null;
     private GeneralGridPanel documentsGrid = null;

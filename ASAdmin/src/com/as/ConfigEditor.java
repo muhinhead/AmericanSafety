@@ -3,6 +3,7 @@ package com.as;
 import com.as.remote.IMessageSender;
 import com.as.rmi.ExchangeFactory;
 import com.as.util.PopupDialog;
+import com.as.util.TexturedPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -64,10 +65,10 @@ public class ConfigEditor extends PopupDialog {
         super(null, title, obj);
     }
 
-    @Override
-    protected Color getHeaderBackground() {
-        return ASAdmin.HDR_COLOR;
-    }
+//    @Override
+//    protected Object getHeaderBackground() {
+//        return "dialog_hdr.png";//ASAdmin.HDR_COLOR;
+//    }
 
     protected void fillContent() {
         super.fillContent();
@@ -80,72 +81,7 @@ public class ConfigEditor extends PopupDialog {
         }
         
         ASAdmin.setWindowIcon(this, "cust_sol16.png");
-        
-//        JComponent[] comps = (JComponent[]) getObject();
-//        imageDirField = (JTextField) comps[0];
-//        addressField = (JTextField) comps[1];
-//        portSpinner = (JSpinner) comps[2];
-//
-//        JPanel upperPanel = new JPanel(new BorderLayout(5, 5));
-//        JPanel labelPanel = new JPanel(new GridLayout(3, 1, 5, 5));
-//        JPanel editPanel = new JPanel(new GridLayout(3, 1, 5, 5));
-//
-//        labelPanel.add(new JLabel(" Default document's folder:", SwingConstants.RIGHT));
-//        labelPanel.add(new JLabel("Server's IP or name:", SwingConstants.RIGHT));
-//        labelPanel.add(new JLabel("Server's port:", SwingConstants.RIGHT));
-//
-//        JPanel imageFolderPanel = new JPanel(new BorderLayout(5, 5));
-//        imageFolderPanel.add(imageDirField, BorderLayout.CENTER);
-//        imageFolderPanel.add(chooseFldrBtn = new JButton(chooseFldrAct = new AbstractAction("...") {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                chooseFolder();
-//            }
-//        }), BorderLayout.EAST);
-//        editPanel.add(imageFolderPanel);
-//        editPanel.add(addressField);
-//        JPanel portPanel = new JPanel(new BorderLayout());
-//        portPanel.add(portSpinner, BorderLayout.WEST);
-//        editPanel.add(portPanel);
-//
-//        upperPanel.add(editPanel, BorderLayout.CENTER);
-//        upperPanel.add(labelPanel, BorderLayout.WEST);
-//        upperPanel.add(new JPanel(), BorderLayout.EAST);
-//
-//        JPanel btnPanel = new JPanel();
-//        btnPanel.add(testBtn = new JButton(testAction = new AbstractAction("Test connection") {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                String serverIP = addressField.getText() + ":" + portSpinner.getValue();
-//                try {
-//                    IMessageSender exch = (IMessageSender) Naming.lookup("rmi://" + serverIP + "/AuditServer");
-//                    JOptionPane.showMessageDialog(null, "Connection successful", "Ok!", JOptionPane.INFORMATION_MESSAGE);
-//                } catch (Exception ex) {
-//                    JOptionPane.showMessageDialog(null, "Connection refused", "Error:", JOptionPane.ERROR_MESSAGE);
-//                }
-//            }
-//        }));
-//        btnPanel.add(okBtn = new JButton(okAction = new AbstractAction("Ok") {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                dispose();
-//            }
-//        }) {
-//        });
-//        btnPanel.add(cancelBtn = new JButton(cancelAction = new AbstractAction("Cancel") {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                addressField.setText("");
-//                portSpinner.setValue(new Integer(0));
-//                dispose();
-//            }
-//        }));
-//
-//        JPanel centerPanel = new JPanel(new BorderLayout());
-//        centerPanel.add(upperPanel, BorderLayout.NORTH);
-//        getContentPane().add(centerPanel, BorderLayout.CENTER);
-//        getContentPane().add(btnPanel, BorderLayout.SOUTH);
-//        getRootPane().setDefaultButton(okBtn);
+
         JComponent[] comps = (JComponent[]) getObject();
         imageDirField = (JTextField) comps[0];
         addressField = (JTextField) comps[1];
