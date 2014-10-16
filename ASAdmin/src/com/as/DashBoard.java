@@ -20,6 +20,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JButton;
@@ -37,10 +38,11 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
     private static final int TOOLBAR_HEIGHT = 55;
     private static final String USERS = "USERS";
     private static final String DOCUMENTS = "DOCUMENTS";
+    private static final String SETUP = "SETUP";
+    private static final String CUSTOMERS = "CUSTOMERS";
     public static DashBoard ourInstance;
     private static IMessageSender exchanger;
     protected JPanel main;
-    private JPanel superMain;
     protected JPanel controlsPanel;
     private int dashWidth;
     private int dashHeight;
@@ -49,9 +51,16 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
     private ToggleToolBarButton setupButton;
     private GeneralGridPanel usersGrid = null;
     private GeneralGridPanel documentsGrid = null;
+    private GeneralGridPanel itemsGrid;
+    private GeneralGridPanel custGrid;
+    private GeneralGridPanel poGrid;
+    private GeneralGridPanel contactGrid;
+    private JTabbedPane setupPanel = null;
+    private JTabbedPane customersPanel = null;
     private TexturedPanel headerLeft;
     private ToggleToolBarButton docsButton;
     private ToggleToolBarButton[] buttons;
+    private ToggleToolBarButton customersButton;
 
     protected class WinListener extends WindowAdapter {
 
@@ -103,10 +112,9 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
                 System.exit(0);
             }
         }));
-//        m.add(appearanceMenu("Theme"));
         bar.add(m);
         m = new JMenu("Help");
-        m.add(new JMenuItem(new AbstractAction("About"){
+        m.add(new JMenuItem(new AbstractAction("About") {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -116,7 +124,7 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
         bar.add(m);
         setJMenuBar(bar);
     }
-    
+
     protected void initBackground() {
         ASAdmin.setWindowIcon(this, "cust_sol16.png");
         addWindowListener(new DashBoard.WinListener(this));
@@ -128,14 +136,12 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
         main = new TexturedPanel(new CardLayout(), getBackGroundImage());
         headerLeft = new TexturedPanel(new FlowLayout(FlowLayout.LEFT), getBackGroundImage());
         headerLeft.setPreferredSize(new Dimension(headerLeft.getPreferredSize().width, TOOLBAR_HEIGHT));
-        //main.setBorder(BorderFactory.createEtchedBorder());
-        
-        JPanel header = new JPanel(new GridLayout(1,2));
+
+        JPanel header = new JPanel(new GridLayout(1, 2));
         header.add(headerLeft);
-        
+
         TexturedPanel headerRight = new TexturedPanel(new FlowLayout(FlowLayout.RIGHT), getBackGroundImage());
-        JButton exitBtn;
-        headerRight.add(exitBtn = new JButton(new AbstractAction(null,new ImageIcon("images/exit.png")) {
+        headerRight.add(new JButton(new AbstractAction(null, new ImageIcon("images/exit.png")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
@@ -143,7 +149,7 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
         }));
         headerRight.add(new ImagePanel(Util.loadImage("amsaf60.png")));
         header.add(headerRight);
-        
+
         controlsPanel.add(header, BorderLayout.NORTH);
         controlsPanel.add(main, BorderLayout.CENTER);
         addNotify();
@@ -164,20 +170,24 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
         buildMenu();
         usersButton = new ToggleToolBarButton("Users.png", "Users");//, true);
         docsButton = new ToggleToolBarButton("dicts.png", "Documents");//, true);
+        customersButton = new ToggleToolBarButton("Client.png", "Customers");//, true);
         setupButton = new ToggleToolBarButton("setup.png", "Settings");//, true);
 
         buttons = new ToggleToolBarButton[]{
             usersButton,
             docsButton,
+            customersButton,
             setupButton
         };
 
         usersButton.setToolTipText("Users");
-        docsButton.setToolTipText("Dosuments");
-        setupButton.setToolTipText("Setup");
+        docsButton.setToolTipText("Doсuments");
+        customersButton.setToolTipText("Customers & contacts");
+        setupButton.setToolTipText("Setup & dictionaries");
 
         headerLeft.add(usersButton);
         headerLeft.add(docsButton);
+        headerLeft.add(customersButton);
         headerLeft.add(setupButton);
 
         usersButton.addActionListener(new AbstractAction() {
@@ -198,11 +208,19 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
             }
         });
 
+        customersButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                unselectOthers(customersButton);
+                showCustomers();
+            }
+        });
+
         setupButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 unselectOthers(setupButton);
-//                showAdminsFrame();
+                showAdminsFrame();
             }
         });
 
@@ -333,6 +351,40 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
     protected void exit() {
         dispose();
         System.exit(1);
+    }
+
+    private static void showCustomers() {
+        try {
+            if (ourInstance.customersPanel == null) {
+                ourInstance.main.add(ourInstance.customersPanel = new JTabbedPane(), CUSTOMERS);
+                ourInstance.customersPanel.add("Customers", ourInstance.custGrid = new CustomerGrid(exchanger));
+                ourInstance.customersPanel.add("Contacts", ourInstance.contactGrid = new ContactGrid(exchanger));
+            }
+            CardLayout cl = (CardLayout) ourInstance.main.getLayout();
+            ourInstance.custGrid.refresh();
+            ourInstance.contactGrid.refresh();
+            cl.show(ourInstance.main, CUSTOMERS);
+            SwingUtilities.updateComponentTreeUI(ourInstance);
+        } catch (Exception ex) {
+            ASAdmin.logAndShowMessage(ex);
+        }
+    }
+
+    public static void showAdminsFrame() {
+        try {
+            if (ourInstance.setupPanel == null) {
+                ourInstance.main.add(ourInstance.setupPanel = new JTabbedPane(), SETUP);
+                ourInstance.setupPanel.add("Items List", ourInstance.itemsGrid = new ItemsGrid(exchanger));
+                ourInstance.setupPanel.add("PO types", ourInstance.poGrid = new PoGrid(exchanger));
+            }
+            CardLayout cl = (CardLayout) ourInstance.main.getLayout();
+            ourInstance.itemsGrid.refresh();
+            ourInstance.poGrid.refresh();
+            cl.show(ourInstance.main, SETUP);
+            SwingUtilities.updateComponentTreeUI(ourInstance);
+        } catch (Exception ex) {
+            ASAdmin.logAndShowMessage(ex);
+        }
     }
 
     public static void showDocuments() {
