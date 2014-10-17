@@ -19,15 +19,18 @@ public class UsersGrid extends GeneralGridPanel {
 
     static {
         maxWidths.put(0, 40);
-        maxWidths.put(3, 60);
-        maxWidths.put(4, 130);
-        maxWidths.put(5, 130);
-        maxWidths.put(6, 130);
-        maxWidths.put(7, 130);
+        maxWidths.put(8, 40);
+//        maxWidths.put(3, 60);
+//        maxWidths.put(4, 130);
+//        maxWidths.put(5, 130);
+//        maxWidths.put(6, 130);
+//        maxWidths.put(7, 130);
     }
 
     public UsersGrid(IMessageSender exchanger) throws RemoteException {
-        super(exchanger, "select * from user", maxWidths, false);
+        super(exchanger, "select user_id \"Id\",first_name \"First Name\","
+                + "last_name \"Last Name\",login \"Login\",if(admin,'Admin','') \"Is admin\","
+                + "created_at \"Created\", updated_at \"Updated\" from user", maxWidths, false);
     }
 
     @Override

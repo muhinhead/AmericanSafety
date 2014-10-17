@@ -66,7 +66,7 @@ class CustomerGrid extends GeneralGridPanel {
 
     @Override
     protected AbstractAction delAction() {
-        return new AbstractAction("Edit", new ImageIcon("images/edit.png")) {
+        return new AbstractAction("Delete", new ImageIcon("images/delete.png")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int id = getSelectedID();

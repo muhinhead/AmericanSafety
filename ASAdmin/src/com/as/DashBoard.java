@@ -54,6 +54,7 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
     private GeneralGridPanel itemsGrid;
     private GeneralGridPanel custGrid;
     private GeneralGridPanel poGrid;
+    private GeneralGridPanel stampsGrid;
     private GeneralGridPanel contactGrid;
     private JTabbedPane setupPanel = null;
     private JTabbedPane customersPanel = null;
@@ -376,10 +377,12 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
                 ourInstance.main.add(ourInstance.setupPanel = new JTabbedPane(), SETUP);
                 ourInstance.setupPanel.add("Items List", ourInstance.itemsGrid = new ItemsGrid(exchanger));
                 ourInstance.setupPanel.add("PO types", ourInstance.poGrid = new PoGrid(exchanger));
+                ourInstance.setupPanel.add("Stamps", ourInstance.stampsGrid = new StampsGrid(exchanger));
             }
             CardLayout cl = (CardLayout) ourInstance.main.getLayout();
             ourInstance.itemsGrid.refresh();
             ourInstance.poGrid.refresh();
+            ourInstance.stampsGrid.refresh();
             cl.show(ourInstance.main, SETUP);
             SwingUtilities.updateComponentTreeUI(ourInstance);
         } catch (Exception ex) {
