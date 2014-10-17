@@ -5,6 +5,7 @@ import com.as.orm.dbobject.DbObject;
 import com.as.remote.IMessageSender;
 import com.as.rmi.DbConnection;
 import com.as.rmi.ExchangeFactory;
+import com.as.util.ComboItem;
 import com.jidesoft.plaf.LookAndFeelFactory;
 import java.awt.Color;
 import java.awt.Image;
@@ -17,6 +18,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -328,6 +330,38 @@ public class ASAdmin {
                 }
             }
         }
+    }
+
+    public static ComboItem[] loadCustomers() {
+        return loadOnSelect("select customer_id, customer_name from customer", null);
+    }
+    
+//    public static ComboItem[] loadContactsOnCustomer(int customer_id) {
+//        return loadOnSelect("select contact_id, concat(first_name,' ',last_name)"
+//                + " from contact where customer_id=" + customer_id, null);
+//    }
+
+    private static ComboItem[] loadOnSelect(String select, ComboItem startItem) {
+        try {
+            Vector[] tab = exchanger.getTableBody(select);
+            Vector rows = tab[1];
+            int delta = (startItem != null ? 1 : 0);
+            ComboItem[] ans = new ComboItem[rows.size() + delta];
+            for (int i = 0; i < rows.size() + delta; i++) {
+                if (startItem != null && i == 0) {
+                    ans[i] = startItem;
+                } else {
+                    Vector line = (Vector) rows.get(i - delta);
+                    int id = Integer.parseInt(line.get(0).toString());
+                    String tmvnr = line.get(1).toString();
+                    ans[i] = new ComboItem(id, tmvnr);
+                }
+            }
+            return ans;
+        } catch (RemoteException ex) {
+            log(ex);
+        }
+        return new ComboItem[]{new ComboItem(0, "")};
     }
 
     public static boolean login(IMessageSender exchanger) {

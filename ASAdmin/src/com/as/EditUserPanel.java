@@ -133,6 +133,7 @@ class EditUserPanel extends RecordEditPanel {
         usr.setPassword(passwdTF.getText());
         usr.setFirstName(firstNameTF.getText());
         usr.setLastName(lastNameTF.getText());
+        usr.setAdmin(isAdminCB.isSelected()?1:0);
         return saveDbRecord(usr, isNew);
     }
 }

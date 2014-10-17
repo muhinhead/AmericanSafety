@@ -416,47 +416,4 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
             ASAdmin.logAndShowMessage(ex);
         }
     }
-
-//    public static GeneralFrame getAuditsFrame(boolean visible) {
-//        if (ourInstance.auditFrame == null) {
-//            ourInstance.auditFrame = new AuditFrame(exchanger, visible);
-//        } else {
-//            try {
-//                ourInstance.auditFrame.setLookAndFeel(ASAdmin.readProperty("LookAndFeel",
-//                        UIManager.getSystemLookAndFeelClassName()));
-//            } catch (Exception ex) {
-//            }
-//            if (!ourInstance.auditFrame.isVisible()) {
-//                ourInstance.auditFrame.setVisible(visible);
-//            }
-//        }
-//        return ourInstance.auditFrame;
-//    }
-//    public static GeneralFrame getPushesFrame(boolean visible) {
-//        if (ourInstance.pushesFrame == null) {
-//            ourInstance.pushesFrame = new PushesFrame(exchanger);
-//        } else {
-//            try {
-//                ourInstance.pushesFrame.setLookAndFeel(ASAdmin.readProperty("LookAndFeel",
-//                        UIManager.getSystemLookAndFeelClassName()));
-//            } catch (Exception ex) {
-//            }
-//            if (!ourInstance.pushesFrame.isVisible()) {
-//                ourInstance.pushesFrame.setVisible(visible);
-//            }
-//        }
-//        return ourInstance.pushesFrame;
-//    }
-//    public static void showAdminsFrame() {
-//        if (adminsFrame == null) {
-//            adminsFrame = new AdminsFrame(exchanger);
-//        } else {
-//            try {
-//                adminsFrame.setLookAndFeel(ASAdmin.readProperty("LookAndFeel",
-//                        UIManager.getSystemLookAndFeelClassName()));
-//            } catch (Exception ex) {
-//            }
-//            adminsFrame.setVisible(true);
-//        }
-//    }
 }
