@@ -336,6 +336,10 @@ public class ASAdmin {
         }
     }
 
+    public static ComboItem[] loadItems() {
+        return loadOnSelect("select item_id, concat(item_name,' (No_',item_number,')') from item", null);
+    }
+    
     public static ComboItem[] loadCustomers() {
         return loadOnSelect("select customer_id, customer_name from customer", null);
     }

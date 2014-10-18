@@ -10,9 +10,8 @@ import com.as.util.Util;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.BorderFactory;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
@@ -75,6 +74,7 @@ class EditCustomerPanel extends RecordEditPanel {
             updatedSP.setValue(cust.getUpdatedAt());
             try {
                 ContactGrid cg = new ContactGrid(ASAdmin.getExchanger(), cust.getCustomerId().intValue());
+                cg.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),"Contacts"));
                 add(cg,BorderLayout.SOUTH);
                 cg.setPreferredSize(new Dimension(900,200));
             } catch (RemoteException ex) {

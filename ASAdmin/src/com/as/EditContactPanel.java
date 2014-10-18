@@ -49,16 +49,14 @@ class EditContactPanel extends RecordEditPanel {
             ""
         };
         JComponent[] edits = new JComponent[]{
-            new JPanel(),
             getGridPanel(idField = new JTextField(), 8),
             firstNameTF = new JTextField(),
             lastNameTF = new JTextField(),
             getBorderPanel(emailTF = new JTextField(20), new JLabel("Phone:"), phoneTF = new JTextField(20)),
             comboPanelWithLookupBtn(customerCB = new JComboBox(ASAdmin.loadCustomers()),
-            cbAction = new CustomerLookupAction(customerCB)),
+                cbAction = new CustomerLookupAction(customerCB)),
             getBorderPanel(createdSP = new SelectedDateSpinner()),
-            getBorderPanel(updatedSP = new SelectedDateSpinner()),
-            new JPanel()
+            getBorderPanel(updatedSP = new SelectedDateSpinner())
         };
         idField.setEnabled(false);
         createdSP.setEnabled(false);

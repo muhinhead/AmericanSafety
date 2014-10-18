@@ -1,6 +1,9 @@
 package com.as;
 
 import com.as.orm.IDocument;
+import com.as.orm.Invoice;
+import com.as.orm.Order;
+import com.as.orm.Quote;
 import com.as.orm.dbobject.DbObject;
 import com.as.util.RecordEditPanel;
 import static com.as.util.RecordEditPanel.comboPanelWithLookupBtn;
@@ -8,8 +11,12 @@ import static com.as.util.RecordEditPanel.getGridPanel;
 import static com.as.util.RecordEditPanel.selectComboItem;
 import com.as.util.SelectedDateSpinner;
 import com.as.util.SelectedNumberSpinner;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.rmi.RemoteException;
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -78,9 +85,9 @@ abstract class EditDocumentPanel extends RecordEditPanel {
                 contractorTF = new JTextField(20)
             }),
             getGridPanel(new JComponent[]{
-                rigCB = new JComboBox(ASAdmin.rigTankEquipment()), 
+                rigCB = new JComboBox(ASAdmin.rigTankEquipment()),
                 new JLabel("Tax %:", SwingConstants.RIGHT),
-                getGridPanel(taxProcSP = new SelectedNumberSpinner(0.0,0.0,100.0,0.5),3)
+                getGridPanel(taxProcSP = new SelectedNumberSpinner(0.0, 0.0, 100.0, 0.5), 3)
             }),
             getGridPanel(new JComponent[]{
                 createdByCB = new JComboBox(new DefaultComboBoxModel(ASAdmin.loadAllLogins())),
@@ -123,6 +130,24 @@ abstract class EditDocumentPanel extends RecordEditPanel {
             taxProcSP.setValue(doc.getTaxProc());
             createdSP.setValue(doc.getCreatedAt());
             updatedSP.setValue(doc.getUpdatedAt());
+            GeneralGridPanel itemsGrid = null;
+            try {
+                if (doc instanceof Quote) {
+                    itemsGrid = new QuoteItemsGrid(ASAdmin.getExchanger(), doc.getPK_ID());
+                } else if (doc instanceof Order) {
+                    itemsGrid = new OrderItemsGrid(ASAdmin.getExchanger(), doc.getPK_ID());
+                } else if (doc instanceof Invoice) {
+                    itemsGrid = new InvoiceItemsGrid(ASAdmin.getExchanger(), doc.getPK_ID());
+                }
+                if (itemsGrid != null) {
+                    itemsGrid.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Items"));
+                    add(itemsGrid, BorderLayout.SOUTH);
+                    itemsGrid.setPreferredSize(new Dimension(900, 200));
+                }
+            } catch (RemoteException ex) {
+                ASAdmin.logAndShowMessage(ex);
+            }
+
         }
         selectComboItem(createdByCB, ASAdmin.getCurrentUser().getPK_ID());
     }

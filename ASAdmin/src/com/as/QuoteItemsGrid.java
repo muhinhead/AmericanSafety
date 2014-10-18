@@ -1,10 +1,10 @@
 package com.as;
 
-import com.as.orm.Item;
+import com.as.orm.Quoteitem;
 import com.as.remote.IMessageSender;
 import java.awt.event.ActionEvent;
-import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.rmi.RemoteException;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
  *
  * @author Nick Mukhin
  */
-class ItemsGrid extends GeneralGridPanel {
+class QuoteItemsGrid extends GeneralGridPanel {
 
     private static HashMap<Integer, Integer> maxWidths = new HashMap<Integer, Integer>();
 
@@ -21,10 +21,8 @@ class ItemsGrid extends GeneralGridPanel {
         maxWidths.put(0, 40);
     }
 
-    public ItemsGrid(IMessageSender exchanger) throws RemoteException {
-        super(exchanger, "select item_id \"Id\", item_number \"Number\", "
-                + " item_name \"Name\", item_description \"Description\", last_price \"Last Price\" "
-                + " from item", maxWidths, false);
+    public QuoteItemsGrid(IMessageSender exchanger, Integer pkID) throws RemoteException {
+        super(exchanger, "select * from quoteitem where quote_id=" + pkID.toString(), maxWidths, false);
     }
 
     @Override
@@ -32,10 +30,12 @@ class ItemsGrid extends GeneralGridPanel {
         return new AbstractAction("Add", new ImageIcon("images/add.png")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                EditItemsDialog itemsDialog = new EditItemsDialog("New Item", null);
-                if (EditItemsDialog.okPressed) {
-                    Item itm = (Item) itemsDialog.getEditPanel().getDbObject();
-                    refresh(itm.getItemId());
+                int p = getSelect().indexOf("from quoteitem where quote_id=");
+                EditQuoteItemDialog.quoteID = p > 0 ? Integer.parseInt(getSelect().substring(p + 30)) : 0;
+                EditQuoteItemDialog qd = new EditQuoteItemDialog("Add Item", null);
+                if (EditQuoteItemDialog.okPressed) {
+                    Quoteitem qi = (Quoteitem) qd.getEditPanel().getDbObject();
+                    refresh(qi.getPK_ID());
                 }
             }
         };
@@ -49,9 +49,11 @@ class ItemsGrid extends GeneralGridPanel {
                 int id = getSelectedID();
                 if (id != 0) {
                     try {
-                        Item item = (Item) exchanger.loadDbObjectOnID(Item.class, id);
-                        new EditItemsDialog("Edit Item", item);
-                        if (EditItemsDialog.okPressed) {
+                        Quoteitem qi = (Quoteitem) exchanger.loadDbObjectOnID(Quoteitem.class, id);
+                        int p = getSelect().indexOf("from contact where customer_id=");
+                        EditQuoteItemDialog.quoteID = p > 0 ? Integer.parseInt(getSelect().substring(p + 30)) : 0;
+                        new EditQuoteItemDialog("Edit Item", qi);
+                        if (EditQuoteItemDialog.okPressed) {
                             refresh();
                         }
                     } catch (RemoteException ex) {
@@ -70,11 +72,11 @@ class ItemsGrid extends GeneralGridPanel {
                 int id = getSelectedID();
                 if (id != 0) {
                     try {
-                        Item item = (Item) exchanger.loadDbObjectOnID(Item.class, id);
-                        if (item != null) {
+                        Quoteitem qi = (Quoteitem) exchanger.loadDbObjectOnID(Quoteitem.class, id);
+                        if (qi!=null) {
                             if (GeneralFrame.yesNo("Attention!",
                                     "Do you want to delete this item?") == JOptionPane.YES_OPTION) {
-                                exchanger.deleteObject(item);
+                                exchanger.deleteObject(qi);
                                 refresh();
                             }
                         }

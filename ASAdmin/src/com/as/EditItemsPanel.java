@@ -33,7 +33,6 @@ class EditItemsPanel extends RecordEditPanel {
     @Override
     protected void fillContent() {
          String titles[] = new String[]{
-            "",
             "ID:",
             "Item Number:",
             "Item Name:",
@@ -41,10 +40,8 @@ class EditItemsPanel extends RecordEditPanel {
             "Last Price",
             "Created:",
             "Updated:",
-            ""
         };
         JComponent[] edits = new JComponent[]{
-            new JPanel(),
             getGridPanel(idField = new JTextField(), 8),
             getGridPanel(itmNumberTF = new JTextField(), 8),
             getBorderPanel(itmNameTF = new JTextField(40)),
@@ -52,7 +49,6 @@ class EditItemsPanel extends RecordEditPanel {
             getGridPanel(lastPriceSP = new SelectedNumberSpinner(0.0, 0.0, Double.MAX_VALUE, 0.01),8),
             getBorderPanel(createdSP = new SelectedDateSpinner()),
             getBorderPanel(updatedSP = new SelectedDateSpinner()),
-            new JPanel()
         };
         lastPriceSP.setPreferredSize(new Dimension(idField.getPreferredSize().width,
             lastPriceSP.getPreferredSize().height));

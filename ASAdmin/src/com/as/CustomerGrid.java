@@ -1,9 +1,7 @@
 package com.as;
 
 import com.as.orm.Customer;
-import com.as.orm.Item;
 import com.as.remote.IMessageSender;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.rmi.RemoteException;
 import java.util.HashMap;
