@@ -1,5 +1,6 @@
 package com.as;
 
+import static com.as.EditContactDialog.okPressed;
 import com.as.orm.dbobject.DbObject;
 import com.as.util.EditRecordDialog;
 
@@ -24,4 +25,9 @@ class EditItemsDialog extends EditRecordDialog {
     protected void setOkPressed(boolean b) {
         okPressed = b;
     }   
+
+    @Override
+    public boolean getOkPressed() {
+        return okPressed;
+    }
 }

@@ -1,6 +1,9 @@
 package com.as;
 
+import com.as.orm.IDocument;
+import com.as.orm.Invoice;
 import com.as.orm.dbobject.DbObject;
+import java.sql.Date;
 
 /**
  *
@@ -18,13 +21,14 @@ class EditInvoicePanel extends EditDocumentPanel {
 //    }
 
     @Override
-    public void loadData() {
-        //TOOD
+    public IDocument createDocument() {
+        return new Invoice(null);
     }
 
     @Override
-    public boolean save() throws Exception {
-        //TOOD
-        return true;
-    }
+    protected void setDocumentAdditionsBeforeSave(IDocument doc) throws Exception {
+        Invoice inv = (Invoice) doc;
+        java.util.Date ud = (java.util.Date) dateOutSP.getValue();
+        inv.setDateOut(new java.sql.Date(ud.getTime()));
+    }   
 }

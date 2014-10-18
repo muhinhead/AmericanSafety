@@ -272,6 +272,10 @@ public class ASAdmin {
         currentUser = curUser;
     }
 
+    public static ComboItem[] loadAllLogins() {
+        return loadOnSelect("select user_id,login from user", null);
+    }
+    
     public static List loadLogins(String fld, String whereCond) {
         try {
             DbObject[] admins = exchanger.getDbObjects(User.class,
@@ -335,11 +339,36 @@ public class ASAdmin {
     public static ComboItem[] loadCustomers() {
         return loadOnSelect("select customer_id, customer_name from customer", null);
     }
+
+    public static ComboItem[] loadContacsOnCustomer(int customer_id) {
+        return loadOnSelect("select contact_id,concat(first_name,' ',last_name)"
+                + " from contact where customer_id="+customer_id,null);
+    }
     
-//    public static ComboItem[] loadContactsOnCustomer(int customer_id) {
-//        return loadOnSelect("select contact_id, concat(first_name,' ',last_name)"
-//                + " from contact where customer_id=" + customer_id, null);
-//    }
+    public static String[] rigTankEquipment() {
+        return loadStrings("select * from (select distinct rig_tank_eq "
+                + "from document "
+                + "union select ''"
+                + "union select 'Rig'"
+                + "union select 'Tank'"
+                + "union select 'Equipment' order by rig_tank_eq) as t");
+    }
+
+    private static String[] loadStrings(String select) {
+        String[] ans = null;
+        try {
+            Vector[] tab = exchanger.getTableBody(select);
+            Vector rows = tab[1];
+            ans = new String[rows.size()];
+            for (int i = 0; i < rows.size(); i++) {
+                Vector line = (Vector) rows.get(i);
+                ans[i] = (String) line.get(0);
+            }
+        } catch (RemoteException ex) {
+            logAndShowMessage(ex);
+        }
+        return ans;
+    }
 
     private static ComboItem[] loadOnSelect(String select, ComboItem startItem) {
         try {
@@ -359,7 +388,7 @@ public class ASAdmin {
             }
             return ans;
         } catch (RemoteException ex) {
-            log(ex);
+            logAndShowMessage(ex);
         }
         return new ComboItem[]{new ComboItem(0, "")};
     }
@@ -370,7 +399,7 @@ public class ASAdmin {
             return LoginImagedDialog.isOkPressed();
         } catch (Throwable ee) {
             JOptionPane.showMessageDialog(null, "Server failure\nCheck your logs please", "Error:", JOptionPane.ERROR_MESSAGE);
-            log(ee);
+            logAndShowMessage(ee);
         }
         return false;
     }

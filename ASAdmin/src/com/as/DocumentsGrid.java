@@ -1,18 +1,24 @@
 package com.as;
 
+import com.as.orm.IDocument;
 import com.as.orm.Invoice;
 import com.as.orm.Order;
 import com.as.orm.Quote;
 import com.as.orm.User;
+import com.as.orm.dbobject.DbObject;
 import com.as.remote.IMessageSender;
+import com.as.util.EditRecordDialog;
 import java.awt.event.ActionEvent;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import java.awt.GridLayout;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 
 /**
@@ -28,7 +34,12 @@ public class DocumentsGrid extends GeneralGridPanel {
     }
 
     public DocumentsGrid(IMessageSender exchanger) throws RemoteException {
-        super(exchanger, "select * from document", maxWidths, false);
+        super(exchanger, "select document_id \"Id\",doc_type \"Document\","
+                + "(select customer_name from customer where customer_id=document.customer_id) \"Customer\","
+                + "(select concat(first_name,' ',last_name) from contact where contact_id=document.contact_id) \"Contact\","
+                + "location \"Location\",contractor \"Contractor\","
+                + "created_at, updated_at "
+                + " from document", maxWidths, false);
     }
 
     @Override
@@ -71,12 +82,49 @@ public class DocumentsGrid extends GeneralGridPanel {
         };
     }
 
+    private Class getCurrentDocumentClass() {
+        int row = getTableView().getSelectedRow();
+        if (row >= 0 && row < getTableView().getRowCount()) {
+            String sid = (String) getTableView().getValueAt(row, 1);
+            if (sid.equalsIgnoreCase("quote")) {
+                return Quote.class;
+            } else if (sid.equalsIgnoreCase("order")) {
+                return Order.class;
+            } else if (sid.equalsIgnoreCase("invoice")) {
+                return Invoice.class;
+            }
+        }
+        return null;
+    }
+
     @Override
     protected AbstractAction editAction() {
         return new AbstractAction("Edit", new ImageIcon("images/edit.png")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                int id = getSelectedID();
+                if (id != 0) {
+                    Class documentClass = getCurrentDocumentClass();
+                    if (documentClass != null) {
+                        try {
+                            EditRecordDialog dialog = null;
+                            IDocument doc = (IDocument) exchanger.loadDbObjectOnID(documentClass, id);
+                            if (documentClass.equals(Quote.class)) {
+                                dialog = new EditQuoteDialog("Edit Quote", doc);
+                            } else if (documentClass.equals(Order.class)) {
+                                dialog = new EditOrderDialog("Edit Order", doc);
+                            }
+                            if (documentClass.equals(Invoice.class)) {
+                                dialog = new EditInvoiceDialog("Edit Invoice", doc);
+                            }
+                            if (dialog != null && dialog.getOkPressed()) {
+                                refresh();
+                            }
+                        } catch (RemoteException ex) {
+                            ASAdmin.logAndShowMessage(ex);
+                        }
+                    }
+                }
             }
         };
     }
@@ -86,7 +134,20 @@ public class DocumentsGrid extends GeneralGridPanel {
         return new AbstractAction("Del", new ImageIcon("images/delete.png")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                int id = getSelectedID();
+                if (id != 0) {
+                    Class documentClass = getCurrentDocumentClass();
+                    try {
+                        IDocument doc = (IDocument) exchanger.loadDbObjectOnID(documentClass, id);
+                        if(doc!=null && GeneralFrame.yesNo("Attention!",
+                                    "Do you want to delete this document?") == JOptionPane.YES_OPTION) {
+                            exchanger.deleteObject((DbObject) doc);
+                            refresh();
+                        }
+                    } catch (RemoteException ex) {
+                        ASAdmin.logAndShowMessage(ex);
+                    }
+                }
             }
         };
     }

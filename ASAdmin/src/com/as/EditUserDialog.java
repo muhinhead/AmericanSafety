@@ -24,4 +24,9 @@ class EditUserDialog extends EditRecordDialog {
     protected void setOkPressed(boolean b) {
         okPressed = b;
     }   
+
+    @Override
+    public boolean getOkPressed() {
+        return okPressed;
+    }
 }

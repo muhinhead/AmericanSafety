@@ -80,8 +80,8 @@ public abstract class EditRecordDialog extends PopupDialog {
         };
     }
 
-    protected void setOkPressed(boolean b) {
-    }
+    protected abstract void setOkPressed(boolean b);
+    public abstract boolean getOkPressed();
 
     protected AbstractAction getCancelAction() {
         return new AbstractAction("Cancel") {
