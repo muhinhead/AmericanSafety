@@ -4,6 +4,7 @@ import com.as.remote.IMessageSender;
 import com.as.util.ImagePanel;
 import com.as.util.TexturedPanel;
 import com.as.util.ToggleToolBarButton;
+import com.as.util.ToolBarButton;
 import com.as.util.Util;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -142,15 +143,26 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
         header.add(headerLeft);
 
         TexturedPanel headerRight = new TexturedPanel(new FlowLayout(FlowLayout.RIGHT), getBackGroundImage());
-        headerRight.add(new JButton(new AbstractAction(null, new ImageIcon("images/exit.png")) {
+        JButton exitBtn;
+        headerRight.add(exitBtn = new JButton(new AbstractAction(null, new ImageIcon("images/exit.png")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
             }
         }));
-        headerRight.add(new ImagePanel(Util.loadImage("amsaf60.png")));
+        exitBtn.setToolTipText("Exit");
+        JButton aboutBtn = new JButton(new AbstractAction(null, new ImageIcon("images/amsaf60.png")){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AboutDialog();
+            }
+        });
+        headerRight.add(aboutBtn);
         header.add(headerRight);
+        aboutBtn.setToolTipText("About the program");
 
+        aboutBtn.setPreferredSize(exitBtn.getPreferredSize());
+        
         controlsPanel.add(header, BorderLayout.NORTH);
         controlsPanel.add(main, BorderLayout.CENTER);
         addNotify();
@@ -167,7 +179,6 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
     }
 
     protected void fillControlsPanel() throws HeadlessException {
-//        String imgName = "Users.png";
         buildMenu();
         usersButton = new ToggleToolBarButton("Users.png", "Users");//, true);
         docsButton = new ToggleToolBarButton("dicts.png", "Documents");//, true);
@@ -225,73 +236,6 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
             }
         });
 
-//
-//        setupButton.setBounds(shift + step, 38, img.getWidth(), img.getHeight());
-//        main.add(setupButton);
-//
-//        compsButton.addActionListener(new AbstractAction() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                if (companyFrame == null) {
-//                    companyFrame = new CompanyFrame(ASAdmin.getExchanger());
-//                } else {
-//                    try {
-//                        companyFrame.setLookAndFeel(ASAdmin.readProperty("LookAndFeel",
-//                                UIManager.getSystemLookAndFeelClassName()));
-//                    } catch (Exception ex) {
-//                    }
-//                    companyFrame.setVisible(true);
-//                }
-//            }
-//        });
-//
-//        peopleButton.addActionListener(new AbstractAction() {
-//            @Override
-//            public void actionPerformed(ActionEvent ae) {
-//                if (peopleFrame == null) {
-//                    peopleFrame = new PeopleFrame(ASAdmin.getExchanger());
-//                } else {
-//                    try {
-//                        peopleFrame.setLookAndFeel(ASAdmin.readProperty("LookAndFeel",
-//                                UIManager.getSystemLookAndFeelClassName()));
-//                    } catch (Exception ex) {
-//                    }
-//                    peopleFrame.setVisible(true);
-//                }
-//            }
-//        });
-//
-//        locationsButton.addActionListener(new AbstractAction() {
-//            @Override
-//            public void actionPerformed(ActionEvent ae) {
-//                if (locationsFrame == null) {
-//                    locationsFrame = new LocationsFrame(ASAdmin.getExchanger());
-//                } else {
-//                    try {
-//                        locationsFrame.setLookAndFeel(ASAdmin.readProperty("LookAndFeel",
-//                                UIManager.getSystemLookAndFeelClassName()));
-//                    } catch (Exception ex) {
-//                    }
-//                    locationsFrame.setVisible(true);
-//                }
-//            }
-//        });
-//
-//        setupButton.addActionListener(new AbstractAction() {
-//            @Override
-//            public void actionPerformed(ActionEvent ae) {
-//                if (adminsFrame == null) {
-//                    adminsFrame = new AdminsFrame(ASAdmin.getExchanger());
-//                } else {
-//                    try {
-//                        adminsFrame.setLookAndFeel(ASAdmin.readProperty("LookAndFeel",
-//                                UIManager.getSystemLookAndFeelClassName()));
-//                    } catch (Exception ex) {
-//                    }
-//                    adminsFrame.setVisible(true);
-//                }
-//            }
-//        });
         centerOnScreen();
     }
 

@@ -1,33 +1,33 @@
 package com.as;
 
 import com.as.orm.Item;
-import com.as.orm.Quoteitem;
+import com.as.orm.Invoiceitem;
 import com.as.orm.dbobject.DbObject;
 import com.as.util.RecordEditPanel;
 import static com.as.util.RecordEditPanel.comboPanelWithLookupBtn;
 import static com.as.util.RecordEditPanel.getBorderPanel;
 import static com.as.util.RecordEditPanel.getGridPanel;
+import static com.as.util.RecordEditPanel.getSelectedCbItem;
+import static com.as.util.RecordEditPanel.selectComboItem;
 import com.as.util.SelectedDateSpinner;
 import com.as.util.SelectedNumberSpinner;
 import com.as.util.Util;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.SwingConstants;
-import javax.swing.JLabel;
-import javax.swing.JCheckBox;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 /**
  *
  * @author Nick Mukhin
  */
-class EditQuoteItemPanel extends RecordEditPanel {
+class EditInvoiceItemPanel extends RecordEditPanel {
 
     private JTextField idField;
     private JComboBox itemCB;
@@ -38,7 +38,7 @@ class EditQuoteItemPanel extends RecordEditPanel {
     private SelectedDateSpinner updatedSP;
     private SelectedNumberSpinner qtyCB;
 
-    public EditQuoteItemPanel(DbObject dbObject) {
+    public EditInvoiceItemPanel(DbObject dbObject) {
         super(dbObject);
     }
 
@@ -94,18 +94,18 @@ class EditQuoteItemPanel extends RecordEditPanel {
 
     @Override
     public void loadData() {
-        Quoteitem qi = (Quoteitem) getDbObject();
-        if (qi != null) {
-            idField.setText(qi.getPK_ID().toString());
-            selectComboItem(itemCB, qi.getItemId());
-            priceSP.setValue(qi.getPrice());
-            qtyCB.setValue(qi.getQty());
-            taxCB.setSelected(qi.getTax() != null && qi.getTax() == 1);
-            if (qi.getCreatedAt() != null) {
-                createdSP.setValue(qi.getCreatedAt());
+        Invoiceitem ii = (Invoiceitem) getDbObject();
+        if (ii != null) {
+            idField.setText(ii.getPK_ID().toString());
+            selectComboItem(itemCB, ii.getItemId());
+            priceSP.setValue(ii.getPrice());
+            qtyCB.setValue(ii.getQty());
+            taxCB.setSelected(ii.getTax() != null && ii.getTax() == 1);
+            if (ii.getCreatedAt() != null) {
+                createdSP.setValue(ii.getCreatedAt());
             }
-            if (qi.getUpdatedAt() != null) {
-                updatedSP.setValue(qi.getUpdatedAt());
+            if (ii.getUpdatedAt() != null) {
+                updatedSP.setValue(ii.getUpdatedAt());
             }
         }
     }
@@ -113,24 +113,24 @@ class EditQuoteItemPanel extends RecordEditPanel {
     @Override
     public boolean save() throws Exception {
         boolean isNew = false;
-        Quoteitem qi = (Quoteitem) getDbObject();
-        if (qi == null) {
-            qi = new Quoteitem(null);
-            qi.setPK_ID(0);
-            qi.setQuoteId(EditQuoteItemDialog.quoteID);
+        Invoiceitem oi = (Invoiceitem) getDbObject();
+        if (oi == null) {
+            oi = new Invoiceitem(null);
+            oi.setPK_ID(0);
+            oi.setInvoiceId(EditInvoiceItemDialog.invoiceID);
             isNew = true;
         }
         Integer itemID;
-        qi.setItemId(itemID = getSelectedCbItem(itemCB));
+        oi.setItemId(itemID = getSelectedCbItem(itemCB));
         Item itm = (Item) ASAdmin.getExchanger().loadDbObjectOnID(Item.class, itemID);
-        qi.setPrice((Double) priceSP.getValue());
-        qi.setTax(taxCB.isSelected() ? 1 : 0);
-        qi.setQty((Integer) qtyCB.getValue());
-        boolean ok = saveDbRecord(qi, isNew);
-//        if (ok) {
-//            itm.setLastPrice(qi.getPrice());
-//            ASAdmin.getExchanger().saveDbObject(itm);
-//        }
+        oi.setPrice((Double) priceSP.getValue());
+        oi.setTax(taxCB.isSelected() ? 1 : 0);
+        oi.setQty((Integer) qtyCB.getValue());
+        boolean ok = saveDbRecord(oi, isNew);
+        if (ok) {
+            itm.setLastPrice(oi.getPrice());
+            ASAdmin.getExchanger().saveDbObject(itm);
+        }
         return ok;
     }
 }

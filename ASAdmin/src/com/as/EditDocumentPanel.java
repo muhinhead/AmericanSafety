@@ -5,7 +5,7 @@ import com.as.orm.Invoice;
 import com.as.orm.Order;
 import com.as.orm.Quote;
 import com.as.orm.dbobject.DbObject;
-import com.as.util.RecordEditPanel;
+import com.as.util.EditPanelWithPhoto;
 import static com.as.util.RecordEditPanel.comboPanelWithLookupBtn;
 import static com.as.util.RecordEditPanel.getGridPanel;
 import static com.as.util.RecordEditPanel.selectComboItem;
@@ -30,7 +30,7 @@ import javax.swing.JTextField;
  *
  * @author Nick Mukhin
  */
-abstract class EditDocumentPanel extends RecordEditPanel {
+abstract class EditDocumentPanel extends EditPanelWithPhoto {
 
     protected JTextField idField;
     protected SelectedDateSpinner dateInSP;
@@ -47,9 +47,16 @@ abstract class EditDocumentPanel extends RecordEditPanel {
     protected JLabel dateOutLbl;
     private JComboBox createdByCB;
     private SelectedNumberSpinner taxProcSP;
+    private JComboBox poTypeCB;
+    private JTextField poValueTF;
 
     public EditDocumentPanel(DbObject dbObject) {
         super(dbObject);
+    }
+
+    @Override
+    protected String getImagePanelLabel() {
+        return "Signature";
     }
 
     @Override
@@ -60,6 +67,7 @@ abstract class EditDocumentPanel extends RecordEditPanel {
             "Customer:", //"Location:"
             "Contact:", //"Contractor:"
             "Rig/Tank/Equipment",
+            "", //PO
             "Created by:"
         //            "Created:"   //"Updated:"
 
@@ -89,6 +97,12 @@ abstract class EditDocumentPanel extends RecordEditPanel {
                 new JLabel("Tax %:", SwingConstants.RIGHT),
                 getGridPanel(taxProcSP = new SelectedNumberSpinner(0.0, 0.0, 100.0, 0.5), 3)
             }),
+            getGridPanel(
+            getGridPanel(new JComponent[]{
+                poTypeCB = new JComboBox(new DefaultComboBoxModel(ASAdmin.loadPOtypes())),
+                poValueTF = new JTextField()
+            }), 3
+            ),
             getGridPanel(new JComponent[]{
                 createdByCB = new JComboBox(new DefaultComboBoxModel(ASAdmin.loadAllLogins())),
                 getBorderPanel(new JLabel("Created at:", SwingConstants.RIGHT), createdSP = new SelectedDateSpinner()),
@@ -128,8 +142,16 @@ abstract class EditDocumentPanel extends RecordEditPanel {
             contractorTF.setText(doc.getContractor());
             rigCB.setSelectedItem(doc.getRigTankEq());
             taxProcSP.setValue(doc.getTaxProc());
-            createdSP.setValue(doc.getCreatedAt());
-            updatedSP.setValue(doc.getUpdatedAt());
+            selectComboItem(poTypeCB, doc.getPoTypeId());
+            poValueTF.setText(doc.getPoNumber());
+            if (doc.getCreatedAt() != null) {
+                createdSP.setValue(doc.getCreatedAt());
+            }
+            if (doc.getUpdatedAt() != null) {
+                updatedSP.setValue(doc.getUpdatedAt());
+            }
+            imageData = (byte[]) doc.getSignature();
+            setImage(imageData);
             GeneralGridPanel itemsGrid = null;
             try {
                 if (doc instanceof Quote) {
@@ -174,6 +196,9 @@ abstract class EditDocumentPanel extends RecordEditPanel {
         doc.setContractor(contractorTF.getText());
         doc.setRigTankEq((String) rigCB.getSelectedItem());
         doc.setTaxProc((Double) taxProcSP.getValue());
+        doc.setPoTypeId(getSelectedCbItem(poTypeCB));
+        doc.setPoNumber(poValueTF.getText());
+        doc.setSignature(imageData);
         doc.setCreatedBy(ASAdmin.getCurrentUser().getPK_ID());
         setDocumentAdditionsBeforeSave(doc);
         return saveDbRecord((DbObject) doc, isNew);

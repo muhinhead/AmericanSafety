@@ -50,7 +50,7 @@ class QuoteItemsGrid extends GeneralGridPanel {
                 if (id != 0) {
                     try {
                         Quoteitem qi = (Quoteitem) exchanger.loadDbObjectOnID(Quoteitem.class, id);
-                        int p = getSelect().indexOf("from contact where customer_id=");
+                        int p = getSelect().indexOf("from quoteitem where quote_id=");
                         EditQuoteItemDialog.quoteID = p > 0 ? Integer.parseInt(getSelect().substring(p + 30)) : 0;
                         new EditQuoteItemDialog("Edit Item", qi);
                         if (EditQuoteItemDialog.okPressed) {

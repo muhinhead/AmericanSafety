@@ -7,17 +7,17 @@ import com.as.util.EditRecordDialog;
  *
  * @author Nick Mukhin
  */
-class EditQuoteItemDialog extends EditRecordDialog {
+public class EditInvoiceItemDialog extends EditRecordDialog {
     public static boolean okPressed;
-    public static int quoteID;
+    public static int invoiceID;
 
-    public EditQuoteItemDialog(String title, DbObject obj) {
+    public EditInvoiceItemDialog(String title, DbObject obj) {
         super(title, obj);
     }
     
      @Override
     protected void fillContent() {
-        super.fillContent(new EditQuoteItemPanel((DbObject) getObject()));
+        super.fillContent(new EditInvoiceItemPanel((DbObject) getObject()));
     }
 
     @Override
@@ -30,3 +30,4 @@ class EditQuoteItemDialog extends EditRecordDialog {
         return okPressed;
     }
 }
+

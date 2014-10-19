@@ -39,7 +39,7 @@ class EditCustomerPanel extends RecordEditPanel {
             "ID:",
             "Customer Name:",
             "Customer Address:",
-            "Created:", 
+            "Created:",
             "Updated:",
             ""
         };
@@ -70,13 +70,17 @@ class EditCustomerPanel extends RecordEditPanel {
             idField.setText(cust.getPK_ID().toString());
             nameTF.setText(cust.getCustomerName());
             addressTF.setText(cust.getCustomerAddress());
-            createdSP.setValue(cust.getCreatedAt());
-            updatedSP.setValue(cust.getUpdatedAt());
+            if (cust.getCreatedAt() != null) {
+                createdSP.setValue(cust.getCreatedAt());
+            }
+            if (cust.getUpdatedAt() != null) {
+                updatedSP.setValue(cust.getUpdatedAt());
+            }
             try {
                 ContactGrid cg = new ContactGrid(ASAdmin.getExchanger(), cust.getCustomerId().intValue());
-                cg.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),"Contacts"));
-                add(cg,BorderLayout.SOUTH);
-                cg.setPreferredSize(new Dimension(900,200));
+                cg.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Contacts"));
+                add(cg, BorderLayout.SOUTH);
+                cg.setPreferredSize(new Dimension(900, 200));
             } catch (RemoteException ex) {
                 ASAdmin.logAndShowMessage(ex);
             }

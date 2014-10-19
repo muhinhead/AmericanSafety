@@ -54,7 +54,7 @@ class EditContactPanel extends RecordEditPanel {
             lastNameTF = new JTextField(),
             getBorderPanel(emailTF = new JTextField(20), new JLabel("Phone:"), phoneTF = new JTextField(20)),
             comboPanelWithLookupBtn(customerCB = new JComboBox(ASAdmin.loadCustomers()),
-                cbAction = new CustomerLookupAction(customerCB)),
+            cbAction = new CustomerLookupAction(customerCB)),
             getBorderPanel(createdSP = new SelectedDateSpinner()),
             getBorderPanel(updatedSP = new SelectedDateSpinner())
         };
@@ -86,8 +86,12 @@ class EditContactPanel extends RecordEditPanel {
             emailTF.setText(cnt.getEmail());
             phoneTF.setText(cnt.getPhone());
             selectComboItem(customerCB, cnt.getCustomerId());
-            createdSP.setValue(cnt.getCreatedAt());
-            updatedSP.setValue(cnt.getUpdatedAt());
+            if (cnt.getCreatedAt() != null) {
+                createdSP.setValue(cnt.getCreatedAt());
+            }
+            if (cnt.getUpdatedAt() != null) {
+                updatedSP.setValue(cnt.getUpdatedAt());
+            }
         } else {
             selectComboItem(customerCB, EditContactDialog.customerID);
         }

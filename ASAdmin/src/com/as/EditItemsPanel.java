@@ -18,6 +18,7 @@ import javax.swing.JSpinner;
  * @author Nick Mukhin
  */
 class EditItemsPanel extends RecordEditPanel {
+
     private JTextField idField;
     private JTextField itmNumberTF;
     private JTextField itmNameTF;
@@ -32,26 +33,24 @@ class EditItemsPanel extends RecordEditPanel {
 
     @Override
     protected void fillContent() {
-         String titles[] = new String[]{
+        String titles[] = new String[]{
             "ID:",
             "Item Number:",
             "Item Name:",
             "Item Description:",
             "Last Price",
             "Created:",
-            "Updated:",
-        };
+            "Updated:",};
         JComponent[] edits = new JComponent[]{
             getGridPanel(idField = new JTextField(), 8),
             getGridPanel(itmNumberTF = new JTextField(), 8),
             getBorderPanel(itmNameTF = new JTextField(40)),
             getBorderPanel(itmDescrTF = new JTextField(60)),
-            getGridPanel(lastPriceSP = new SelectedNumberSpinner(0.0, 0.0, Double.MAX_VALUE, 0.01),8),
+            getGridPanel(lastPriceSP = new SelectedNumberSpinner(0.0, 0.0, Double.MAX_VALUE, 0.01), 8),
             getBorderPanel(createdSP = new SelectedDateSpinner()),
-            getBorderPanel(updatedSP = new SelectedDateSpinner()),
-        };
+            getBorderPanel(updatedSP = new SelectedDateSpinner()),};
         lastPriceSP.setPreferredSize(new Dimension(idField.getPreferredSize().width,
-            lastPriceSP.getPreferredSize().height));
+                lastPriceSP.getPreferredSize().height));
         idField.setEnabled(false);
         createdSP.setEnabled(false);
         updatedSP.setEnabled(false);
@@ -63,14 +62,18 @@ class EditItemsPanel extends RecordEditPanel {
     @Override
     public void loadData() {
         Item itm = (Item) getDbObject();
-        if (itm!=null) {
+        if (itm != null) {
             idField.setText(itm.getItemId().toString());
             itmNumberTF.setText(itm.getItemNumber());
             itmNameTF.setText(itm.getItemName());
             itmDescrTF.setText(itm.getItemDescription());
             lastPriceSP.setValue(itm.getLastPrice());
-            createdSP.setValue(itm.getCreatedAt());
-            updatedSP.setValue(itm.getUpdatedAt());
+            if (itm.getCreatedAt() != null) {
+                createdSP.setValue(itm.getCreatedAt());
+            }
+            if (itm.getUpdatedAt() != null) {
+                updatedSP.setValue(itm.getUpdatedAt());
+            }
         }
     }
 
@@ -78,7 +81,7 @@ class EditItemsPanel extends RecordEditPanel {
     public boolean save() throws Exception {
         boolean isNew = false;
         Item itm = (Item) getDbObject();
-        if(itm==null) {
+        if (itm == null) {
             itm = new Item(null);
             itm.setItemId(0);
             isNew = true;
@@ -86,8 +89,8 @@ class EditItemsPanel extends RecordEditPanel {
         itm.setItemNumber(itmNumberTF.getText());
         itm.setItemName(itmNameTF.getText());
         itm.setItemDescription(itmDescrTF.getText());
-        itm.setLastPrice((Double)lastPriceSP.getValue());
+        itm.setLastPrice((Double) lastPriceSP.getValue());
         return saveDbRecord(itm, isNew);
     }
-    
+
 }

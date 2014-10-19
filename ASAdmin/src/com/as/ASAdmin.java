@@ -275,7 +275,7 @@ public class ASAdmin {
     public static ComboItem[] loadAllLogins() {
         return loadOnSelect("select user_id,login from user", null);
     }
-    
+
     public static List loadLogins(String fld, String whereCond) {
         try {
             DbObject[] admins = exchanger.getDbObjects(User.class,
@@ -339,16 +339,16 @@ public class ASAdmin {
     public static ComboItem[] loadItems() {
         return loadOnSelect("select item_id, concat(item_name,' (No_',item_number,')') from item", null);
     }
-    
+
     public static ComboItem[] loadCustomers() {
         return loadOnSelect("select customer_id, customer_name from customer", null);
     }
 
     public static ComboItem[] loadContacsOnCustomer(int customer_id) {
         return loadOnSelect("select contact_id,concat(first_name,' ',last_name)"
-                + " from contact where customer_id="+customer_id,null);
+                + " from contact where customer_id=" + customer_id, null);
     }
-    
+
     public static String[] rigTankEquipment() {
         return loadStrings("select * from (select distinct rig_tank_eq "
                 + "from document "
@@ -406,5 +406,9 @@ public class ASAdmin {
             logAndShowMessage(ee);
         }
         return false;
+    }
+
+    static ComboItem[] loadPOtypes() {
+        return loadOnSelect("select po_id,po_description from po", null);
     }
 }

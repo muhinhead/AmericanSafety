@@ -120,12 +120,13 @@ public class LoginImagedDialog extends PopupDialog {
         pwdField.setBorder(null);
         main.add(pwdField);
 
-        JButton okButton = new ToolBarButton("Lock.png", true);
+//        JButton okButton = new ToolBarButton("Lock.png", true);
+        JButton okButton = new JButton("Login");
         img = new ImagePanel(ASAdmin.loadImage("Lock.png", this));
 
         okButton.setBounds(dashWidth - img.getWidth() - xShift, dashHeight - img.getHeight() - yShift,
                 img.getWidth(), img.getHeight());
-
+        
         main.add(okButton);
         okButton.addActionListener(okButtonListener());
 

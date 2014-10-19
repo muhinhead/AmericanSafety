@@ -7,17 +7,17 @@ import com.as.util.EditRecordDialog;
  *
  * @author Nick Mukhin
  */
-class EditQuoteItemDialog extends EditRecordDialog {
+public class EditOrderItemDialog extends EditRecordDialog {
     public static boolean okPressed;
-    public static int quoteID;
+    public static int orderID;
 
-    public EditQuoteItemDialog(String title, DbObject obj) {
+    public EditOrderItemDialog(String title, DbObject obj) {
         super(title, obj);
     }
     
      @Override
     protected void fillContent() {
-        super.fillContent(new EditQuoteItemPanel((DbObject) getObject()));
+        super.fillContent(new EditOrderItemPanel((DbObject) getObject()));
     }
 
     @Override
