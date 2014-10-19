@@ -143,23 +143,26 @@ public class DashBoard extends JFrame {//extends AbstractDashBoard {
         header.add(headerLeft);
 
         TexturedPanel headerRight = new TexturedPanel(new FlowLayout(FlowLayout.RIGHT), getBackGroundImage());
-        JButton exitBtn;
-        headerRight.add(exitBtn = new JButton(new AbstractAction(null, new ImageIcon("images/exit.png")) {
+        ToolBarButton exitBtn = new ToolBarButton("exit.png", null);
+        headerRight.add(exitBtn);
+        exitBtn.addActionListener(new AbstractAction(){
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
             }
-        }));
+        });
         exitBtn.setToolTipText("Exit");
-        JButton aboutBtn = new JButton(new AbstractAction(null, new ImageIcon("images/amsaf60.png")){
+        
+        ToolBarButton aboutBtn = new ToolBarButton("amsaf60.png", null);
+        aboutBtn.addActionListener(new AbstractAction(){
             @Override
             public void actionPerformed(ActionEvent e) {
                 new AboutDialog();
             }
         });
+        aboutBtn.setToolTipText("About the program");
         headerRight.add(aboutBtn);
         header.add(headerRight);
-        aboutBtn.setToolTipText("About the program");
 
         aboutBtn.setPreferredSize(exitBtn.getPreferredSize());
         

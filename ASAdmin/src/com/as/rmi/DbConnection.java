@@ -87,7 +87,7 @@ public class DbConnection {
     }
 
     public static String getPassword() {
-        return props.getProperty("dbPassword", "root");
+        return props.getProperty("dbPassword", "Ghbdtnnt2044");
     }
 
 //    public static String getBackupCommand() {
@@ -128,7 +128,7 @@ public class DbConnection {
                     props.getProperty("dbDriverName",
                     "com.mysql.jdbc.Driver")).newInstance());
             String connectionString = props.getProperty("JDBCconnection",
-                    "jdbc:mysql://localhost/amsaf?characterEncoding=UTF8");
+                    "jdbc:mysql://104.130.138.22/amsaf?characterEncoding=UTF8");
             String login = getLogin();
             String pwd = getPassword();
             connection = DriverManager.getConnection(
