@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Document.findByDocumentID", query = "SELECT d FROM Document d WHERE d.documentPK.documentID = :documentID"),
     @NamedQuery(name = "Document.findByDocType", query = "SELECT d FROM Document d WHERE d.documentPK.docType = :docType"),
     @NamedQuery(name = "Document.findByLocation", query = "SELECT d FROM Document d WHERE d.location = :location"),
-    @NamedQuery(name = "Document.findByContactor", query = "SELECT d FROM Document d WHERE d.contactor = :contactor"),
+    @NamedQuery(name = "Document.findByContactor", query = "SELECT d FROM Document d WHERE d.contractor = :contractor"),
     @NamedQuery(name = "Document.findByRigTankEq", query = "SELECT d FROM Document d WHERE d.rigTankEq = :rigTankEq"),
     @NamedQuery(name = "Document.findByDiscount", query = "SELECT d FROM Document d WHERE d.discount = :discount"),
     @NamedQuery(name = "Document.findByTaxProc", query = "SELECT d FROM Document d WHERE d.taxProc = :taxProc"),
@@ -45,8 +45,8 @@ public class Document implements Serializable {
     @Column(name = "location")
     private String location;
     @Size(max = 255)
-    @Column(name = "contactor")
-    private String contactor;
+    @Column(name = "contractor")
+    private String contractor;
     @Size(max = 255)
     @Column(name = "rig_tank_eq")
     private String rigTankEq;
@@ -121,11 +121,11 @@ public class Document implements Serializable {
     }
 
     public String getContactor() {
-        return contactor;
+        return contractor;
     }
 
-    public void setContactor(String contactor) {
-        this.contactor = contactor;
+    public void setContactor(String contractor) {
+        this.contractor = contractor;
     }
 
     public String getRigTankEq() {

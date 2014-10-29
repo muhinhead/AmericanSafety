@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Quote.findAll", query = "SELECT q FROM Quote q"),
     @NamedQuery(name = "Quote.findByQuoteID", query = "SELECT q FROM Quote q WHERE q.quoteID = :quoteID"),
     @NamedQuery(name = "Quote.findByLocation", query = "SELECT q FROM Quote q WHERE q.location = :location"),
-    @NamedQuery(name = "Quote.findByContactor", query = "SELECT q FROM Quote q WHERE q.contactor = :contactor"),
+    @NamedQuery(name = "Quote.findByContactor", query = "SELECT q FROM Quote q WHERE q.contractor = :contractor"),
     @NamedQuery(name = "Quote.findByRigTankEq", query = "SELECT q FROM Quote q WHERE q.rigTankEq = :rigTankEq"),
     @NamedQuery(name = "Quote.findByDiscount", query = "SELECT q FROM Quote q WHERE q.discount = :discount"),
     @NamedQuery(name = "Quote.findByTaxProc", query = "SELECT q FROM Quote q WHERE q.taxProc = :taxProc"),
@@ -49,6 +49,12 @@ public class Quote implements Serializable {
     @Lob
     @Column(name = "signature")
     private byte[] signature;
+    @JoinColumn(name = "po_type_id", referencedColumnName = "po_id")
+    @ManyToOne
+    private Po poTypeId;
+    @JoinColumn(name = "tax_id", referencedColumnName = "tax_id")
+    @ManyToOne
+    private Tax taxId;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,8 +65,8 @@ public class Quote implements Serializable {
     @Column(name = "location")
     private String location;
     @Size(max = 255)
-    @Column(name = "contactor")
-    private String contactor;
+    @Column(name = "contractor")
+    private String contractor;
     @Size(max = 255)
     @Column(name = "rig_tank_eq")
     private String rigTankEq;
@@ -94,6 +100,10 @@ public class Quote implements Serializable {
     @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
     @ManyToOne(optional = false)
     private Customer customerID;
+
+    @JoinColumn(name = "contact_id", referencedColumnName = "contact_id")
+    @ManyToOne(optional = false)
+    private Contact contactID;
 
     @JoinColumn(name = "created_by", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
@@ -129,11 +139,11 @@ public class Quote implements Serializable {
     }
 
     public String getContactor() {
-        return contactor;
+        return contractor;
     }
 
-    public void setContactor(String contactor) {
-        this.contactor = contactor;
+    public void setContactor(String contractor) {
+        this.contractor = contractor;
     }
 
     public String getRigTankEq() {
@@ -263,11 +273,42 @@ public class Quote implements Serializable {
         this.createdBY = createdBY;
     }
 
+
+    /**
+     * @return the contactID
+     */
+    public Contact getContactID() {
+        return contactID;
+    }
+
+    /**
+     * @param contactID the contactID to set
+     */
+    public void setContactID(Contact contactID) {
+        this.contactID = contactID;
+    }
+
     public byte[] getSignature() {
         return signature;
     }
 
     public void setSignature(byte[] signature) {
         this.signature = signature;
+    }
+
+    public Po getPoTypeId() {
+        return poTypeId;
+    }
+
+    public void setPoTypeId(Po poTypeId) {
+        this.poTypeId = poTypeId;
+    }
+
+    public Tax getTaxId() {
+        return taxId;
+    }
+
+    public void setTaxId(Tax taxId) {
+        this.taxId = taxId;
     }
 }

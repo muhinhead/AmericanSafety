@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.as.service;
 
 import com.as.Contact;
@@ -36,14 +35,14 @@ public class ContactFacadeREST extends AbstractFacade<Contact> {
 
     @POST
     @Override
-    @Consumes("application/json")
+    @Consumes({"application/xml", "application/json"})
     public void create(Contact entity) {
         super.create(entity);
     }
 
     @PUT
     @Path("{id}")
-    @Consumes("application/json")
+    @Consumes({"application/xml", "application/json"})
     public void edit(@PathParam("id") Integer id, Contact entity) {
         super.edit(entity);
     }
@@ -56,21 +55,21 @@ public class ContactFacadeREST extends AbstractFacade<Contact> {
 
     @GET
     @Path("{id}")
-    @Produces("application/json")
+    @Produces({"application/xml", "application/json"})
     public Contact find(@PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
     @Override
-    @Produces("application/json")
+    @Produces({"application/xml", "application/json"})
     public List<Contact> findAll() {
         return super.findAll();
     }
 
     @GET
     @Path("{from}/{to}")
-    @Produces("application/json")
+    @Produces({"application/xml", "application/json"})
     public List<Contact> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }

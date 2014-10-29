@@ -1,6 +1,6 @@
 package com.as.util;
 
-import com.as.Document;
+import com.as.Tax;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
@@ -14,33 +14,23 @@ import javax.persistence.Id;
  * @author Nick Mukhin
  */
 @Entity
-public class ResponseDocumentList implements Serializable {
-
+public class ResponseTaxList implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private List<ResponseDocument> response;
+    private List<Tax> response;
     private String[] errorMsg;
 
-    public ResponseDocumentList() {
+    public ResponseTaxList() {
     }
-
-    public ResponseDocumentList(List<Document> doclist, String[] errmsg) {
-        if (doclist != null) {
-            response = new ArrayList<ResponseDocument>(doclist.size());
-            for (Document doc : doclist) {
-                ResponseDocument rd = new ResponseDocument();
-                rd.setStartRangeTime(doc.getDateIn());
-                rd.setFinishRangeTime(doc.getDateOut());
-                rd.setDocumentType(doc.getDocumentPK().getDocType());
-                rd.setSetPO(doc.getPoNumber() == null);
-            }
-        } else {
-            errorMsg = errmsg;
-        }
+    
+    public ResponseTaxList(List<Tax> taxList, String[] errmsg) {
+        setResponse(taxList);
+        setErrorMsg(errmsg);
     }
-
+    
+    
     public Long getId() {
         return id;
     }
@@ -59,10 +49,10 @@ public class ResponseDocumentList implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ResponseDocumentList)) {
+        if (!(object instanceof ResponseTaxList)) {
             return false;
         }
-        ResponseDocumentList other = (ResponseDocumentList) object;
+        ResponseTaxList other = (ResponseTaxList) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -71,20 +61,20 @@ public class ResponseDocumentList implements Serializable {
 
     @Override
     public String toString() {
-        return "com.as.util.ResponseDocumentList[ id=" + id + " ]";
+        return "com.as.util.ResponseTaxList[ id=" + id + " ]";
     }
 
     /**
      * @return the response
      */
-    public List<ResponseDocument> getResponse() {
+    public List<Tax> getResponse() {
         return response;
     }
 
     /**
      * @param response the response to set
      */
-    public void setResponse(List<ResponseDocument> response) {
+    public void setResponse(List<Tax> response) {
         this.response = response;
     }
 
@@ -96,10 +86,10 @@ public class ResponseDocumentList implements Serializable {
     }
 
     /**
-     * @param errMsg the errorMsg to set
+     * @param errorMsg the errorMsg to set
      */
-    public void setErrorMsg(String[] errMsg) {
-        this.errorMsg = errMsg;
+    public void setErrorMsg(String[] errorMsg) {
+        this.errorMsg = errorMsg;
     }
-
+    
 }

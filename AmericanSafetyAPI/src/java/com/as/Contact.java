@@ -7,7 +7,10 @@
 package com.as;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,7 +20,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -39,6 +45,16 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Contact.findByEmail", query = "SELECT c FROM Contact c WHERE c.email = :email"),
     @NamedQuery(name = "Contact.findByPhone", query = "SELECT c FROM Contact c WHERE c.phone = :phone")})
 public class Contact implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,7 +96,16 @@ public class Contact implements Serializable {
     @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
     @ManyToOne(optional = false)
     private Customer customerID;
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contactID")
+    private Collection<Quote> quoteCollection;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contactID")
+    private Collection<Order1> orderCollection;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contactID")
+    private Collection<Invoice> invoiceCollection;    
+    
     public Contact() {
     }
 
@@ -188,6 +213,64 @@ public class Contact implements Serializable {
     @Override
     public String toString() {
         return "com.as.Contact[ contactID=" + contactID + " ]";
+    }
+
+    /**
+     * @return the quoteCollection
+     */
+    public Collection<Quote> getQuoteCollection() {
+        return quoteCollection;
+    }
+
+    /**
+     * @param quoteCollection the quoteCollection to set
+     */
+    public void setQuoteCollection(Collection<Quote> quoteCollection) {
+        this.quoteCollection = quoteCollection;
+    }
+
+    /**
+     * @return the orderCollection
+     */
+    public Collection<Order1> getOrderCollection() {
+        return orderCollection;
+    }
+
+    /**
+     * @param orderCollection the orderCollection to set
+     */
+    public void setOrderCollection(Collection<Order1> orderCollection) {
+        this.orderCollection = orderCollection;
+    }
+
+    /**
+     * @return the invoiceCollection
+     */
+    public Collection<Invoice> getInvoiceCollection() {
+        return invoiceCollection;
+    }
+
+    /**
+     * @param invoiceCollection the invoiceCollection to set
+     */
+    public void setInvoiceCollection(Collection<Invoice> invoiceCollection) {
+        this.invoiceCollection = invoiceCollection;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
     
 }
