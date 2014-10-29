@@ -8,44 +8,38 @@ import com.as.orm.dbobject.Triggers;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class Po extends DbObject  {
+public class Tax extends DbObject  {
     private static Triggers activeTriggers = null;
-    private Integer poId = null;
-    private String poDescription = null;
-    private Timestamp updatedAt = null;
-    private Timestamp createdAt = null;
+    private Integer taxId = null;
+    private String taxDescription = null;
 
-    public Po(Connection connection) {
-        super(connection, "po", "po_id");
-        setColumnNames(new String[]{"po_id", "po_description", "updated_at", "created_at"});
+    public Tax(Connection connection) {
+        super(connection, "tax", "tax_id");
+        setColumnNames(new String[]{"tax_id", "tax_description"});
     }
 
-    public Po(Connection connection, Integer poId, String poDescription, Timestamp updatedAt, Timestamp createdAt) {
-        super(connection, "po", "po_id");
-        setNew(poId.intValue() <= 0);
-//        if (poId.intValue() != 0) {
-            this.poId = poId;
+    public Tax(Connection connection, Integer taxId, String taxDescription) {
+        super(connection, "tax", "tax_id");
+        setNew(taxId.intValue() <= 0);
+//        if (taxId.intValue() != 0) {
+            this.taxId = taxId;
 //        }
-        this.poDescription = poDescription;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
+        this.taxDescription = taxDescription;
     }
 
     public DbObject loadOnId(int id) throws SQLException, ForeignKeyViolationException {
-        Po po = null;
+        Tax tax = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String stmt = "SELECT po_id,po_description,updated_at,created_at FROM po WHERE po_id=" + id;
+        String stmt = "SELECT tax_id,tax_description FROM tax WHERE tax_id=" + id;
         try {
             ps = getConnection().prepareStatement(stmt);
             rs = ps.executeQuery();
             if (rs.next()) {
-                po = new Po(getConnection());
-                po.setPoId(new Integer(rs.getInt(1)));
-                po.setPoDescription(rs.getString(2));
-                po.setUpdatedAt(rs.getTimestamp(3));
-                po.setCreatedAt(rs.getTimestamp(4));
-                po.setNew(false);
+                tax = new Tax(getConnection());
+                tax.setTaxId(new Integer(rs.getInt(1)));
+                tax.setTaxDescription(rs.getString(2));
+                tax.setNew(false);
             }
         } finally {
             try {
@@ -54,7 +48,7 @@ public class Po extends DbObject  {
                 if (ps != null) ps.close();
             }
         }
-        return po;
+        return tax;
     }
 
     protected void insert() throws SQLException, ForeignKeyViolationException {
@@ -63,28 +57,26 @@ public class Po extends DbObject  {
          }
          PreparedStatement ps = null;
          String stmt =
-                "INSERT INTO po ("+(getPoId().intValue()!=0?"po_id,":"")+"po_description,updated_at,created_at) values("+(getPoId().intValue()!=0?"?,":"")+"?,?,?)";
+                "INSERT INTO tax ("+(getTaxId().intValue()!=0?"tax_id,":"")+"tax_description) values("+(getTaxId().intValue()!=0?"?,":"")+"?)";
          try {
              ps = getConnection().prepareStatement(stmt);
              int n = 0;
-             if (getPoId().intValue()!=0) {
-                 ps.setObject(++n, getPoId());
+             if (getTaxId().intValue()!=0) {
+                 ps.setObject(++n, getTaxId());
              }
-             ps.setObject(++n, getPoDescription());
-             ps.setObject(++n, getUpdatedAt());
-             ps.setObject(++n, getCreatedAt());
+             ps.setObject(++n, getTaxDescription());
              ps.execute();
          } finally {
              if (ps != null) ps.close();
          }
          ResultSet rs = null;
-         if (getPoId().intValue()==0) {
-             stmt = "SELECT max(po_id) FROM po";
+         if (getTaxId().intValue()==0) {
+             stmt = "SELECT max(tax_id) FROM tax";
              try {
                  ps = getConnection().prepareStatement(stmt);
                  rs = ps.executeQuery();
                  if (rs.next()) {
-                     setPoId(new Integer(rs.getInt(1)));
+                     setTaxId(new Integer(rs.getInt(1)));
                  }
              } finally {
                  try {
@@ -110,14 +102,12 @@ public class Po extends DbObject  {
             }
             PreparedStatement ps = null;
             String stmt =
-                    "UPDATE po " +
-                    "SET po_description = ?, updated_at = ?, created_at = ?" + 
-                    " WHERE po_id = " + getPoId();
+                    "UPDATE tax " +
+                    "SET tax_description = ?" + 
+                    " WHERE tax_id = " + getTaxId();
             try {
                 ps = getConnection().prepareStatement(stmt);
-                ps.setObject(1, getPoDescription());
-                ps.setObject(2, getUpdatedAt());
-                ps.setObject(3, getCreatedAt());
+                ps.setObject(1, getTaxDescription());
                 ps.execute();
             } finally {
                 if (ps != null) ps.close();
@@ -130,40 +120,43 @@ public class Po extends DbObject  {
     }
 
     public void delete() throws SQLException, ForeignKeyViolationException {
-        if (Order.exists(getConnection(),"po_type_id = " + getPoId())) {
-            throw new ForeignKeyViolationException("Can't delete, foreign key violation: order_po_fk");
+        if (Invoice.exists(getConnection(),"tax_id = " + getTaxId())) {
+            throw new ForeignKeyViolationException("Can't delete, foreign key violation: invoice_tax_fk");
         }
-        if (Quote.exists(getConnection(),"po_type_id = " + getPoId())) {
-            throw new ForeignKeyViolationException("Can't delete, foreign key violation: quote_po_fk");
+        if (Quote.exists(getConnection(),"tax_id = " + getTaxId())) {
+            throw new ForeignKeyViolationException("Can't delete, foreign key violation: quote_tax_fk");
+        }
+        if (Order.exists(getConnection(),"tax_id = " + getTaxId())) {
+            throw new ForeignKeyViolationException("Can't delete, foreign key violation: order_tax_fk");
         }
         if (getTriggers() != null) {
             getTriggers().beforeDelete(this);
         }
         PreparedStatement ps = null;
         String stmt =
-                "DELETE FROM po " +
-                "WHERE po_id = " + getPoId();
+                "DELETE FROM tax " +
+                "WHERE tax_id = " + getTaxId();
         try {
             ps = getConnection().prepareStatement(stmt);
             ps.execute();
         } finally {
             if (ps != null) ps.close();
         }
-        setPoId(new Integer(-getPoId().intValue()));
+        setTaxId(new Integer(-getTaxId().intValue()));
         if (getTriggers() != null) {
             getTriggers().afterDelete(this);
         }
     }
 
     public boolean isDeleted() {
-        return (getPoId().intValue() < 0);
+        return (getTaxId().intValue() < 0);
     }
 
     public static DbObject[] load(Connection con,String whereCondition,String orderCondition) throws SQLException {
         ArrayList lst = new ArrayList();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String stmt = "SELECT po_id,po_description,updated_at,created_at FROM po " +
+        String stmt = "SELECT tax_id,tax_description FROM tax " +
                 ((whereCondition != null && whereCondition.length() > 0) ?
                 " WHERE " + whereCondition : "") +
                 ((orderCondition != null && orderCondition.length() > 0) ?
@@ -173,7 +166,7 @@ public class Po extends DbObject  {
             rs = ps.executeQuery();
             while (rs.next()) {
                 DbObject dbObj;
-                lst.add(dbObj=new Po(con,new Integer(rs.getInt(1)),rs.getString(2),rs.getTimestamp(3),rs.getTimestamp(4)));
+                lst.add(dbObj=new Tax(con,new Integer(rs.getInt(1)),rs.getString(2)));
                 dbObj.setNew(false);
             }
         } finally {
@@ -183,10 +176,10 @@ public class Po extends DbObject  {
                 if (ps != null) ps.close();
             }
         }
-        Po[] objects = new Po[lst.size()];
+        Tax[] objects = new Tax[lst.size()];
         for (int i = 0; i < lst.size(); i++) {
-            Po po = (Po) lst.get(i);
-            objects[i] = po;
+            Tax tax = (Tax) lst.get(i);
+            objects[i] = tax;
         }
         return objects;
     }
@@ -198,7 +191,7 @@ public class Po extends DbObject  {
         boolean ok = false;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String stmt = "SELECT po_id FROM po " +
+        String stmt = "SELECT tax_id FROM tax " +
                 ((whereCondition != null && whereCondition.length() > 0) ?
                 "WHERE " + whereCondition : "");
         try {
@@ -216,61 +209,41 @@ public class Po extends DbObject  {
     }
 
     //public String toString() {
-    //    return getPoId() + getDelimiter();
+    //    return getTaxId() + getDelimiter();
     //}
 
     public Integer getPK_ID() {
-        return poId;
+        return taxId;
     }
 
     public void setPK_ID(Integer id) throws ForeignKeyViolationException {
         boolean prevIsNew = isNew();
-        setPoId(id);
+        setTaxId(id);
         setNew(prevIsNew);
     }
 
-    public Integer getPoId() {
-        return poId;
+    public Integer getTaxId() {
+        return taxId;
     }
 
-    public void setPoId(Integer poId) throws ForeignKeyViolationException {
-        setWasChanged(this.poId != null && this.poId != poId);
-        this.poId = poId;
-        setNew(poId.intValue() == 0);
+    public void setTaxId(Integer taxId) throws ForeignKeyViolationException {
+        setWasChanged(this.taxId != null && this.taxId != taxId);
+        this.taxId = taxId;
+        setNew(taxId.intValue() == 0);
     }
 
-    public String getPoDescription() {
-        return poDescription;
+    public String getTaxDescription() {
+        return taxDescription;
     }
 
-    public void setPoDescription(String poDescription) throws SQLException, ForeignKeyViolationException {
-        setWasChanged(this.poDescription != null && !this.poDescription.equals(poDescription));
-        this.poDescription = poDescription;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) throws SQLException, ForeignKeyViolationException {
-        setWasChanged(this.updatedAt != null && !this.updatedAt.equals(updatedAt));
-        this.updatedAt = updatedAt;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) throws SQLException, ForeignKeyViolationException {
-        setWasChanged(this.createdAt != null && !this.createdAt.equals(createdAt));
-        this.createdAt = createdAt;
+    public void setTaxDescription(String taxDescription) throws SQLException, ForeignKeyViolationException {
+        setWasChanged(this.taxDescription != null && !this.taxDescription.equals(taxDescription));
+        this.taxDescription = taxDescription;
     }
     public Object[] getAsRow() {
-        Object[] columnValues = new Object[4];
-        columnValues[0] = getPoId();
-        columnValues[1] = getPoDescription();
-        columnValues[2] = getUpdatedAt();
-        columnValues[3] = getCreatedAt();
+        Object[] columnValues = new Object[2];
+        columnValues[0] = getTaxId();
+        columnValues[1] = getTaxDescription();
         return columnValues;
     }
 
@@ -287,12 +260,10 @@ public class Po extends DbObject  {
     public void fillFromString(String row) throws ForeignKeyViolationException, SQLException {
         String[] flds = splitStr(row, delimiter);
         try {
-            setPoId(Integer.parseInt(flds[0]));
+            setTaxId(Integer.parseInt(flds[0]));
         } catch(NumberFormatException ne) {
-            setPoId(null);
+            setTaxId(null);
         }
-        setPoDescription(flds[1]);
-        setUpdatedAt(toTimeStamp(flds[2]));
-        setCreatedAt(toTimeStamp(flds[3]));
+        setTaxDescription(flds[1]);
     }
 }

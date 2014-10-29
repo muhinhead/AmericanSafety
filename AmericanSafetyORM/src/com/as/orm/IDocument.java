@@ -46,7 +46,9 @@ public interface IDocument {
     Object getSignature();
 
     Double getTaxProc();
-
+    
+    Integer getTaxId();
+    
     Timestamp getUpdatedAt();
 
     DbObject loadOnId(int id) throws SQLException, ForeignKeyViolationException;
@@ -80,6 +82,8 @@ public interface IDocument {
     void setSignature(Object signature) throws SQLException, ForeignKeyViolationException;
 
     void setTaxProc(Double taxProc) throws SQLException, ForeignKeyViolationException;
+
+    void setTaxId(Integer taxШd) throws SQLException, ForeignKeyViolationException;
 
     void setUpdatedAt(Timestamp updatedAt) throws SQLException, ForeignKeyViolationException;
     
