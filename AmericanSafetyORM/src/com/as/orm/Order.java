@@ -61,7 +61,7 @@ public class Order extends DbObject implements IDocument {
         Order order = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String stmt = "SELECT order_id,location,contractor,customer_id,contact_id,rig_tank_eq,discount,tax_proc,tax_id,po_type_id,po_number,date_in,date_out,signature,updated_at,created_at,created_by FROM order WHERE order_id=" + id;
+        String stmt = "SELECT order_id,location,contractor,customer_id,contact_id,rig_tank_eq,discount,tax_proc,tax_id,po_type_id,po_number,date_in,date_out,signature,updated_at,created_at,created_by FROM `order` WHERE order_id=" + id;
         try {
             ps = getConnection().prepareStatement(stmt);
             rs = ps.executeQuery();
@@ -102,7 +102,7 @@ public class Order extends DbObject implements IDocument {
          }
          PreparedStatement ps = null;
          String stmt =
-                "INSERT INTO order ("+(getOrderId().intValue()!=0?"order_id,":"")+"location,contractor,customer_id,contact_id,rig_tank_eq,discount,tax_proc,tax_id,po_type_id,po_number,date_in,date_out,signature,updated_at,created_at,created_by) values("+(getOrderId().intValue()!=0?"?,":"")+"?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                "INSERT INTO `order` ("+(getOrderId().intValue()!=0?"order_id,":"")+"location,contractor,customer_id,contact_id,rig_tank_eq,discount,tax_proc,tax_id,po_type_id,po_number,date_in,date_out,signature,updated_at,created_at,created_by) values("+(getOrderId().intValue()!=0?"?,":"")+"?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
          try {
              ps = getConnection().prepareStatement(stmt);
              int n = 0;
@@ -131,7 +131,7 @@ public class Order extends DbObject implements IDocument {
          }
          ResultSet rs = null;
          if (getOrderId().intValue()==0) {
-             stmt = "SELECT max(order_id) FROM order";
+             stmt = "SELECT max(order_id) FROM `order`";
              try {
                  ps = getConnection().prepareStatement(stmt);
                  rs = ps.executeQuery();
@@ -162,7 +162,7 @@ public class Order extends DbObject implements IDocument {
             }
             PreparedStatement ps = null;
             String stmt =
-                    "UPDATE order " +
+                    "UPDATE `order` " +
                     "SET location = ?, contractor = ?, customer_id = ?, contact_id = ?, rig_tank_eq = ?, discount = ?, tax_proc = ?, tax_id = ?, po_type_id = ?, po_number = ?, date_in = ?, date_out = ?, signature = ?, updated_at = ?, created_at = ?, created_by = ?" + 
                     " WHERE order_id = " + getOrderId();
             try {
@@ -203,7 +203,7 @@ public class Order extends DbObject implements IDocument {
         }
         PreparedStatement ps = null;
         String stmt =
-                "DELETE FROM order " +
+                "DELETE FROM `order` " +
                 "WHERE order_id = " + getOrderId();
         try {
             ps = getConnection().prepareStatement(stmt);
@@ -225,7 +225,7 @@ public class Order extends DbObject implements IDocument {
         ArrayList lst = new ArrayList();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String stmt = "SELECT order_id,location,contractor,customer_id,contact_id,rig_tank_eq,discount,tax_proc,tax_id,po_type_id,po_number,date_in,date_out,signature,updated_at,created_at,created_by FROM order " +
+        String stmt = "SELECT order_id,location,contractor,customer_id,contact_id,rig_tank_eq,discount,tax_proc,tax_id,po_type_id,po_number,date_in,date_out,signature,updated_at,created_at,created_by FROM `order` " +
                 ((whereCondition != null && whereCondition.length() > 0) ?
                 " WHERE " + whereCondition : "") +
                 ((orderCondition != null && orderCondition.length() > 0) ?
@@ -260,7 +260,7 @@ public class Order extends DbObject implements IDocument {
         boolean ok = false;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String stmt = "SELECT order_id FROM order " +
+        String stmt = "SELECT order_id FROM `order` " +
                 ((whereCondition != null && whereCondition.length() > 0) ?
                 "WHERE " + whereCondition : "");
         try {
