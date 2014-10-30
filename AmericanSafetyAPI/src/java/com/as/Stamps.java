@@ -27,16 +27,35 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Nick Mukhin
+ * @author nick
  */
 @Entity
-@Table(name = "po")
+@Table(name = "stamps")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Po.findAll", query = "SELECT p FROM Po p"),
-    @NamedQuery(name = "Po.findByPoID", query = "SELECT p FROM Po p WHERE p.poID = :poID"),
-    @NamedQuery(name = "Po.findByPoDescription", query = "SELECT p FROM Po p WHERE p.poDescription = :poDescription")})
-public class Po implements Serializable {
+    @NamedQuery(name = "Stamps.findAll", query = "SELECT s FROM Stamps s"),
+    @NamedQuery(name = "Stamps.findByStampsID", query = "SELECT s FROM Stamps s WHERE s.stampsID = :stampsID"),
+    @NamedQuery(name = "Stamps.findByStamps", query = "SELECT s FROM Stamps s WHERE s.stamps = :stamps"),
+    @NamedQuery(name = "Stamps.findByUpdatedAt", query = "SELECT s FROM Stamps s WHERE s.updatedAt = :updatedAt"),
+    @NamedQuery(name = "Stamps.findByCreatedAt", query = "SELECT s FROM Stamps s WHERE s.createdAt = :createdAt")})
+public class Stamps implements Serializable {
+    @OneToMany(mappedBy = "stampsID")
+    private Collection<Quote> quoteCollection;
+    @OneToMany(mappedBy = "stampsID")
+    private Collection<Invoice> invoiceCollection;
+    @OneToMany(mappedBy = "stampsID")
+    private Collection<Order1> order1Collection;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "stamps_id")
+    private Integer stampsID;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 32)
+    @Column(name = "stamps")
+    private String stamps;
     @Basic(optional = false)
     @NotNull
     @Column(name = "updated_at")
@@ -47,75 +66,35 @@ public class Po implements Serializable {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @OneToMany(mappedBy = "poTypeID")
-    private Collection<Quote> quoteCollection;
-    @OneToMany(mappedBy = "poTypeID")
-    private Collection<Invoice> invoiceCollection;
-    @OneToMany(mappedBy = "poTypeID")
-    private Collection<Order1> order1Collection;
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "po_id")
-    private Integer poID;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 32)
-    @Column(name = "po_description")
-    private String poDescription;
 
-    public Po() {
+    public Stamps() {
     }
 
-    public Po(Integer poID) {
-        this.poID = poID;
+    public Stamps(Integer stampsID) {
+        this.stampsID = stampsID;
     }
 
-    public Po(Integer poID, String poDescription) {
-        this.poID = poID;
-        this.poDescription = poDescription;
+    public Stamps(Integer stampsID, String stamps, Date updatedAt, Date createdAt) {
+        this.stampsID = stampsID;
+        this.stamps = stamps;
+        this.updatedAt = updatedAt;
+        this.createdAt = createdAt;
     }
 
-    public Integer getPoID() {
-        return poID;
+    public Integer getStampsID() {
+        return stampsID;
     }
 
-    public void setPoID(Integer poID) {
-        this.poID = poID;
+    public void setStampsID(Integer stampsID) {
+        this.stampsID = stampsID;
     }
 
-    public String getPoDescription() {
-        return poDescription;
+    public String getStamps() {
+        return stamps;
     }
 
-    public void setPoDescription(String poDescription) {
-        this.poDescription = poDescription;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (poID != null ? poID.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Po)) {
-            return false;
-        }
-        Po other = (Po) object;
-        if ((this.poID == null && other.poID != null) || (this.poID != null && !this.poID.equals(other.poID))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "com.as.Po[ poID=" + poID + " ]";
+    public void setStamps(String stamps) {
+        this.stamps = stamps;
     }
 
     public Date getUpdatedAt() {
@@ -132,6 +111,31 @@ public class Po implements Serializable {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (stampsID != null ? stampsID.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Stamps)) {
+            return false;
+        }
+        Stamps other = (Stamps) object;
+        if ((this.stampsID == null && other.stampsID != null) || (this.stampsID != null && !this.stampsID.equals(other.stampsID))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "com.as.Stamps[ stampsID=" + stampsID + " ]";
     }
 
     @XmlTransient

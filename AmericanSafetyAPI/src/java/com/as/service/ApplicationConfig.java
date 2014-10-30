@@ -35,9 +35,12 @@ public class ApplicationConfig extends Application {
         resources.add(com.as.service.InvoiceitemFacadeREST.class);
         resources.add(com.as.service.ItemFacadeREST.class);
         resources.add(com.as.service.LoginFacadeREST.class);
+        resources.add(com.as.service.Order1FacadeREST.class);
         resources.add(com.as.service.OrderitemFacadeREST.class);
         resources.add(com.as.service.PoFacadeREST.class);
+        resources.add(com.as.service.QuoteFacadeREST.class);
         resources.add(com.as.service.QuoteitemFacadeREST.class);
+        resources.add(com.as.service.StampsFacadeREST.class);
         resources.add(com.as.service.TaxFacadeREST.class);
     }
     

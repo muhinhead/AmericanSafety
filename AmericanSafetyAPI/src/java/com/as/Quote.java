@@ -49,12 +49,18 @@ public class Quote implements Serializable {
     @Lob
     @Column(name = "signature")
     private byte[] signature;
+    @JoinColumn(name = "stamps_id", referencedColumnName = "stamps_id")
+    @ManyToOne
+    
+    private Stamps stampsID;
     @JoinColumn(name = "po_type_id", referencedColumnName = "po_id")
     @ManyToOne
-    private Po poTypeId;
+    private Po poTypeID;
+    
     @JoinColumn(name = "tax_id", referencedColumnName = "tax_id")
     @ManyToOne
-    private Tax taxId;
+    private Tax taxID;
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -288,6 +294,23 @@ public class Quote implements Serializable {
         this.contactID = contactID;
     }
 
+
+    public Po getPoTypeID() {
+        return poTypeID;
+    }
+
+    public void setPoTypeID(Po poTypeID) {
+        this.poTypeID = poTypeID;
+    }
+
+    public Tax getTaxID() {
+        return taxID;
+    }
+
+    public void setTaxID(Tax taxID) {
+        this.taxID = taxID;
+    }
+
     public byte[] getSignature() {
         return signature;
     }
@@ -296,19 +319,11 @@ public class Quote implements Serializable {
         this.signature = signature;
     }
 
-    public Po getPoTypeId() {
-        return poTypeId;
+    public Stamps getStampsID() {
+        return stampsID;
     }
 
-    public void setPoTypeId(Po poTypeId) {
-        this.poTypeId = poTypeId;
-    }
-
-    public Tax getTaxId() {
-        return taxId;
-    }
-
-    public void setTaxId(Tax taxId) {
-        this.taxId = taxId;
+    public void setStampsID(Stamps stampsID) {
+        this.stampsID = stampsID;
     }
 }

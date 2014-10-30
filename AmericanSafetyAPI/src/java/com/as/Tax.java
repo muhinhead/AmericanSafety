@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Tax.findByTaxID", query = "SELECT t FROM Tax t WHERE t.taxID = :taxID"),
     @NamedQuery(name = "Tax.findByTaxDescription", query = "SELECT t FROM Tax t WHERE t.taxDescription = :taxDescription")})
 public class Tax implements Serializable {
-    @OneToMany(mappedBy = "taxId")
+    @OneToMany(mappedBy = "taxID")
     private Collection<Quote> quoteCollection;
-    @OneToMany(mappedBy = "taxId")
+    @OneToMany(mappedBy = "taxID")
     private Collection<Invoice> invoiceCollection;
-    @OneToMany(mappedBy = "taxId")
+    @OneToMany(mappedBy = "taxID")
     private Collection<Order1> order1Collection;
     private static final long serialVersionUID = 1L;
     @Id
@@ -50,12 +50,12 @@ public class Tax implements Serializable {
     public Tax() {
     }
 
-    public Tax(Integer taxId) {
-        this.taxID = taxId;
+    public Tax(Integer taxID) {
+        this.taxID = taxID;
     }
 
-    public Tax(Integer taxId, String taxDescription) {
-        this.taxID = taxId;
+    public Tax(Integer taxID, String taxDescription) {
+        this.taxID = taxID;
         this.taxDescription = taxDescription;
     }
 
@@ -63,8 +63,8 @@ public class Tax implements Serializable {
         return taxID;
     }
 
-    public void setTaxID(Integer taxId) {
-        this.taxID = taxId;
+    public void setTaxID(Integer taxID) {
+        this.taxID = taxID;
     }
 
     public String getTaxDescription() {
@@ -97,7 +97,7 @@ public class Tax implements Serializable {
 
     @Override
     public String toString() {
-        return "com.as.Tax[ taxId=" + taxID + " ]";
+        return "com.as.Tax[ taxID=" + taxID + " ]";
     }
 
     @XmlTransient

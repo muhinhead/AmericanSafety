@@ -44,9 +44,9 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
          */
         com.as.DocumentPK key = new com.as.DocumentPK();
         javax.ws.rs.core.MultivaluedMap<String, String> map = pathSegment.getMatrixParameters();
-        java.util.List<String> documentId = map.get("documentId");
-        if (documentId != null && !documentId.isEmpty()) {
-            key.setDocumentID(new java.lang.Integer(documentId.get(0)));
+        java.util.List<String> documentID = map.get("documentID");
+        if (documentID != null && !documentID.isEmpty()) {
+            key.setDocumentID(new java.lang.Integer(documentID.get(0)));
         }
         java.util.List<String> docType = map.get("docType");
         if (docType != null && !docType.isEmpty()) {

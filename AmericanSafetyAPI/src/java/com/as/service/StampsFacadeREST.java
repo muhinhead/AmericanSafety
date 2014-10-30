@@ -5,13 +5,13 @@
  */
 package com.as.service;
 
-import com.as.Item;
-import com.as.util.ParamMask;
+import com.as.Stamps;
+import com.as.Tax;
 import com.as.util.ParamPage;
-import com.as.util.ResponseItemList;
 import com.as.util.ResponseStampsList;
-import java.util.List;
+import com.as.util.ResponseTaxList;
 import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,52 +30,50 @@ import javax.ws.rs.Produces;
  * @author nick
  */
 @Stateless
-@Path("com.as.item")
-public class ItemFacadeREST extends AbstractFacade<Item> {
-
+@Path("com.as.stamps")
+public class StampsFacadeREST extends AbstractFacade<Stamps> {
     @PersistenceContext(unitName = "AmericanSafetyAPIPU")
     private EntityManager em;
 
-    public ItemFacadeREST() {
-        super(Item.class);
-    }
-
-    @POST
-    @Override
-    @Consumes({"application/xml", "application/json"})
-    public void create(Item entity) {
-        super.create(entity);
+    public StampsFacadeREST() {
+        super(Stamps.class);
     }
 
     @POST
     @Path("/find")
     @Consumes("application/json")
     @Produces("application/json")
-    public ResponseItemList findStamps(ParamMask parms) {
+    public ResponseStampsList findStamps(ParamPage parms) {
         try {
-            Query qry = getEntityManager().createNativeQuery(
-                    "SELECT item_id FROM item"
-                    + (parms.getMask() != null ? 
-                            " WHERE concat(item_name,' ',item_description) LIKE '%" + parms.getMask() + "%'" : "")
+            Query qry = getEntityManager().createNativeQuery("SELECT stamps_id FROM stamps "
                     + " LIMIT " + (parms.getOffset() != null ? parms.getOffset().toString() + "," : "")
                     + (parms.getLimit() != null ? parms.getLimit().toString() : "9999999999999999999"));
-            List<Integer> itemIds = qry.getResultList();
-            List<Item> itemsList = new ArrayList<Item>(itemIds.size());
-            for (Integer stampsID : itemIds) {
-                Item item = (Item) getEntityManager().createNamedQuery("Item.findByItemID")
-                        .setParameter("itemID", stampsID).getSingleResult();
-                itemsList.add(item);
+            //System.out.println("!!sql:"+sql);
+            List<Integer> stampsIds = qry.getResultList();
+            
+            List<Stamps> stampsList = new ArrayList<Stamps>(stampsIds.size());
+            for (Integer stampsID : stampsIds) {
+                Stamps stamps = (Stamps) getEntityManager().createNamedQuery("Stamps.findByStampsID")
+                        .setParameter("stampsID", stampsID).getSingleResult();
+                stampsList.add(stamps);
             }
-            return new ResponseItemList(itemsList, null);
+            return new ResponseStampsList(stampsList, null);
         } catch (Exception e) {
-            return new ResponseItemList(null, new String[]{e.getMessage()});
+            return new ResponseStampsList(null, new String[]{e.getMessage()});
         }
+    }
+    
+    @POST
+    @Override
+    @Consumes({"application/xml", "application/json"})
+    public void create(Stamps entity) {
+        super.create(entity);
     }
 
     @PUT
     @Path("{id}")
     @Consumes({"application/xml", "application/json"})
-    public void edit(@PathParam("id") Integer id, Item entity) {
+    public void edit(@PathParam("id") Integer id, Stamps entity) {
         super.edit(entity);
     }
 
@@ -88,21 +86,21 @@ public class ItemFacadeREST extends AbstractFacade<Item> {
     @GET
     @Path("{id}")
     @Produces({"application/xml", "application/json"})
-    public Item find(@PathParam("id") Integer id) {
+    public Stamps find(@PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
     @Override
     @Produces({"application/xml", "application/json"})
-    public List<Item> findAll() {
+    public List<Stamps> findAll() {
         return super.findAll();
     }
 
     @GET
     @Path("{from}/{to}")
     @Produces({"application/xml", "application/json"})
-    public List<Item> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
+    public List<Stamps> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }
 
@@ -117,5 +115,5 @@ public class ItemFacadeREST extends AbstractFacade<Item> {
     protected EntityManager getEntityManager() {
         return em;
     }
-
+    
 }
