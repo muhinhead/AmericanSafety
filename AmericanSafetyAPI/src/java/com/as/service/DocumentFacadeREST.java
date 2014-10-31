@@ -94,7 +94,7 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
 
     @POST
     @Override
-    @Consumes({"application/xml", "application/json"})
+    @Consumes("application/json")
     public void create(Document entity) {
         super.create(entity);
     }

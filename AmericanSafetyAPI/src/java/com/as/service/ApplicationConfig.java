@@ -30,6 +30,8 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(com.as.service.ContactFacadeREST.class);
+        resources.add(com.as.service.CustomerFacadeREST.class);
         resources.add(com.as.service.DocumentFacadeREST.class);
         resources.add(com.as.service.InvoiceFacadeREST.class);
         resources.add(com.as.service.InvoiceitemFacadeREST.class);
@@ -42,6 +44,7 @@ public class ApplicationConfig extends Application {
         resources.add(com.as.service.QuoteitemFacadeREST.class);
         resources.add(com.as.service.StampsFacadeREST.class);
         resources.add(com.as.service.TaxFacadeREST.class);
+        resources.add(com.as.service.UserFacadeREST.class);
     }
     
 }

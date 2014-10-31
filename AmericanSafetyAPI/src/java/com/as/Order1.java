@@ -82,6 +82,8 @@ public class Order1 implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "discount")
     private BigDecimal discount;
+    @Column(name = "subtotal")
+    private BigDecimal subtotal;
     @Column(name = "tax_proc")
     private BigDecimal taxProc;
     @Size(max = 12)
@@ -90,6 +92,14 @@ public class Order1 implements Serializable {
     @Size(max = 32)
     @Column(name = "po_number")
     private String poNumber;
+    @Column(name = "well_name")
+    private String wellName;
+    @Column(name = "afe_uww")
+    private String afeUww;
+    @Column(name = "cai")
+    private String cai;
+    @Column(name = "aprvr_name")
+    private String aprvrName;
     @Column(name = "date_in")
     @Temporal(TemporalType.DATE)
     private Date dateIn;
@@ -340,6 +350,76 @@ public class Order1 implements Serializable {
 
     public void setSignature(byte[] signature) {
         this.signature = signature;
+    }
+
+    /**
+     * @return the subtotal
+     */
+    public BigDecimal getSubtotal() {
+        return subtotal;
+    }
+
+    /**
+     * @param subtotal the subtotal to set
+     */
+    public void setSubtotal(BigDecimal subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    /**
+     * @return the wellName
+     */
+    public String getWellName() {
+        return wellName;
+    }
+
+    /**
+     * @param wellName the wellName to set
+     */
+    public void setWellName(String wellName) {
+        this.wellName = wellName;
+    }
+
+    /**
+     * @return the afeUww
+     */
+    public String getAfeUww() {
+        return afeUww;
+    }
+
+    /**
+     * @param afeUww the afeUww to set
+     */
+    public void setAfeUww(String afeUww) {
+        this.afeUww = afeUww;
+    }
+
+    /**
+     * @return the cai
+     */
+    public String getCai() {
+        return cai;
+    }
+
+    /**
+     * @param cai the cai to set
+     */
+    public void setCai(String cai) {
+        this.cai = cai;
+    }
+
+    /**
+     * @return the aprvrName
+     */
+    public String getAprvrName() {
+        return aprvrName;
+    }
+
+    /**
+     * @param aprvrName the aprvrName to set
+     */
+    public void setAprvrName(String aprvrName) {
+        this.aprvrName = aprvrName;
     }
 
 }
