@@ -35,9 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Orderitem.findAll", query = "SELECT o FROM Orderitem o"),
     @NamedQuery(name = "Orderitem.findByOrderitemID", query = "SELECT o FROM Orderitem o WHERE o.orderitemID = :orderitemID"),
     @NamedQuery(name = "Orderitem.findByQty", query = "SELECT o FROM Orderitem o WHERE o.qty = :qty"),
-    @NamedQuery(name = "Orderitem.findByPrice", query = "SELECT o FROM Orderitem o WHERE o.price = :price"),
-    @NamedQuery(name = "Orderitem.findByUpdatedAt", query = "SELECT o FROM Orderitem o WHERE o.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Orderitem.findByCreatedAt", query = "SELECT o FROM Orderitem o WHERE o.createdAt = :createdAt")})
+    @NamedQuery(name = "Orderitem.findByPrice", query = "SELECT o FROM Orderitem o WHERE o.price = :price")})
 public class Orderitem implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -52,16 +50,6 @@ public class Orderitem implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "price")
     private BigDecimal price;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
     @JoinColumn(name = "item_id", referencedColumnName = "item_id")
     @ManyToOne(optional = false)
     private Item itemID;
@@ -76,12 +64,12 @@ public class Orderitem implements Serializable {
         this.orderitemID = orderitemID;
     }
 
-    public Orderitem(Integer orderitemID, int qty, Date updatedAt, Date createdAt) {
-        this.orderitemID = orderitemID;
-        this.qty = qty;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-    }
+//    public Orderitem(Integer orderitemID, int qty, Date updatedAt, Date createdAt) {
+//        this.orderitemID = orderitemID;
+//        this.qty = qty;
+//        this.updatedAt = updatedAt;
+//        this.createdAt = createdAt;
+//    }
 
     public Integer getOrderitemID() {
         return orderitemID;
@@ -107,21 +95,21 @@ public class Orderitem implements Serializable {
         this.price = price;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public Date getUpdatedAt() {
+//        return updatedAt;
+//    }
+//
+//    public void setUpdatedAt(Date updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
+//
+//    public Date getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(Date createdAt) {
+//        this.createdAt = createdAt;
+//    }
 
     public Item getItemID() {
         return itemID;

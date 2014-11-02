@@ -1,15 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.as.service;
 
 import com.as.Stamps;
-import com.as.Tax;
 import com.as.util.ParamPage;
 import com.as.util.ResponseStampsList;
-import com.as.util.ResponseTaxList;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;

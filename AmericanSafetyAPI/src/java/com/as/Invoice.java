@@ -20,7 +20,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -42,11 +41,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Invoice.findByTaxProc", query = "SELECT i FROM Invoice i WHERE i.taxProc = :taxProc"),
     @NamedQuery(name = "Invoice.findByDateIn", query = "SELECT i FROM Invoice i WHERE i.dateIn = :dateIn"),
     @NamedQuery(name = "Invoice.findByDateOut", query = "SELECT i FROM Invoice i WHERE i.dateOut = :dateOut"),
-    @NamedQuery(name = "Invoice.findByPoType", query = "SELECT i FROM Invoice i WHERE i.poType = :poType"),
-    @NamedQuery(name = "Invoice.findByPoNumber", query = "SELECT i FROM Invoice i WHERE i.poNumber = :poNumber"),
-    @NamedQuery(name = "Invoice.findByUpdatedAt", query = "SELECT i FROM Invoice i WHERE i.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Invoice.findByCreatedAt", query = "SELECT i FROM Invoice i WHERE i.createdAt = :createdAt")})
-public class Invoice implements Serializable {
+    @NamedQuery(name = "Invoice.findByPoNumber", query = "SELECT i FROM Invoice i WHERE i.poNumber = :poNumber")})
+public class Invoice implements Serializable, IDocument {
     @Lob
     @Column(name = "signature")
     private byte[] signature;
@@ -88,10 +84,6 @@ public class Invoice implements Serializable {
     @Column(name = "date_out")
     @Temporal(TemporalType.DATE)
     private Date dateOut;
-    
-    @Size(max = 12)
-    @Column(name = "po_type")
-    private String poType;
     @Size(max = 32)
     @Column(name = "po_number")
     private String poNumber;
@@ -99,20 +91,22 @@ public class Invoice implements Serializable {
     private String wellName;
     @Column(name = "afe_uww")
     private String afeUww;
+    @Column(name = "date_str")
+    private String dateStr;
     @Column(name = "cai")
     private String cai;
     @Column(name = "aprvr_name")
     private String aprvrName;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+//    @Basic(optional = false)
+//    @NotNull
+//    @Column(name = "updated_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date updatedAt;
+//    @Basic(optional = false)
+//    @NotNull
+//    @Column(name = "created_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date createdAt;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "invoiceID")
     private Collection<Invoiceitem> invoiceitemCollection;
@@ -136,11 +130,11 @@ public class Invoice implements Serializable {
         this.invoiceID = invoiceID;
     }
 
-    public Invoice(Integer invoiceID, Date updatedAt, Date createdAt) {
-        this.invoiceID = invoiceID;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-    }
+//    public Invoice(Integer invoiceID, Date updatedAt, Date createdAt) {
+//        this.invoiceID = invoiceID;
+//        this.updatedAt = updatedAt;
+//        this.createdAt = createdAt;
+//    }
 
     public Integer getInvoiceID() {
         return invoiceID;
@@ -206,15 +200,6 @@ public class Invoice implements Serializable {
         this.dateOut = dateOut;
     }
 
-
-    public String getPoType() {
-        return poType;
-    }
-
-    public void setPoType(String poType) {
-        this.poType = poType;
-    }
-
     public String getPoNumber() {
         return poNumber;
     }
@@ -223,21 +208,21 @@ public class Invoice implements Serializable {
         this.poNumber = poNumber;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public Date getUpdatedAt() {
+//        return updatedAt;
+//    }
+//
+//    public void setUpdatedAt(Date updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
+//
+//    public Date getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(Date createdAt) {
+//        this.createdAt = createdAt;
+//    }
 
     @XmlTransient
     public Collection<Invoiceitem> getInvoiceitemCollection() {
@@ -417,6 +402,20 @@ public class Invoice implements Serializable {
      */
     public void setAprvrName(String aprvrName) {
         this.aprvrName = aprvrName;
+    }
+
+    /**
+     * @return the dateStr
+     */
+    public String getDateStr() {
+        return dateStr;
+    }
+
+    /**
+     * @param dateStr the dateStr to set
+     */
+    public void setDateStr(String dateStr) {
+        this.dateStr = dateStr;
     }
 
 }

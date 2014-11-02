@@ -1,14 +1,24 @@
 package com.as.util;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Date;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
+
 
 /**
  *
@@ -16,6 +26,9 @@ import javax.persistence.TemporalType;
  */
 @Entity
 public class ParamDocument4Submit implements Serializable {
+
+    private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd/HH:mm:ss");
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,6 +46,68 @@ public class ParamDocument4Submit implements Serializable {
     private String rigTankEquipment;
     private byte[] imageSignature;
     private BigDecimal discount;
+    private String wellName;
+    private String afeUww;
+    private String dateStr;
+    private String cai;
+    private String aprvrName;
+    private Integer poTypeID;  // instead of poID in specs
+    private Integer taxID;     // instead of tax in specs
+    private String poNumber;   // instead of poID Set // BOOL=YES/NO in specs
+    private Integer stampID;   // added above specs, because exists in all documents
+    private List<ParamDocItem> items;
+
+    public ParamDocument4Submit() {
+    }
+
+    public ParamDocument4Submit(HttpServletRequest request) throws ParseException, IOException, ServletException {
+        if (request.getParameter("userID") != null) {
+            userID = Integer.parseInt(request.getParameter("userID"));
+        }
+        if (request.getParameter("dateIn") != null) {
+            dateIn = dateTimeFormat.parse(request.getParameter("dateIn"));
+        }
+        if (request.getParameter("dateOut") != null) {
+            dateOut = dateTimeFormat.parse(request.getParameter("dateOut"));
+        }
+        documentType = request.getParameter("documentType");
+        if (request.getParameter("customerID") != null) {
+            customerID = Integer.parseInt(request.getParameter("customerID"));
+        }
+        if (request.getParameter("contactID") != null) {
+            contactID = Integer.parseInt(request.getParameter("contactID"));
+        }
+        location = request.getParameter("location");
+        contractor = request.getParameter("contractor");
+        rigTankEquipment = request.getParameter("rigTankEquipment");
+        discount = BigDecimal.valueOf(Double.parseDouble(request.getParameter("discount")));
+        wellName = request.getParameter("wellName");
+        afeUww = request.getParameter("afeUww");
+        dateStr = request.getParameter("dateStr");
+        cai = request.getParameter("cai");
+        aprvrName = request.getParameter("aprvrName");
+        if (request.getParameter("poTypeID") != null) {
+            poTypeID = Integer.parseInt(request.getParameter("poTypeID"));
+        }
+        poNumber = request.getParameter("poNumber");
+        if (request.getParameter("stampID") != null) {
+            stampID = Integer.parseInt(request.getParameter("stampID"));
+        }
+        items = new ArrayList<ParamDocItem>();
+        int i = 1;
+        while (request.getParameter("itemID" + i) != null) {
+            BigDecimal sum = BigDecimal.valueOf(Double.parseDouble(request.getParameter("sum" + i)));
+            items.add(new ParamDocItem(Integer.parseInt(request.getParameter("itemID" + i)),
+                    Integer.parseInt(request.getParameter("qty" + i)), sum));
+            ++i;
+        }
+        Collection<Part> parts = request.getParts();
+        for (Part part : parts) {
+            if (part.getContentType() != null) {
+                imageSignature = Utils.createByteArray(part.getInputStream());
+            }
+        }
+    }
 
     public Long getId() {
         return id;
@@ -220,5 +295,145 @@ public class ParamDocument4Submit implements Serializable {
     public void setDiscount(BigDecimal discount) {
         this.discount = discount;
     }
-    
+
+    /**
+     * @return the wellName
+     */
+    public String getWellName() {
+        return wellName;
+    }
+
+    /**
+     * @param wellName the wellName to set
+     */
+    public void setWellName(String wellName) {
+        this.wellName = wellName;
+    }
+
+    /**
+     * @return the afeUww
+     */
+    public String getAfeUww() {
+        return afeUww;
+    }
+
+    /**
+     * @param afeUww the afeUww to set
+     */
+    public void setAfeUww(String afeUww) {
+        this.afeUww = afeUww;
+    }
+
+    /**
+     * @return the cai
+     */
+    public String getCai() {
+        return cai;
+    }
+
+    /**
+     * @param cai the cai to set
+     */
+    public void setCai(String cai) {
+        this.cai = cai;
+    }
+
+    /**
+     * @return the aprvrName
+     */
+    public String getAprvrName() {
+        return aprvrName;
+    }
+
+    /**
+     * @param aprvrName the aprvrName to set
+     */
+    public void setAprvrName(String aprvrName) {
+        this.aprvrName = aprvrName;
+    }
+
+    /**
+     * @return the dateStr
+     */
+    public String getDateStr() {
+        return dateStr;
+    }
+
+    /**
+     * @param dateStr the dateStr to set
+     */
+    public void setDateStr(String dateStr) {
+        this.dateStr = dateStr;
+    }
+
+    /**
+     * @return the poTypeID
+     */
+    public Integer getPoTypeID() {
+        return poTypeID;
+    }
+
+    /**
+     * @param poTypeID the poTypeID to set
+     */
+    public void setPoTypeID(Integer poTypeID) {
+        this.poTypeID = poTypeID;
+    }
+
+    /**
+     * @return the poNumber
+     */
+    public String getPoNumber() {
+        return poNumber;
+    }
+
+    /**
+     * @param poNumber the poNumber to set
+     */
+    public void setPoNumber(String poNumber) {
+        this.poNumber = poNumber;
+    }
+
+    /**
+     * @return the items
+     */
+    public List<ParamDocItem> getItems() {
+        return items;
+    }
+
+    /**
+     * @param items the items to set
+     */
+    public void setItems(List<ParamDocItem> items) {
+        this.items = items;
+    }
+
+    /**
+     * @return the stampID
+     */
+    public Integer getStampID() {
+        return stampID;
+    }
+
+    /**
+     * @param stampID the stampID to set
+     */
+    public void setStampID(Integer stampID) {
+        this.stampID = stampID;
+    }
+
+    /**
+     * @return the taxID
+     */
+    public Integer getTaxID() {
+        return taxID;
+    }
+
+    /**
+     * @param taxID the taxID to set
+     */
+    public void setTaxID(Integer taxID) {
+        this.taxID = taxID;
+    }
+
 }

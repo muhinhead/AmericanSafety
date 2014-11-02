@@ -7,7 +7,6 @@ package com.as;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,8 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -35,9 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Invoiceitem.findAll", query = "SELECT i FROM Invoiceitem i"),
     @NamedQuery(name = "Invoiceitem.findByInvoiceitemID", query = "SELECT i FROM Invoiceitem i WHERE i.invoiceitemID = :invoiceitemID"),
     @NamedQuery(name = "Invoiceitem.findByQty", query = "SELECT i FROM Invoiceitem i WHERE i.qty = :qty"),
-    @NamedQuery(name = "Invoiceitem.findByPrice", query = "SELECT i FROM Invoiceitem i WHERE i.price = :price"),
-    @NamedQuery(name = "Invoiceitem.findByUpdatedAt", query = "SELECT i FROM Invoiceitem i WHERE i.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Invoiceitem.findByCreatedAt", query = "SELECT i FROM Invoiceitem i WHERE i.createdAt = :createdAt")})
+    @NamedQuery(name = "Invoiceitem.findByPrice", query = "SELECT i FROM Invoiceitem i WHERE i.price = :price")})
 public class Invoiceitem implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -52,16 +47,6 @@ public class Invoiceitem implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "price")
     private BigDecimal price;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
     @JoinColumn(name = "invoice_id", referencedColumnName = "invoice_id")
     @ManyToOne(optional = false)
     private Invoice invoiceID;
@@ -76,12 +61,12 @@ public class Invoiceitem implements Serializable {
         this.invoiceitemID = invoiceitemID;
     }
 
-    public Invoiceitem(Integer invoiceitemID, int qty, Date updatedAt, Date createdAt) {
-        this.invoiceitemID = invoiceitemID;
-        this.qty = qty;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-    }
+//    public Invoiceitem(Integer invoiceitemID, int qty, Date updatedAt, Date createdAt) {
+//        this.invoiceitemID = invoiceitemID;
+//        this.qty = qty;
+//        this.updatedAt = updatedAt;
+//        this.createdAt = createdAt;
+//    }
 
     public Integer getInvoiceitemID() {
         return invoiceitemID;
@@ -105,22 +90,6 @@ public class Invoiceitem implements Serializable {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
     }
 
     public Invoice getInvoiceID() {

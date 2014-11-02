@@ -21,6 +21,15 @@ public class ParamDocItem implements Serializable {
     private Integer qty;
     private BigDecimal sum;
 
+    public ParamDocItem() {
+    }
+
+    public ParamDocItem(Integer itemID, Integer qty, BigDecimal sum) {
+        this.itemID = itemID;
+        this.qty = qty;
+        this.sum = sum;
+    }
+    
     public Long getId() {
         return id;
     }

@@ -2,16 +2,32 @@ package com.as.service;
 
 import com.as.Document;
 import com.as.DocumentPK;
+import com.as.IDocument;
+import com.as.Invoice;
+import com.as.Invoiceitem;
+import com.as.Order1;
+import com.as.Orderitem;
+import com.as.Quote;
+import com.as.Quoteitem;
 import com.as.util.DocumentsParams;
-import com.as.util.ResponseDocument;
+import com.as.util.ParamDocItem;
+import com.as.util.ParamDocument4Submit;
 import com.as.util.ResponseDocumentList;
+import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,7 +36,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -93,11 +112,46 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
     }
 
     @POST
-    @Override
     @Consumes("application/json")
-    public void create(Document entity) {
-        super.create(entity);
+    @Produces("application/json")
+    public Response createDoc(ParamDocument4Submit pars) {
+        String output = null;
+        int code = 200;
+        try {
+            Integer docID;
+            IDocument doc = createDocument(pars);
+            if (pars.getDocumentType().equalsIgnoreCase("quote")) {
+                Quote quote = (Quote) doc;
+                docID = QuoteFacadeREST.createAndReturnID(quote, getEntityManager());
+                quote.setQuoteitemCollection(createQuoteItemsCollection(quote, pars.getItems()));
+                output = "{\"quoteID\":\"" + String.valueOf(docID) + "\"}";
+            } else if (pars.getDocumentType().equalsIgnoreCase("order")) {
+                Order1 order = (Order1) doc;
+                docID = Order1FacadeREST.createAndReturnID(order, getEntityManager());
+                order.setOrderitemCollection(createOrderItemsCollection(order, pars.getItems()));
+                output = "{\"orderID\":\"" + String.valueOf(docID) + "\"}";
+            } else if (pars.getDocumentType().equalsIgnoreCase("invoice")) {
+                Invoice invoice = (Invoice) doc;
+                docID = InvoiceFacadeREST.createAndReturnID(invoice, getEntityManager());
+                invoice.setInvoiceitemCollection(createInvoiceItemsCollection(invoice, pars.getItems()));
+                output = "{\"invoiceID\":\"" + String.valueOf(docID) + "\"}";
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(DocumentFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            code = 500;
+            output = "{\"errorMsg\":[\"" + ex.getMessage() + "\"]}";
+        }
+        return Response.status(code).entity(output).build();
     }
+    
+    @POST    
+    @Path("/upload")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces("application/json")
+    public Response submitDocument(@Context HttpServletRequest request) throws ParseException, IOException, ServletException {
+        return createDoc(new ParamDocument4Submit(request));
+    }
+
     @PUT
     @Path("{id}")
     @Consumes({"application/xml", "application/json"})
@@ -144,6 +198,83 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
     @Override
     protected EntityManager getEntityManager() {
         return em;
+    }
+
+    public IDocument createDocument(ParamDocument4Submit pd) {
+        IDocument idoc = null;
+        if (pd.getDocumentType().equalsIgnoreCase("quote")) {
+            Quote quote = new Quote();
+            idoc = quote;
+        } else if (pd.getDocumentType().equalsIgnoreCase("order")) {
+            Order1 order = new Order1();
+            idoc = order;
+        } else if (pd.getDocumentType().equalsIgnoreCase("invoice")) {
+            Invoice invoice = new Invoice();
+            idoc = invoice;
+        } else {
+            return null;
+        }
+        idoc.setAfeUww(pd.getAfeUww());
+        idoc.setAprvrName(pd.getAprvrName());
+        idoc.setCai(pd.getCai());
+        idoc.setContactID(loadContactOnId(pd.getContactID()));
+        idoc.setContactor(pd.getContractor());
+        idoc.setCreatedBY(loadUserOnId(pd.getUserID()));
+        idoc.setCustomerID(loadCustomerOnId(pd.getCustomerID()));
+        idoc.setDateIn(pd.getDateIn());
+        idoc.setDateOut(pd.getDateOut());
+        idoc.setDateStr(pd.getDateStr());
+        idoc.setDiscount(pd.getDiscount());
+        idoc.setLocation(pd.getLocation());
+        idoc.setPoNumber(pd.getPoNumber());
+        idoc.setPoTypeID(loadPoTypeOnID(pd.getPoTypeID()));
+        idoc.setRigTankEq(pd.getRigTankEquipment());
+        idoc.setSignature(pd.getImageSignature());
+        idoc.setTaxID(loadTaxOnID(pd.getTaxID()));
+        idoc.setStampsID(loadStampsOnId(pd.getStampID()));
+        return idoc;
+    }
+
+    private Collection<Quoteitem> createQuoteItemsCollection(Quote quote, List<ParamDocItem> items) {
+        List<Quoteitem> quoteItems = new ArrayList<Quoteitem>(items.size());
+        for (ParamDocItem itm : items) {
+            Quoteitem qi = new Quoteitem();
+            qi.setQty(itm.getQty());
+            qi.setPrice(itm.getSum().divide(BigDecimal.valueOf(itm.getQty().longValue()),2,BigDecimal.ROUND_DOWN));
+            qi.setQuoteID(quote);
+            qi.setItemID(loadItemOnID(itm.getItemID()));
+            QuoteitemFacadeREST.createAndReturnID(qi, getEntityManager());
+            quoteItems.add(qi);
+        }
+        return quoteItems;
+    }
+
+    private Collection<Orderitem> createOrderItemsCollection(Order1 order, List<ParamDocItem> items) {
+        List<Orderitem> orderItems = new ArrayList<Orderitem>(items.size());
+        for (ParamDocItem itm : items) {
+            Orderitem oi = new Orderitem();
+            oi.setQty(itm.getQty());
+            oi.setPrice(itm.getSum().divide(BigDecimal.valueOf(itm.getQty().longValue()),2,BigDecimal.ROUND_DOWN));
+            oi.setOrderID(order);
+            oi.setItemID(loadItemOnID(itm.getItemID()));
+            OrderitemFacadeREST.createAndReturnID(oi, getEntityManager());
+            orderItems.add(oi);
+        }
+        return orderItems;
+    }
+
+    private Collection<Invoiceitem> createInvoiceItemsCollection(Invoice invoice, List<ParamDocItem> items) {
+        List<Invoiceitem> invoiceItems = new ArrayList<Invoiceitem>(items.size());
+        for (ParamDocItem itm : items) {
+            Invoiceitem ii = new Invoiceitem();
+            ii.setQty(itm.getQty());
+            ii.setPrice(itm.getSum().divide(BigDecimal.valueOf(itm.getQty().longValue()),2,BigDecimal.ROUND_DOWN));
+            ii.setInvoiceID(invoice);
+            ii.setItemID(loadItemOnID(itm.getItemID()));
+            InvoiceitemFacadeREST.createAndReturnID(ii, getEntityManager());
+            invoiceItems.add(ii);
+        }
+        return invoiceItems;
     }
 
 }

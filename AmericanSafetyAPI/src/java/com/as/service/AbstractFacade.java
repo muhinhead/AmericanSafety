@@ -1,5 +1,12 @@
 package com.as.service;
 
+import com.as.Contact;
+import com.as.Customer;
+import com.as.Item;
+import com.as.Po;
+import com.as.Stamps;
+import com.as.Tax;
+import com.as.User;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -144,6 +151,8 @@ public abstract class AbstractFacade<T> {
         }
     }
     
+    
+    
 // save uploaded file to a defined location on the server
     protected void saveFile(InputStream uploadedInputStream, String serverLocation, Class class4logger) {
         try {
@@ -164,5 +173,65 @@ public abstract class AbstractFacade<T> {
             Logger.getLogger(class4logger.getName()).log(Level.SEVERE, null, e);
         }
     }
+
+    public Contact loadContactOnId(Integer contactID) {
+        try {
+            return (Contact) getEntityManager().createNamedQuery("Contact.findByContactID").setParameter("contactID", contactID).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    protected Customer loadCustomerOnId(Integer customerID) {
+        try {
+            return (Customer) getEntityManager().createNamedQuery("Customer.findByCustomerID").setParameter("customerID", customerID).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    protected User loadUserOnId(Integer userID) {
+        try {
+            return (User) getEntityManager().createNamedQuery("User.findByUserID")
+                    .setParameter("userID", userID).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
     
+    protected Po loadPoTypeOnID(Integer poID) {
+        try {
+            return (Po) getEntityManager().createNamedQuery("Po.findByPoID")
+                    .setParameter("poID", poID).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    protected Tax loadTaxOnID(Integer taxID) {
+        try {
+            return (Tax) getEntityManager().createNamedQuery("Tax.findByTaxID")
+                    .setParameter("taxID", taxID).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    protected Stamps loadStampsOnId(Integer stampID) {
+        try {
+            return (Stamps) getEntityManager().createNamedQuery("Stamps.findByStampsID")
+                    .setParameter("stampsID", stampID).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }    
+    
+    protected Item loadItemOnID(Integer itemID) {
+        try {
+            return (Item) getEntityManager().createNamedQuery("Item.findByItemID")
+                    .setParameter("itemID", itemID).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

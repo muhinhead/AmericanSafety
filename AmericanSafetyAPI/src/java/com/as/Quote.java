@@ -40,12 +40,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Quote.findByRigTankEq", query = "SELECT q FROM Quote q WHERE q.rigTankEq = :rigTankEq"),
     @NamedQuery(name = "Quote.findByDiscount", query = "SELECT q FROM Quote q WHERE q.discount = :discount"),
     @NamedQuery(name = "Quote.findByTaxProc", query = "SELECT q FROM Quote q WHERE q.taxProc = :taxProc"),
-    @NamedQuery(name = "Quote.findByPoType", query = "SELECT q FROM Quote q WHERE q.poType = :poType"),
     @NamedQuery(name = "Quote.findByPoNumber", query = "SELECT q FROM Quote q WHERE q.poNumber = :poNumber"),
-    @NamedQuery(name = "Quote.findByDateIn", query = "SELECT q FROM Quote q WHERE q.dateIn = :dateIn"),
-    @NamedQuery(name = "Quote.findByUpdatedAt", query = "SELECT q FROM Quote q WHERE q.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Quote.findByCreatedAt", query = "SELECT q FROM Quote q WHERE q.createdAt = :createdAt")})
-public class Quote implements Serializable {
+    @NamedQuery(name = "Quote.findByDateIn", query = "SELECT q FROM Quote q WHERE q.dateIn = :dateIn")})
+public class Quote implements Serializable, IDocument {
     @Lob
     @Column(name = "signature")
     private byte[] signature;
@@ -83,9 +80,6 @@ public class Quote implements Serializable {
     private BigDecimal subtotal;
     @Column(name = "tax_proc")
     private BigDecimal taxProc;
-    @Size(max = 12)
-    @Column(name = "po_type")
-    private String poType;
     @Size(max = 32)
     @Column(name = "po_number")
     private String poNumber;
@@ -93,6 +87,8 @@ public class Quote implements Serializable {
     private String wellName;
     @Column(name = "afe_uww")
     private String afeUww;
+    @Column(name = "date_str")
+    private String dateStr;
     @Column(name = "cai")
     private String cai;
     @Column(name = "aprvr_name")
@@ -101,16 +97,16 @@ public class Quote implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date dateIn;
 
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+//    @Basic(optional = false)
+//    @NotNull
+//    @Column(name = "updated_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date updatedAt;
+//    @Basic(optional = false)
+//    @NotNull
+//    @Column(name = "created_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date createdAt;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quoteID")
     private Collection<Quoteitem> quoteitemCollection;
     @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
@@ -132,11 +128,11 @@ public class Quote implements Serializable {
         this.quoteID = quoteID;
     }
 
-    public Quote(Integer quoteID, Date updatedAt, Date createdAt) {
-        this.quoteID = quoteID;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-    }
+//    public Quote(Integer quoteID, Date updatedAt, Date createdAt) {
+//        this.quoteID = quoteID;
+//        this.updatedAt = updatedAt;
+//        this.createdAt = createdAt;
+//    }
 
     public Integer getQuoteID() {
         return quoteID;
@@ -186,14 +182,6 @@ public class Quote implements Serializable {
         this.taxProc = taxProc;
     }
 
-    public String getPoType() {
-        return poType;
-    }
-
-    public void setPoType(String poType) {
-        this.poType = poType;
-    }
-
     public String getPoNumber() {
         return poNumber;
     }
@@ -211,21 +199,21 @@ public class Quote implements Serializable {
     }
 
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public Date getUpdatedAt() {
+//        return updatedAt;
+//    }
+//
+//    public void setUpdatedAt(Date updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
+//
+//    public Date getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(Date createdAt) {
+//        this.createdAt = createdAt;
+//    }
 
     @XmlTransient
     public Collection<Quoteitem> getQuoteitemCollection() {
@@ -405,5 +393,28 @@ public class Quote implements Serializable {
      */
     public void setAprvrName(String aprvrName) {
         this.aprvrName = aprvrName;
+    }
+
+    /**
+     * @return the dateStr
+     */
+    public String getDateStr() {
+        return dateStr;
+    }
+
+    /**
+     * @param dateStr the dateStr to set
+     */
+    public void setDateStr(String dateStr) {
+        this.dateStr = dateStr;
+    }
+
+    @Override
+    public Date getDateOut() {
+        return null;
+    }
+
+    @Override
+    public void setDateOut(Date dateOut) {
     }
 }
