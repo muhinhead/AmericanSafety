@@ -30,7 +30,7 @@ public class UsersGrid extends GeneralGridPanel {
     public UsersGrid(IMessageSender exchanger) throws RemoteException {
         super(exchanger, "select user_id \"Id\",first_name \"First Name\","
                 + "last_name \"Last Name\",login \"Login\",if(admin,'Admin','') \"Is admin\","
-                + "created_at \"Created\", updated_at \"Updated\" from user", maxWidths, false);
+                + "DATE_FORMAT(created_at,'%m-%e-%Y %r') \"Created\", DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Updated\" from user", maxWidths, false);
     }
 
     @Override

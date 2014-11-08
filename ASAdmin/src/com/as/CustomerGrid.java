@@ -23,7 +23,7 @@ class CustomerGrid extends GeneralGridPanel {
 
     public CustomerGrid(IMessageSender exchanger) throws RemoteException {
         super(exchanger, "select customer_id \"Id\",customer_name \"Customer Name\","
-                + "customer_address \"Address\",created_at \"Created\",updated_at \"Updated\" "
+                + "customer_address \"Address\",DATE_FORMAT(created_at,'%m-%e-%Y %r') \"Created\",DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Updated\" "
                 + " from customer", maxWidths, false);
     }
 

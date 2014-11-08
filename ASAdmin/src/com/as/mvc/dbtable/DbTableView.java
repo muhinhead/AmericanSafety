@@ -4,6 +4,8 @@ import com.as.mvc.Controller;
 import com.as.mvc.Document;
 import com.as.mvc.IView;
 import java.awt.Rectangle;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Vector;
 import javax.swing.JTable;
@@ -21,6 +23,7 @@ import javax.swing.table.TableRowSorter;
  */
 public class DbTableView extends JTable implements ITableView {
 
+    private static final SimpleDateFormat americanDateFormat = new SimpleDateFormat("MM-d-yyyy HH:mm:ss aaa");
     private TableRowSorter<MyTableModel> sorter;
 
     /**
@@ -66,7 +69,20 @@ public class DbTableView extends JTable implements ITableView {
         public Object getValueAt(int row, int col) {
             try {
                 Vector line = (Vector) rowData.get(row);
-                return line.get(colNumAdjusted(col));
+                String originalValue = (String) line.get(colNumAdjusted(col));
+                try {
+                    return americanDateFormat.parse(originalValue);
+                } catch (ParseException ex) {
+                }
+                try {
+                    return Integer.parseInt(originalValue);
+                } catch (NumberFormatException ne) {
+                }
+                try {
+                    return Double.parseDouble(originalValue);
+                } catch (NumberFormatException ne) {
+                }
+                return originalValue;
             } catch (ArrayIndexOutOfBoundsException ae) {
                 return "";
             }

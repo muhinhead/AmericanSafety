@@ -38,7 +38,7 @@ public class DocumentsGrid extends GeneralGridPanel {
                 + "(select customer_name from customer where customer_id=document.customer_id) \"Customer\","
                 + "(select concat(first_name,' ',last_name) from contact where contact_id=document.contact_id) \"Contact\","
                 + "location \"Location\",contractor \"Contractor\","
-                + "created_at, updated_at "
+                + "DATE_FORMAT(created_at,'%m-%e-%Y %r') \"Created\", DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Updated\" "
                 + " from document", maxWidths, false);
     }
 

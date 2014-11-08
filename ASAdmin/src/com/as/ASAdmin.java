@@ -40,7 +40,7 @@ import javax.swing.SpinnerNumberModel;
  */
 public class ASAdmin {
 
-    private static final String version = "0.1";
+    private static final String version = "0.3";
     private static Logger logger = null;
     private static FileHandler fh;
     private static Properties props;
@@ -320,7 +320,8 @@ public class ASAdmin {
                     setExchanger(exc);
                 }
                 if (getExchanger() != null && matchVersions() && login(getExchanger())) {
-                    new DashBoard("ASAdmin v." + version, exchanger);
+//                    new DashBoard("ASAdmin v." + version, exchanger);
+                    new DashBoardImage("ASAdmin v." + version, exchanger);
                     break;
                 } else {
                     System.exit(1);

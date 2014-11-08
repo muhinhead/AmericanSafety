@@ -170,7 +170,7 @@ public class DbTableGridPanel extends JPanel {
     public int getSelectedID() {
         int row = tableView.getSelectedRow();
         if (row >= 0 && row < tableView.getRowCount()) {//&& row < tableView.getSelectedRow()) {
-            String sid = (String) tableView.getValueAt(row, 0);
+            String sid = tableView.getValueAt(row, 0).toString();
             return Integer.parseInt(sid);
         }
         return 0;

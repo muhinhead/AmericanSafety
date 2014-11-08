@@ -23,7 +23,9 @@ public class StampsGrid extends GeneralGridPanel {
     }
 
     public StampsGrid(IMessageSender exchanger) throws RemoteException {
-        super(exchanger, "select * from stamps", maxWidths, false);
+        super(exchanger, "select stamps_id \"Id\",stamps \"Stamp\","
+                + "DATE_FORMAT(created_at,'%m-%e-%Y %r') \"Created\", "
+                + "DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Updated\" from stamps", maxWidths, false);
     }
 
     @Override

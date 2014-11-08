@@ -7,6 +7,7 @@ import java.util.Vector;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Label;
+import java.text.SimpleDateFormat;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
@@ -16,6 +17,7 @@ import javax.swing.table.TableCellRenderer;
  */
 public class MyColorRenderer extends JLabel implements TableCellRenderer {
 
+    private static final SimpleDateFormat americanDateFormat = new SimpleDateFormat("MM-d-yyyy HH:mm aaa");
     private Color stripColor = new Color(0, 0, 255, 16);
     private Color searchStringColor = Color.BLUE;
     private Color searchBackColor = Color.CYAN;
@@ -41,9 +43,18 @@ public class MyColorRenderer extends JLabel implements TableCellRenderer {
             JTable table, Object value,
             boolean isSelected, boolean hasFocus, int row, int column) {
         if (row < tv.getRowData().size()) {
+            boolean undefinedDate = false;
             Vector line = (Vector) tv.getRowData().get(row);
             if (value != null) {
-                setText(value.toString());
+                if (value instanceof java.util.Date) {
+                    String sd = americanDateFormat.format(value);
+                    undefinedDate = sd.equals("01-1-1970 12:00 PM");
+                    setText(sd);
+                } else if (value instanceof Double) {
+                    setText(value.toString());
+                } else {
+                    setText(value.toString());
+                }
             }
             this.setOpaque(true);
             String searchStr = tv.getSearchString();
@@ -56,6 +67,8 @@ public class MyColorRenderer extends JLabel implements TableCellRenderer {
                     : found ? searchStringColor : table.getForeground();
             setBackground(backColor);
             setForeground(foreColor);
+            if(undefinedDate)
+                setText("");
         }
         return this;
     }

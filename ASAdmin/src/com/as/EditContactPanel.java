@@ -61,8 +61,8 @@ class EditContactPanel extends RecordEditPanel {
         idField.setEnabled(false);
         createdSP.setEnabled(false);
         updatedSP.setEnabled(false);
-        createdSP.setEditor(new JSpinner.DateEditor(createdSP, "yyyy-MM-dd hh:mm"));
-        updatedSP.setEditor(new JSpinner.DateEditor(createdSP, "yyyy-MM-dd hh:mm"));
+        createdSP.setEditor(new JSpinner.DateEditor(createdSP, "MM-dd-yyyy HH:mm"));
+        updatedSP.setEditor(new JSpinner.DateEditor(createdSP, "MM-dd-yyyy HH:mm"));
         customerCB.setEnabled(EditContactDialog.customerID == 0);
         cbAction.setEnabled(EditContactDialog.customerID == 0);
         Util.addFocusSelectAllAction(createdSP);

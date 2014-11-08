@@ -28,7 +28,10 @@ class OrderItemsGrid extends GeneralGridPanel {
     }
     
     public OrderItemsGrid(IMessageSender exchanger, Integer pkID) throws RemoteException {
-        super(exchanger, "select * from orderitem where order_id="+pkID.toString(), maxWidths, false);
+        super(exchanger, "select orderitem_id \"Id\","
+                + "item_number \"Itm No_\",item_name \"Name\","
+                + "qty \"Qty\",price,if(tax,'Yes','No') \"Tax\" from "
+                + "orderitem,item where orderitem.item_id=item.item_id and order_id="+pkID.toString(), maxWidths, false);
     }
 
     @Override

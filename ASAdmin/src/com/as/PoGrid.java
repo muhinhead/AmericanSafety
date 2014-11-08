@@ -18,7 +18,9 @@ public class PoGrid extends GeneralGridPanel {
     }
 
     public PoGrid(IMessageSender exchanger) throws RemoteException {
-        super(exchanger, "select * from po", maxWidths, false);
+        super(exchanger, "select po_id \"Id\",po_description \"Description\","
+                + "DATE_FORMAT(created_at,'%m-%e-%Y %r') \"Created\", "
+                + "DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Updated\" from po", maxWidths, false);
     }
 
     @Override

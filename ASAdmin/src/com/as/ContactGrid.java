@@ -33,14 +33,14 @@ public class ContactGrid extends GeneralGridPanel {
                 + "contact_id \"Id\", title \"Title\", first_name \"First Name\", last_name \"Last Name\", "
                 + "email \"Email\", phone \"Phone\", "
                 + "(select customer_name from  customer where customer_id=contact.customer_id) \"Customer\","
-                + "created_at \"Created\", updated_at \"Last update\" "
+                + "DATE_FORMAT(created_at,'%m-%e-%Y %r') \"Created\", DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Last update\" "
                 + "from contact where 0=0", maxWidths, false);
     }
 
     public ContactGrid(IMessageSender exchanger, int customer_id) throws RemoteException {
         super(exchanger, "select "
                 + "contact_id \"Id\", title \"Title\", first_name \"First Name\", last_name \"Last Name\", "
-                + "email \"Email\", phone \"Phone\", created_at \"Created\", updated_at \"Last update\" "
+                + "email \"Email\", phone \"Phone\", DATE_FORMAT(created_at,'%m-%e-%Y %r') \"Created\", DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Last update\" "
                 + "from contact where customer_id=" + customer_id, maxWidths, false);
     }
 

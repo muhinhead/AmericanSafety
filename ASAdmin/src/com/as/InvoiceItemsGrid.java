@@ -22,7 +22,11 @@ class InvoiceItemsGrid extends GeneralGridPanel {
     }
     
     public InvoiceItemsGrid(IMessageSender exchanger, Integer pkID) throws RemoteException {
-        super(exchanger, "select * from invoiceitem where invoice_id="+pkID.toString(), maxWidths, false);
+        super(exchanger, "select invoiceitem_id \"Id\","
+                + "item_number \"Itm No_\",item_name \"Name\","
+                + "qty \"Qty\",price,if(tax,'Yes','No') \"Tax\" from "
+                + "invoiceitem,item where invoiceitem.item_id=item.item_id and invoice_id="
+                + pkID.toString(), maxWidths, false);
     }
 
     @Override
