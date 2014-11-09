@@ -30,12 +30,13 @@ public class UsersGrid extends GeneralGridPanel {
     public UsersGrid(IMessageSender exchanger) throws RemoteException {
         super(exchanger, "select user_id \"Id\",first_name \"First Name\","
                 + "last_name \"Last Name\",login \"Login\",if(admin,'Admin','') \"Is admin\","
-                + "DATE_FORMAT(created_at,'%m-%e-%Y %r') \"Created\", DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Updated\" from user", maxWidths, false);
+                + "DATE_FORMAT(created_at,'%m-%e-%Y %r') \"Created\", "
+                + "DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Updated\" from user", maxWidths, false);
     }
 
     @Override
     protected AbstractAction addAction() {
-        return new AbstractAction("Add", new ImageIcon("images/add.png")) {
+        return new AbstractAction("Add", new ImageIcon("images/NewEntry.jpg")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 EditUserDialog ed = new EditUserDialog("New User", null);
@@ -70,7 +71,7 @@ public class UsersGrid extends GeneralGridPanel {
 
     @Override
     protected AbstractAction delAction() {
-        return new AbstractAction("Del", new ImageIcon("images/delete.png")) {
+        return new AbstractAction("Del", new ImageIcon("images/DeleteEntry.jpg")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int id = getSelectedID();

@@ -1,6 +1,5 @@
 package com.as;
 
-import static com.as.DashBoard.ourInstance;
 import com.as.remote.IMessageSender;
 import com.as.util.ImagePanel;
 import com.as.util.TexturedPanel;
@@ -8,13 +7,9 @@ import java.util.ArrayList;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Insets;
-import java.awt.Cursor;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -49,7 +44,7 @@ public class DashBoardImage extends JFrame {
     private TexturedPanel main;
     private TexturedPanel headerLeft;
     private TexturedPanel manageCustomersProductsPanel;
-    private ArrayList<ImagePanel> concurBtns = new ArrayList<ImagePanel>();
+    //private ArrayList<ImagePanel> concurBtns = new ArrayList<ImagePanel>();
     private GeneralGridPanel usersGrid = null;
     private GeneralGridPanel documentsGrid = null;
     private GeneralGridPanel itemsGrid;
@@ -187,7 +182,7 @@ public class DashBoardImage extends JFrame {
                 new Dimension(img.getWidth(), img.getHeight()));
         header.add(manageCustomersProductsPanel, BorderLayout.SOUTH);
 
-        concurBtns.add(img = new ImagePanel(ASAdmin.loadImage("Manage1.PNG", this), //"Manage1.PNG"));
+        img = new ImagePanel(ASAdmin.loadImage("Manage1.PNG", this), //"Manage1.PNG"));
                 ASAdmin.loadImage("Manage.PNG", this),
                 ASAdmin.loadImage("Manage2.PNG", this),
                 new AbstractAction() {
@@ -196,12 +191,12 @@ public class DashBoardImage extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         showAdminsFrame();
                     }
-                }));
+                });
 
         img.setBounds(0, 0, img.getWidth(), img.getHeight());
         manageCustomersProductsPanel.add(img);
 
-        concurBtns.add(img = new ImagePanel(ASAdmin.loadImage("Customers1.PNG", this), //"Customers1.PNG"));
+        img = new ImagePanel(ASAdmin.loadImage("Customers1.PNG", this), //"Customers1.PNG"));
                 ASAdmin.loadImage("Customers.PNG", this),
                 ASAdmin.loadImage("Customers2.PNG", this), new AbstractAction() {
 
@@ -209,11 +204,11 @@ public class DashBoardImage extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         showCustomers();
                     }
-                }));
+                });
         img.setBounds(177, 0, img.getWidth(), img.getHeight());
         manageCustomersProductsPanel.add(img);
 
-        concurBtns.add(img = new ImagePanel(ASAdmin.loadImage("Products1.PNG", this), //"Customers1.PNG"));
+        img = new ImagePanel(ASAdmin.loadImage("Products1.PNG", this), //"Customers1.PNG"));
                 ASAdmin.loadImage("Products.PNG", this),
                 ASAdmin.loadImage("Products2.PNG", this), new AbstractAction() {
 
@@ -221,10 +216,46 @@ public class DashBoardImage extends JFrame {
                     public void actionPerformed(ActionEvent e) {
 
                     }
-                }));
+                });
         img.setBounds(360, 0, img.getWidth(), img.getHeight());
         manageCustomersProductsPanel.add(img);
 
+        img = new ImagePanel(ASAdmin.loadImage("Quotes1.PNG", this),
+                ASAdmin.loadImage("Quotes.PNG", this),
+                ASAdmin.loadImage("Quotes2.PNG", this), new AbstractAction() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                    }
+                });
+        img.setBounds(0, 52, img.getWidth(), img.getHeight());
+        manageCustomersProductsPanel.add(img);
+        
+        img = new ImagePanel(ASAdmin.loadImage("WorkOrders1.PNG", this),
+                ASAdmin.loadImage("WorkOrders.PNG", this),
+                ASAdmin.loadImage("WorkOrders2.PNG", this), new AbstractAction() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                    }
+                });
+        img.setBounds(369, 52, img.getWidth(), img.getHeight());
+        manageCustomersProductsPanel.add(img);
+        
+        img = new ImagePanel(ASAdmin.loadImage("Invoiced1.PNG", this),
+                ASAdmin.loadImage("Invoiced.PNG", this),
+                ASAdmin.loadImage("Invoiced2.PNG", this), new AbstractAction() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                    }
+                });
+        img.setBounds(177, 52, img.getWidth(), img.getHeight());
+        manageCustomersProductsPanel.add(img);
+        
         controlsPanel.add(main, BorderLayout.CENTER);
         controlsPanel.add(header, BorderLayout.NORTH);
 

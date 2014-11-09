@@ -44,14 +44,16 @@ public class ImagePanel extends JPanel {
             }
 
             public void mouseClicked(MouseEvent e) {
-                if (clickedImg != null) {
-                    setImg(clickedImg);
-                    releaseCurrent();
-                    current = ImagePanel.this;
-                } else if (hoveredImg != null) {
-                    setImg(hoveredImg);
+                if ((ImagePanel) e.getSource() != current) {
+                    if (clickedImg != null) {
+                        setImg(clickedImg);
+                        releaseCurrent();
+                        current = ImagePanel.this;
+                    } else if (hoveredImg != null) {
+                        setImg(hoveredImg);
+                    }
                 }
-                if (action!=null) {
+                if (action != null) {
                     action.actionPerformed(null);
                 }
             }
