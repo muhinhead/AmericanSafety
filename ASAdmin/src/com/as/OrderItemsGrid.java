@@ -6,13 +6,11 @@
 package com.as;
 
 import com.as.orm.Orderitem;
-import com.as.orm.Quoteitem;
 import com.as.remote.IMessageSender;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.rmi.RemoteException;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -35,12 +33,12 @@ class OrderItemsGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction addAction() {
-        return new AbstractAction("Add", new ImageIcon("images/add.png")) {
+    public AbstractAction addAction() {
+        return new AbstractAction("Add") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int p = getSelect().indexOf("from orderitem where order_id=");
-                EditOrderItemDialog.orderID = p > 0 ? Integer.parseInt(getSelect().substring(p + 30)) : 0;
+                int p = getSelect().indexOf(" and order_id=");
+                EditOrderItemDialog.orderID = p > 0 ? Integer.parseInt(getSelect().substring(p + 14)) : 0;
                 EditOrderItemDialog qd = new EditOrderItemDialog("Add Item", null);
                 if (EditOrderItemDialog.okPressed) {
                     Orderitem qi = (Orderitem) qd.getEditPanel().getDbObject();
@@ -51,16 +49,16 @@ class OrderItemsGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction editAction() {
-        return new AbstractAction("Edit", new ImageIcon("images/edit.png")) {
+    public AbstractAction editAction() {
+        return new AbstractAction("Edit") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int id = getSelectedID();
                 if (id != 0) {
                     try {
                         Orderitem oi = (Orderitem) exchanger.loadDbObjectOnID(Orderitem.class, id);
-                        int p = getSelect().indexOf("from orderitem where order_id=");
-                        EditOrderItemDialog.orderID = p > 0 ? Integer.parseInt(getSelect().substring(p + 30)) : 0;
+                        int p = getSelect().indexOf(" and order_id=");
+                        EditOrderItemDialog.orderID = p > 0 ? Integer.parseInt(getSelect().substring(p + 14)) : 0;
                         new EditOrderItemDialog("Edit Item", oi);
                         if (EditOrderItemDialog.okPressed) {
                             refresh();
@@ -74,8 +72,8 @@ class OrderItemsGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction delAction() {
-        return new AbstractAction("Del", new ImageIcon("images/delete.png")) {
+    public AbstractAction delAction() {
+        return new AbstractAction("Del") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int id = getSelectedID();

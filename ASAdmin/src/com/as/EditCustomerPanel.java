@@ -35,22 +35,18 @@ class EditCustomerPanel extends RecordEditPanel {
     @Override
     protected void fillContent() {
         String titles[] = new String[]{
-            "",
             "ID:",
             "Customer Name:",
             "Customer Address:",
             "Created:",
             "Updated:",
-            ""
         };
         JComponent[] edits = new JComponent[]{
-            new JPanel(),
             getGridPanel(idField = new JTextField(), 8),
             getBorderPanel(nameTF = new JTextField(20)),
             getBorderPanel(addressTF = new JTextField(40)),
             getBorderPanel(createdSP = new SelectedDateSpinner()),
-            getBorderPanel(updatedSP = new SelectedDateSpinner()),
-            new JPanel()
+            getBorderPanel(updatedSP = new SelectedDateSpinner())
         };
         idField.setEnabled(false);
         createdSP.setEnabled(false);

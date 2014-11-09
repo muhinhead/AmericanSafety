@@ -135,7 +135,9 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
         IDocument doc = (IDocument) getDbObject();
         if (doc != null) {
             idField.setText(doc.getPK_ID().toString());
-            dateInSP.setValue(doc.getDateIn());
+            if (doc.getDateIn() != null) {
+                dateInSP.setValue(doc.getDateIn());
+            }
             selectComboItem(customerCB, doc.getCustomerId());
             locationTF.setText(doc.getLocation());
             selectComboItem(contactCB, doc.getContactId());

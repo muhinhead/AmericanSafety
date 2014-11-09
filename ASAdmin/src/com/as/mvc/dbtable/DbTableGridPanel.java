@@ -70,7 +70,8 @@ public class DbTableGridPanel extends JPanel {
         init(new AbstractAction[]{addAction, editAction, delAction}, null, tableBody, maxWidths, null);
     }
 
-    protected void init(AbstractAction[] acts, String select, Vector[] tableBody, HashMap<Integer, Integer> maxWidths, DbTableView tabView) {
+    protected void init(AbstractAction[] acts, String select, Vector[] tableBody, 
+            HashMap<Integer, Integer> maxWidths, DbTableView tabView) {
         this.setAddAction(acts.length > 0 ? acts[0] : null);
         this.setEditAction(acts.length > 1 ? acts[1] : null);
         this.setDelAction(acts.length > 2 ? acts[2] : null);
@@ -84,6 +85,28 @@ public class DbTableGridPanel extends JPanel {
         tableDoc = new DbTableDocument(toString(), tableBody);
         tableDoc.setSelectStatement(select);
         controller = new Controller(getTableDoc(), getTableView());
+        JPanel pageChoosePanel = new JPanel(new FlowLayout());
+        pageChoosePanel.add(progressBar = new JProgressBar());
+        progressBar.setIndeterminate(false);
+        pageChoosePanel.add(progressBar);
+        pageChoosePanel.add(pageLbl = new JLabel("Page:", SwingConstants.RIGHT));
+        pageChoosePanel.add(pageSelector = new JComboBox());
+        add(sp = new JScrollPane((JComponent) getTableView()), BorderLayout.CENTER);
+        
+        addRightBtnPanel(acts);
+        
+        add(pageChoosePanel, BorderLayout.SOUTH);
+        tableView.addMouseListener(doubleClickAdapter = new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2 && getEditAction() != null) {
+                    getEditAction().actionPerformed(null);
+                }
+            }
+        });
+        activatePopup(getAddAction(), getEditAction(), getDelAction());
+    }
+
+    protected void addRightBtnPanel(AbstractAction[] acts) {
         JPanel btnPanel = new JPanel(new GridLayout(acts.length, 1, 5, 5));
         AbstractAction addAct = getAddAction();
         if (addAct != null) {
@@ -100,25 +123,9 @@ public class DbTableGridPanel extends JPanel {
         for (int i = 3; i < acts.length; i++) {
             btnPanel.add(new JButton(acts[i]));
         }
-        JPanel pageChoosePanel = new JPanel(new FlowLayout());
-        pageChoosePanel.add(progressBar = new JProgressBar());
-        progressBar.setIndeterminate(false);
-        pageChoosePanel.add(progressBar);
-        pageChoosePanel.add(pageLbl = new JLabel("Page:", SwingConstants.RIGHT));
-        pageChoosePanel.add(pageSelector = new JComboBox());
-        add(sp = new JScrollPane((JComponent) getTableView()), BorderLayout.CENTER);
         if (addAct != null || editAct != null || delAct != null) {
             add(getRightPanel(btnPanel), BorderLayout.EAST);
         }
-        add(pageChoosePanel, BorderLayout.SOUTH);
-        tableView.addMouseListener(doubleClickAdapter = new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && getEditAction() != null) {
-                    getEditAction().actionPerformed(null);
-                }
-            }
-        });
-        activatePopup(getAddAction(), getEditAction(), getDelAction());
     }
 
     protected JPanel getRightPanel(JPanel btnPanel) {

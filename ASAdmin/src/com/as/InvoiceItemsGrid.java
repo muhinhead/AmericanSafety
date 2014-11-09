@@ -30,12 +30,12 @@ class InvoiceItemsGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction addAction() {
-        return new AbstractAction("Add", new ImageIcon("images/add.png")) {
+    public AbstractAction addAction() {
+        return new AbstractAction("Add") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int p = getSelect().indexOf("from invoiceitem where invoice_id=");
-                EditInvoiceItemDialog.invoiceID = p > 0 ? Integer.parseInt(getSelect().substring(p + 34)) : 0;
+                int p = getSelect().indexOf(" and invoice_id=");
+                EditInvoiceItemDialog.invoiceID = p > 0 ? Integer.parseInt(getSelect().substring(p + 16)) : 0;
                 EditInvoiceItemDialog ii = new EditInvoiceItemDialog("Add Item", null);
                 if (EditInvoiceItemDialog.okPressed) {
                     Invoiceitem qi = (Invoiceitem) ii.getEditPanel().getDbObject();
@@ -46,16 +46,16 @@ class InvoiceItemsGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction editAction() {
-        return new AbstractAction("Edit", new ImageIcon("images/edit.png")) {
+    public AbstractAction editAction() {
+        return new AbstractAction("Edit") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int id = getSelectedID();
                 if (id != 0) {
                     try {
                         Invoiceitem qi = (Invoiceitem) exchanger.loadDbObjectOnID(Invoiceitem.class, id);
-                        int p = getSelect().indexOf("from invoiceitem where invoice_id=");
-                        EditInvoiceItemDialog.invoiceID = p > 0 ? Integer.parseInt(getSelect().substring(p + 34)) : 0;
+                        int p = getSelect().indexOf(" and invoice_id=");
+                        EditInvoiceItemDialog.invoiceID = p > 0 ? Integer.parseInt(getSelect().substring(p + 16)) : 0;
                         new EditInvoiceItemDialog("Edit Item", qi);
                         if (EditInvoiceItemDialog.okPressed) {
                             refresh();
@@ -69,8 +69,8 @@ class InvoiceItemsGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction delAction() {
-        return new AbstractAction("Del", new ImageIcon("images/delete.png")) {
+    public AbstractAction delAction() {
+        return new AbstractAction("Del") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int id = getSelectedID();

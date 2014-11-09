@@ -29,17 +29,17 @@ public class StampsGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction addAction() {
+    public AbstractAction addAction() {
         return null;
     }
 
     @Override
-    protected AbstractAction editAction() {
+    public AbstractAction editAction() {
         return null;
     }
 
     @Override
-    protected AbstractAction delAction() {
+    public AbstractAction delAction() {
         return null;
     }    
 }

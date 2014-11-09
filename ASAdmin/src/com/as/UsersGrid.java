@@ -27,16 +27,20 @@ public class UsersGrid extends GeneralGridPanel {
 //        maxWidths.put(7, 130);
     }
 
-    public UsersGrid(IMessageSender exchanger) throws RemoteException {
+    public UsersGrid(IMessageSender exchanger, boolean hideBtns) throws RemoteException {
         super(exchanger, "select user_id \"Id\",first_name \"First Name\","
                 + "last_name \"Last Name\",login \"Login\",if(admin,'Admin','') \"Is admin\","
                 + "DATE_FORMAT(created_at,'%m-%e-%Y %r') \"Created\", "
-                + "DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Updated\" from user", maxWidths, false);
+                + "DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Updated\" from user", maxWidths, hideBtns);
     }
 
+    public UsersGrid(IMessageSender exchanger) throws RemoteException {
+        this(exchanger, false);
+    }
+    
     @Override
-    protected AbstractAction addAction() {
-        return new AbstractAction("Add", new ImageIcon("images/NewEntry.jpg")) {
+    public AbstractAction addAction() {
+        return new AbstractAction("Add") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 EditUserDialog ed = new EditUserDialog("New User", null);
@@ -49,8 +53,8 @@ public class UsersGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction editAction() {
-        return new AbstractAction("Edit", new ImageIcon("images/edit.png")) {
+    public AbstractAction editAction() {
+        return new AbstractAction("Edit") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int id = getSelectedID();
@@ -70,8 +74,8 @@ public class UsersGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction delAction() {
-        return new AbstractAction("Del", new ImageIcon("images/DeleteEntry.jpg")) {
+    public AbstractAction delAction() {
+        return new AbstractAction("Del") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int id = getSelectedID();

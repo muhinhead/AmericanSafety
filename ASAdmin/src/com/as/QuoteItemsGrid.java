@@ -29,12 +29,12 @@ class QuoteItemsGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction addAction() {
-        return new AbstractAction("Add", new ImageIcon("images/add.png")) {
+    public AbstractAction addAction() {
+        return new AbstractAction("Add") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int p = getSelect().indexOf("from quoteitem where quote_id=");
-                EditQuoteItemDialog.quoteID = p > 0 ? Integer.parseInt(getSelect().substring(p + 30)) : 0;
+                int p = getSelect().indexOf(" and quote_id=");
+                EditQuoteItemDialog.quoteID = p > 0 ? Integer.parseInt(getSelect().substring(p + 14)) : 0;
                 EditQuoteItemDialog qd = new EditQuoteItemDialog("Add Item", null);
                 if (EditQuoteItemDialog.okPressed) {
                     Quoteitem qi = (Quoteitem) qd.getEditPanel().getDbObject();
@@ -45,16 +45,16 @@ class QuoteItemsGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction editAction() {
-        return new AbstractAction("Edit", new ImageIcon("images/edit.png")) {
+    public AbstractAction editAction() {
+        return new AbstractAction("Edit") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int id = getSelectedID();
                 if (id != 0) {
                     try {
                         Quoteitem qi = (Quoteitem) exchanger.loadDbObjectOnID(Quoteitem.class, id);
-                        int p = getSelect().indexOf("from quoteitem where quote_id=");
-                        EditQuoteItemDialog.quoteID = p > 0 ? Integer.parseInt(getSelect().substring(p + 30)) : 0;
+                        int p = getSelect().indexOf(" and quote_id=");
+                        EditQuoteItemDialog.quoteID = p > 0 ? Integer.parseInt(getSelect().substring(p + 14)) : 0;
                         new EditQuoteItemDialog("Edit Item", qi);
                         if (EditQuoteItemDialog.okPressed) {
                             refresh();
@@ -68,8 +68,8 @@ class QuoteItemsGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction delAction() {
-        return new AbstractAction("Del", new ImageIcon("images/delete.png")) {
+    public AbstractAction delAction() {
+        return new AbstractAction("Del") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int id = getSelectedID();

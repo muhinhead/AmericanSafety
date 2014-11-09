@@ -38,15 +38,13 @@ class EditContactPanel extends RecordEditPanel {
     @Override
     protected void fillContent() {
         String titles[] = new String[]{
-            "",
             "ID:",
             "First Name:",
             "Last Name:",
             "Email:",//            "Phone:",
             "Customer:",
             "Created:",
-            "Updated:",
-            ""
+            "Updated:"
         };
         JComponent[] edits = new JComponent[]{
             getGridPanel(idField = new JTextField(), 8),

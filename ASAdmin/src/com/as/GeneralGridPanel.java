@@ -42,11 +42,11 @@ public abstract class GeneralGridPanel extends DbTableGridPanel {
         this(exchanger, select, maxWidths, readOnly, null);
     }
 
-    protected abstract AbstractAction addAction();
+    public abstract AbstractAction addAction();
 
-    protected abstract AbstractAction editAction();
+    public abstract AbstractAction editAction();
 
-    protected abstract AbstractAction delAction();
+    public abstract AbstractAction delAction();
 
     protected void init(AbstractAction[] acts, String select, Vector[] tableBody,
             HashMap<Integer, Integer> maxWidths, DbTableView tabView) {

@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -21,15 +20,19 @@ class ItemsGrid extends GeneralGridPanel {
         maxWidths.put(0, 40);
     }
 
-    public ItemsGrid(IMessageSender exchanger) throws RemoteException {
+    public ItemsGrid(IMessageSender exchanger, boolean hideBtns) throws RemoteException {
         super(exchanger, "select item_id \"Id\", item_number \"Number\", "
                 + " item_name \"Name\", item_description \"Description\", last_price \"Last Price\" "
-                + " from item", maxWidths, false);
+                + " from item", maxWidths, hideBtns);
+    }
+
+    public ItemsGrid(IMessageSender exchanger) throws RemoteException {
+        this(exchanger, false);
     }
 
     @Override
-    protected AbstractAction addAction() {
-        return new AbstractAction("Add", new ImageIcon("images/add.png")) {
+    public AbstractAction addAction() {
+        return new AbstractAction("Add") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 EditItemsDialog itemsDialog = new EditItemsDialog("New Item", null);
@@ -42,8 +45,8 @@ class ItemsGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction editAction() {
-        return new AbstractAction("Edit", new ImageIcon("images/edit.png")) {
+    public AbstractAction editAction() {
+        return new AbstractAction("Edit") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int id = getSelectedID();
@@ -63,8 +66,8 @@ class ItemsGrid extends GeneralGridPanel {
     }
 
     @Override
-    protected AbstractAction delAction() {
-        return new AbstractAction("Del", new ImageIcon("images/delete.png")) {
+    public AbstractAction delAction() {
+        return new AbstractAction("Del") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int id = getSelectedID();

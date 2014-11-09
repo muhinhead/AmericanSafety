@@ -1,6 +1,10 @@
 package com.as.mvc.dbtable;
 
 import com.as.mvc.Document;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -159,6 +163,109 @@ public class DbTableDocument extends Document {
             Object[] content = (Object[]) body;
             colNames = (Vector) content[0];
             rowData = (Vector) content[1];
+        }
+    }
+
+    public void generateCSV(File expFile) throws Exception {
+        if (expFile == null) {
+            return;
+        }
+        Object[] content = (Object[]) getBody();
+        BufferedOutputStream bufferedOutput = null;
+        try {
+            Vector tds = (Vector) content[0];
+            Vector lines = (Vector) content[1];
+            bufferedOutput = new BufferedOutputStream(new FileOutputStream(expFile));
+            int col = 0;
+            for (Object td : tds) {
+                if (col > 0) {
+                    bufferedOutput.write(", ".getBytes());
+                }
+                bufferedOutput.write(("\"" + td.toString().replaceAll("\"", "\"\"") + "\"").getBytes());
+                col++;
+            }
+            bufferedOutput.write("\n".getBytes());
+            for (Object l : lines) {
+                Vector line = (Vector) l;
+                col = 0;
+                for (Object c : line) {
+                    if (col > 0) {
+                        bufferedOutput.write(", ".getBytes());
+                    }
+                    bufferedOutput.write("\"".getBytes());
+                    bufferedOutput.write(c.toString().replaceAll("\"", "\"\"").getBytes());
+                    bufferedOutput.write("\"".getBytes());
+                    col++;
+                }
+                bufferedOutput.write("\n".getBytes());
+            }
+        } finally {
+            if (bufferedOutput != null) {
+                try {
+                    bufferedOutput.flush();
+                    bufferedOutput.close();
+                } catch (IOException ex) {
+                }
+            }
+        }
+    }
+
+    public void generateHTML(File expFile) throws Exception {
+        if (expFile == null) {
+            return;
+        }
+        Object[] content = (Object[]) getBody();
+        BufferedOutputStream bufferedOutput = null;
+        try {
+            Vector tds = (Vector) content[0];
+            Vector lines = (Vector) content[1];
+            bufferedOutput = new BufferedOutputStream(new FileOutputStream(expFile));
+            bufferedOutput.write("<html>\n".getBytes());
+            bufferedOutput.write("<head>\n".getBytes());
+            bufferedOutput.write("</head>\n".getBytes());
+            bufferedOutput.write(("<style type=\"text/css\">"
+                    + "table.mystyle"
+                    + "{"
+                    + "border-width: 1 1 1px 1px;"
+                    + "border-spacing: 0;"
+                    + "border-collapse: collapse;"
+                    + "border-style: solid;"
+                    + "}"
+                    + ".mystyle td, .mystyle th"
+                    + "{"
+                    + "margin: 0;"
+                    + "padding: 4px;"
+                    + "border-width: 1px 1px 1 1;"
+                    + "border-style: solid;"
+                    + "}"
+                    + "</style>\n").getBytes());
+            bufferedOutput.write("<body>\n".getBytes());
+            bufferedOutput.write("<table class=\"mystyle\">\n".getBytes());
+            bufferedOutput.write("<tr>\n".getBytes());
+            for (Object td : tds) {
+                bufferedOutput.write(("<th>" + td.toString() + "</th>\n").getBytes());
+            }
+            bufferedOutput.write("</tr>\n".getBytes());
+            for (Object l : lines) {
+                bufferedOutput.write("<tr>\n".getBytes());
+                Vector line = (Vector) l;
+                for (Object c : line) {
+                    bufferedOutput.write("<td>\n".getBytes());
+                    bufferedOutput.write(c.toString().getBytes());
+                    bufferedOutput.write("</td>\n".getBytes());
+                }
+                bufferedOutput.write("</tr>\n".getBytes());
+            }
+            bufferedOutput.write("</table>\n".getBytes());
+            bufferedOutput.write("</body></html>\n".getBytes());
+        } finally {
+            if (bufferedOutput != null) {
+                try {
+                    bufferedOutput.flush();
+                    bufferedOutput.close();
+                } catch (IOException ex) {
+                }
+            }
         }
     }
 
