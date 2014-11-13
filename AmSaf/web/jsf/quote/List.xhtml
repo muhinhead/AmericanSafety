@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListQuoteTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:form styleClass="jsfcrud_list_form">
+                <h:panelGroup id="messagePanel" layout="block">
+                    <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+                </h:panelGroup>
+                <h:outputText escape="false" value="#{bundle.ListQuoteEmpty}" rendered="#{quoteController.items.rowCount == 0}"/>
+                <h:panelGroup rendered="#{quoteController.items.rowCount > 0}">
+                    <h:outputText value="#{quoteController.pagination.pageFirstItem + 1}..#{quoteController.pagination.pageLastItem + 1}/#{quoteController.pagination.itemsCount}"/>&nbsp;
+                    <h:commandLink action="#{quoteController.previous}" value="#{bundle.Previous} #{quoteController.pagination.pageSize}" rendered="#{quoteController.pagination.hasPreviousPage}"/>&nbsp;
+                    <h:commandLink action="#{quoteController.next}" value="#{bundle.Next} #{quoteController.pagination.pageSize}" rendered="#{quoteController.pagination.hasNextPage}"/>&nbsp;
+                    <h:dataTable value="#{quoteController.items}" var="item" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px">
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_quoteId}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.quoteId}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_location}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.location}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_contractor}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.contractor}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_rigTankEq}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.rigTankEq}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_discount}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.discount}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_taxProc}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.taxProc}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_poNumber}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.poNumber}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_dateIn}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.dateIn}">
+                                <f:convertDateTime pattern="MM/dd/yyyy" />
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_signature}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.signature}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_subtotal}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.subtotal}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_wellName}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.wellName}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_afeUww}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.afeUww}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_cai}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.cai}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_aprvrName}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.aprvrName}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_dateStr}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.dateStr}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_contactId}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.contactId}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_customerId}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.customerId}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_poTypeId}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.poTypeId}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_stampsId}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.stampsId}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_taxId}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.taxId}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_createdBy}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.createdBy}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListQuoteTitle_dateOut}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.dateOut}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="&nbsp;"/>
+                            </f:facet>
+                            <h:commandLink action="#{quoteController.prepareView}" value="#{bundle.ListQuoteViewLink}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink action="#{quoteController.prepareEdit}" value="#{bundle.ListQuoteEditLink}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink action="#{quoteController.destroy}" value="#{bundle.ListQuoteDestroyLink}"/>
+                        </h:column>
+                    </h:dataTable>
+                </h:panelGroup>
+                <br />
+                <h:commandLink action="#{quoteController.prepareCreate}" value="#{bundle.ListQuoteCreateLink}"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.ListQuoteIndexLink}"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
