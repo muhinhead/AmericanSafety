@@ -12,14 +12,12 @@ import com.as.util.ParamLoginName;
 import com.as.util.ResponseLogin;
 import com.as.util.ResponseOk;
 import com.as.util.Utils;
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import javax.ws.rs.Consumes;
@@ -56,17 +54,23 @@ public class LoginFacadeREST extends AbstractFacade<Login> {
     }
 
     @POST
-    @Path("uploadavatar")
+    @Path("/uploadavatar")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces("application/json")
-    public ResponseOk uploadAvatar(@Context HttpServletRequest request) throws ParseException, IOException, ServletException {
+    public ResponseOk uploadAvatar(@Context HttpServletRequest request) {
         ResponseOk ok = new ResponseOk();
         try {
-            User user = (User) getEntityManager().createNamedQuery("User.findByLoginAndPassword")
-                    .setParameter("login", request.getParameter("username"))
-                    .setParameter("password", request.getParameter("password"))
+            Map<String, String[]> vals = request.getParameterMap();
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            Login login = (Login) getEntityManager().createNamedQuery("Login.findByNameAndPassword")
+                    .setParameter("username", username)
+                    .setParameter("password", password)
                     .getSingleResult();
-            if (user != null) {
+            
+            if (login != null) {
+                User user = (User) getEntityManager().createNamedQuery("User.findByUserId")
+                        .setParameter("userId", login.getUserId()).getSingleResult();
                 Collection<Part> parts = request.getParts();
                 for (Part part : parts) {
                     if (part.getContentType() != null) {
