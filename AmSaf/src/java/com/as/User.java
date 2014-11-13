@@ -7,7 +7,6 @@ package com.as;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,12 +14,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -39,8 +37,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "User.findByFirstName", query = "SELECT u FROM User u WHERE u.firstName = :firstName"),
     @NamedQuery(name = "User.findByLastName", query = "SELECT u FROM User u WHERE u.lastName = :lastName"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
-    @NamedQuery(name = "User.findByLogin", query = "SELECT u FROM User u WHERE u.login = :login"),
-    @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
+    @NamedQuery(name = "User.findByLoginAndPassword",
+            query = "SELECT u FROM User u WHERE u.login = :username AND u.password = :password"),
     @NamedQuery(name = "User.findByAdmin", query = "SELECT u FROM User u WHERE u.admin = :admin")})
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -75,6 +73,9 @@ public class User implements Serializable {
     private String password;
     @Column(name = "admin")
     private Boolean admin;
+    @Lob
+    @Column(name = "avatar")
+    private byte[] avatar;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdBy")
     private Collection<Quote> quoteCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdBy")
@@ -203,6 +204,20 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.as.User[ userId=" + userId + " ]";
+    }
+
+    /**
+     * @return the avatar
+     */
+    public byte[] getAvatar() {
+        return avatar;
+    }
+
+    /**
+     * @param avatar the avatar to set
+     */
+    public void setAvatar(byte[] avatar) {
+        this.avatar = avatar;
     }
     
 }
