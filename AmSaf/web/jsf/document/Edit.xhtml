@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.EditDocumentTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_documentPK_docType}" for="documentPK_docType" />
+                    <h:inputText id="documentPK_docType" value="#{documentController.selected.documentPK.docType}" title="#{bundle.EditDocumentTitle_documentPK_docType}" required="true" requiredMessage="#{bundle.EditDocumentRequiredMessage_documentPK_docType}"/>
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_documentPK_documentID}" for="documentPK_documentID" />
+                    <h:inputText id="documentPK_documentID" value="#{documentController.selected.documentPK.documentID}" title="#{bundle.EditDocumentTitle_documentPK_documentID}" required="true" requiredMessage="#{bundle.EditDocumentRequiredMessage_documentPK_documentID}"/>
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_documentID}" for="documentID" />
+                    <h:inputText id="documentID" value="#{documentController.selected.documentID}" title="#{bundle.EditDocumentTitle_documentID}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_docType}" for="docType" />
+                    <h:inputText id="docType" value="#{documentController.selected.docType}" title="#{bundle.EditDocumentTitle_docType}" required="true" requiredMessage="#{bundle.EditDocumentRequiredMessage_docType}"/>
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_customerID}" for="customerID" />
+                    <h:inputText id="customerID" value="#{documentController.selected.customerID}" title="#{bundle.EditDocumentTitle_customerID}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_contactID}" for="contactID" />
+                    <h:inputText id="contactID" value="#{documentController.selected.contactID}" title="#{bundle.EditDocumentTitle_contactID}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_location}" for="location" />
+                    <h:inputText id="location" value="#{documentController.selected.location}" title="#{bundle.EditDocumentTitle_location}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_contractor}" for="contractor" />
+                    <h:inputText id="contractor" value="#{documentController.selected.contractor}" title="#{bundle.EditDocumentTitle_contractor}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_rigTankEq}" for="rigTankEq" />
+                    <h:inputText id="rigTankEq" value="#{documentController.selected.rigTankEq}" title="#{bundle.EditDocumentTitle_rigTankEq}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_discount}" for="discount" />
+                    <h:inputText id="discount" value="#{documentController.selected.discount}" title="#{bundle.EditDocumentTitle_discount}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_taxProc}" for="taxProc" />
+                    <h:inputText id="taxProc" value="#{documentController.selected.taxProc}" title="#{bundle.EditDocumentTitle_taxProc}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_subtotal}" for="subtotal" />
+                    <h:inputText id="subtotal" value="#{documentController.selected.subtotal}" title="#{bundle.EditDocumentTitle_subtotal}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_poType}" for="poType" />
+                    <h:inputText id="poType" value="#{documentController.selected.poType}" title="#{bundle.EditDocumentTitle_poType}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_poNumber}" for="poNumber" />
+                    <h:inputText id="poNumber" value="#{documentController.selected.poNumber}" title="#{bundle.EditDocumentTitle_poNumber}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_dateIn}" for="dateIn" />
+                    <h:inputText id="dateIn" value="#{documentController.selected.dateIn}" title="#{bundle.EditDocumentTitle_dateIn}" >
+                        <f:convertDateTime pattern="MM/dd/yyyy" />
+                    </h:inputText>
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_dateOut}" for="dateOut" />
+                    <h:inputText id="dateOut" value="#{documentController.selected.dateOut}" title="#{bundle.EditDocumentTitle_dateOut}" >
+                        <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                    </h:inputText>
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_signature}" for="signature" />
+                    <h:inputTextarea rows="4" cols="30" id="signature" value="#{documentController.selected.signature}" title="#{bundle.EditDocumentTitle_signature}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_wellName}" for="wellName" />
+                    <h:inputText id="wellName" value="#{documentController.selected.wellName}" title="#{bundle.EditDocumentTitle_wellName}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_afeUww}" for="afeUww" />
+                    <h:inputText id="afeUww" value="#{documentController.selected.afeUww}" title="#{bundle.EditDocumentTitle_afeUww}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_dateStr}" for="dateStr" />
+                    <h:inputText id="dateStr" value="#{documentController.selected.dateStr}" title="#{bundle.EditDocumentTitle_dateStr}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_cai}" for="cai" />
+                    <h:inputText id="cai" value="#{documentController.selected.cai}" title="#{bundle.EditDocumentTitle_cai}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_aprvrName}" for="aprvrName" />
+                    <h:inputText id="aprvrName" value="#{documentController.selected.aprvrName}" title="#{bundle.EditDocumentTitle_aprvrName}" />
+                    <h:outputLabel value="#{bundle.EditDocumentLabel_createdBy}" for="createdBy" />
+                    <h:inputText id="createdBy" value="#{documentController.selected.createdBy}" title="#{bundle.EditDocumentTitle_createdBy}" required="true" requiredMessage="#{bundle.EditDocumentRequiredMessage_createdBy}"/>
+                </h:panelGrid>
+                <h:commandLink action="#{documentController.update}" value="#{bundle.EditDocumentSaveLink}"/>
+                <br />
+                <br />
+                <h:link outcome="View" value="#{bundle.EditDocumentViewLink}"/>
+                <br />
+                <h:commandLink action="#{documentController.prepareList}" value="#{bundle.EditDocumentShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.EditDocumentIndexLink}" />
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
