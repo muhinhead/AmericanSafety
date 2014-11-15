@@ -46,12 +46,12 @@ public class LoginFacadeREST extends AbstractFacade<Login> {
         super(Login.class);
     }
 
-    @POST
-    @Override
-    @Consumes({"application/xml", "application/json"})
-    public void create(Login entity) {
-        super.create(entity);
-    }
+//    @POST
+//    @Override
+//    @Consumes({"application/xml", "application/json"})
+//    public void create(Login entity) {
+//        super.create(entity);
+//    }
 
     @POST
     @Path("/uploadavatar")
