@@ -2,6 +2,7 @@ package com.as;
 
 import com.as.orm.User;
 import com.as.orm.dbobject.DbObject;
+import com.as.util.EditPanelWithPhoto;
 import com.as.util.EmailFocusAdapter;
 import com.as.util.RecordEditPanel;
 import java.awt.CardLayout;
@@ -19,7 +20,7 @@ import javax.swing.SwingConstants;
  *
  * @author Nick Mukhin
  */
-class EditUserPanel extends RecordEditPanel {
+class EditUserPanel extends EditPanelWithPhoto {
 
     private JTextField idField;
     private JTextField loginTF;
@@ -35,9 +36,15 @@ class EditUserPanel extends RecordEditPanel {
     private JTextField firstNameTF;
     private JTextField lastNameTF;
     private JLabel emailLBL;
+    private JTextField urlTF;
 
     public EditUserPanel(DbObject dbObject) {
         super(dbObject);
+    }
+
+    @Override
+    protected String getImagePanelLabel() {
+        return "Avatar";
     }
 
     @Override
@@ -49,6 +56,7 @@ class EditUserPanel extends RecordEditPanel {
             "Last Name:",
             "Login:",
             "Email:",
+            "URL:",
             "Password:",
             "Is Admin:",
             ""
@@ -59,21 +67,14 @@ class EditUserPanel extends RecordEditPanel {
             getGridPanel(idField = new JTextField(), 6),
             firstNameTF = new JTextField(20),
             lastNameTF = new JTextField(20),
-            //            getGridPanel(new JComponent[]{
             loginTF = new JTextField(20),
-            //                emailLBL = new JLabel("Email:", SwingConstants.RIGHT),
             emailTF = new JTextField(20),
-            //            }),
+            urlTF = new JTextField(20),
             getGridPanel(new JComponent[]{
                 passwdCardPanel = new JPanel(cl = new CardLayout()),
                 new JLabel("show password", SwingConstants.RIGHT),
                 showPwdCB = new JCheckBox()
             }),
-            //            getGridPanel(new JComponent[]{
-            //                firstNameTF = new JTextField(),
-            //                new JLabel("Last Name:", SwingConstants.RIGHT),
-            //                lastNameTF = new JTextField()
-            //            }),
             isAdminCB = new JCheckBox(),
             new JPanel()
         };
@@ -113,9 +114,12 @@ class EditUserPanel extends RecordEditPanel {
             passwdTF.setText(usr.getPassword());
             passwdPwdF.setText(usr.getPassword());
             emailTF.setText(usr.getEmail());
+            urlTF.setText(usr.getUrl());
             firstNameTF.setText(usr.getFirstName());
             lastNameTF.setText(usr.getLastName());
             isAdminCB.setSelected(usr.getAdmin() != null && usr.getAdmin() == 1);
+            imageData = (byte[]) usr.getAvatar();
+            setImage(imageData);
         }
     }
 
@@ -130,10 +134,12 @@ class EditUserPanel extends RecordEditPanel {
         }
         usr.setLogin(loginTF.getText());
         usr.setEmail(emailTF.getText());
+        usr.setUrl(urlTF.getText());
         usr.setPassword(passwdTF.getText());
         usr.setFirstName(firstNameTF.getText());
         usr.setLastName(lastNameTF.getText());
         usr.setAdmin(isAdminCB.isSelected()?1:0);
+        usr.setAvatar(imageData);
         return saveDbRecord(usr, isNew);
     }
 }

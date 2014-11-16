@@ -40,7 +40,7 @@ import javax.swing.SpinnerNumberModel;
  */
 public class ASAdmin {
 
-    private static final String version = "0.3";
+    private static final String version = "0.4";
     private static Logger logger = null;
     private static FileHandler fh;
     private static Properties props;
@@ -411,5 +411,9 @@ public class ASAdmin {
 
     static ComboItem[] loadPOtypes() {
         return loadOnSelect("select po_id,po_description from po", null);
+    }
+
+    static ComboItem[] loadStamps() {
+        return loadOnSelect("select 0,'' union select stamps_id,stamps from stamps", null);
     }
 }

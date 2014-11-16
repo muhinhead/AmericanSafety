@@ -5,6 +5,7 @@ import com.as.orm.Invoice;
 import com.as.orm.Order;
 import com.as.orm.Quote;
 import com.as.orm.dbobject.DbObject;
+import com.as.util.ComboItem;
 import com.as.util.EditPanelWithPhoto;
 import static com.as.util.RecordEditPanel.comboPanelWithLookupBtn;
 import static com.as.util.RecordEditPanel.getGridPanel;
@@ -49,6 +50,17 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
     private SelectedNumberSpinner taxProcSP;
     private JComboBox poTypeCB;
     private JTextField poValueTF;
+    private JComboBox stampsCB;
+    private JLabel chevronLbl1;
+    private JLabel chevronLbl2;
+    private JLabel chevronLbl3;
+    private JLabel chevronLbl4;
+    private JLabel chevronLbl5;
+    private JTextField chewronWellNameTF;
+    private JTextField chewronAfeUwvTF;
+    private JTextField chewronDateTF;
+    private JTextField chewronAprNameTF;
+    private JTextField chewronCaiTF;
 
     public EditDocumentPanel(DbObject dbObject) {
         super(dbObject);
@@ -67,7 +79,8 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
             "Customer:", //"Location:"
             "Contact:", //"Contractor:"
             "Rig/Tank/Equipment",
-            "", //PO
+            "", //PO //Stamps
+            "", "", "", "", "",
             "Created by:"
         //            "Created:"   //"Updated:"
 
@@ -97,12 +110,22 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
                 new JLabel("Tax %:", SwingConstants.RIGHT),
                 getGridPanel(taxProcSP = new SelectedNumberSpinner(0.0, 0.0, 100.0, 0.5), 3)
             }),
-            getGridPanel(
             getGridPanel(new JComponent[]{
-                poTypeCB = new JComboBox(new DefaultComboBoxModel(ASAdmin.loadPOtypes())),
-                poValueTF = new JTextField()
-            }), 3
-            ),
+                getGridPanel(new JComponent[]{
+                    poTypeCB = new JComboBox(new DefaultComboBoxModel(ASAdmin.loadPOtypes())),
+                    poValueTF = new JTextField()
+                }), new JLabel("Stamps:", SwingConstants.RIGHT), stampsCB = new JComboBox(ASAdmin.loadStamps())
+            }),
+            getGridPanel(new JComponent[]{new JPanel(),
+                chevronLbl1 = new JLabel("Well name:", SwingConstants.RIGHT), chewronWellNameTF = new JTextField()}),
+            getGridPanel(new JComponent[]{new JPanel(),
+                chevronLbl2 = new JLabel("AFE/UWV #:", SwingConstants.RIGHT), chewronAfeUwvTF = new JTextField()}),
+            getGridPanel(new JComponent[]{new JPanel(),
+                chevronLbl3 = new JLabel("Date:", SwingConstants.RIGHT), chewronDateTF = new JTextField()}),
+            getGridPanel(new JComponent[]{new JPanel(),
+                chevronLbl4 = new JLabel("CAI:", SwingConstants.RIGHT), chewronCaiTF = new JTextField()}),
+            getGridPanel(new JComponent[]{new JPanel(),
+                chevronLbl5 = new JLabel("Aprvr Name:", SwingConstants.RIGHT),chewronAprNameTF = new JTextField()}),
             getGridPanel(new JComponent[]{
                 createdByCB = new JComboBox(new DefaultComboBoxModel(ASAdmin.loadAllLogins())),
                 getBorderPanel(new JLabel("Created at:", SwingConstants.RIGHT), createdSP = new SelectedDateSpinner()),
@@ -117,6 +140,27 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
                 contactCB.setModel(model);
             }
         });
+        stampsCB.setAction(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ComboItem ci = (ComboItem) stampsCB.getSelectedItem();
+                boolean isChevron = ci.getValue().equals("Chevron");
+                for (JComponent c : new JComponent[]{
+                    chevronLbl1, chevronLbl2, chevronLbl3, chevronLbl4, chevronLbl5,
+                    chewronAfeUwvTF, chewronAprNameTF, chewronDateTF, 
+                    chewronWellNameTF, chewronCaiTF
+                }) {
+                    c.setVisible(isChevron);
+                }
+            }
+        });
+        for (JComponent c : new JComponent[]{
+            chevronLbl1, chevronLbl2, chevronLbl3, chevronLbl4, chevronLbl5,
+            chewronAfeUwvTF, chewronAprNameTF, chewronDateTF, 
+            chewronWellNameTF, chewronCaiTF
+        }) {
+            c.setVisible(false);
+        }
         customerCB.setSelectedIndex(0);
         idField.setEnabled(false);
         dateInSP.setEditor(new JSpinner.DateEditor(dateInSP, "yyyy-MM-dd hh:mm"));
@@ -146,6 +190,12 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
             taxProcSP.setValue(doc.getTaxProc());
             selectComboItem(poTypeCB, doc.getPoTypeId());
             poValueTF.setText(doc.getPoNumber());
+            selectComboItem(stampsCB, doc.getStampsId());
+            chewronAfeUwvTF.setText(doc.getAfeUww()); 
+            chewronAprNameTF.setText(doc.getAprvrName());
+            chewronDateTF.setText(doc.getDateStr()); 
+            chewronWellNameTF.setText(doc.getWellName());
+            chewronCaiTF.setText(doc.getCai());
             if (doc.getCreatedAt() != null) {
                 createdSP.setValue(doc.getCreatedAt());
             }
@@ -202,6 +252,12 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
         doc.setPoNumber(poValueTF.getText());
         doc.setSignature(imageData);
         doc.setCreatedBy(ASAdmin.getCurrentUser().getPK_ID());
+        doc.setStampsId(getSelectedCbItem(stampsCB));
+        doc.setAfeUww(chewronAfeUwvTF.getText());
+        doc.setAprvrName(chewronAprNameTF.getText());
+        doc.setWellName(chewronWellNameTF.getText());
+        doc.setDateStr(chewronDateTF.getText());
+        doc.setCai(chewronCaiTF.getText());
         setDocumentAdditionsBeforeSave(doc);
         return saveDbRecord((DbObject) doc, isNew);
     }
