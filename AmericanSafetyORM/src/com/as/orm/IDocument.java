@@ -50,10 +50,14 @@ public interface IDocument {
     Integer getTaxId();
     
     Timestamp getUpdatedAt();
+    
+    Integer getStampsId();
 
     DbObject loadOnId(int id) throws SQLException, ForeignKeyViolationException;
 
     void save() throws SQLException, ForeignKeyViolationException;
+
+    void setStampsId(Integer contactId) throws SQLException, ForeignKeyViolationException;
 
     void setContactId(Integer contactId) throws SQLException, ForeignKeyViolationException;
 
@@ -87,4 +91,23 @@ public interface IDocument {
 
     void setUpdatedAt(Timestamp updatedAt) throws SQLException, ForeignKeyViolationException;
     
+    String getWellName();
+
+    void setWellName(String wellName) throws SQLException, ForeignKeyViolationException;
+
+    String getAfeUww();
+
+    void setAfeUww(String afeUww) throws SQLException, ForeignKeyViolationException;
+
+    String getCai();
+
+    void setCai(String cai) throws SQLException, ForeignKeyViolationException;
+
+    String getAprvrName();
+
+    void setAprvrName(String aprvrName) throws SQLException, ForeignKeyViolationException;
+    
+    String getDateStr();
+    
+    void setDateStr(String dateStr) throws SQLException, ForeignKeyViolationException;
 }
