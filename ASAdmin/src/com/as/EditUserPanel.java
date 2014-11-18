@@ -1,14 +1,27 @@
 package com.as;
 
+import com.as.orm.Role;
 import com.as.orm.User;
+import com.as.orm.Usersrole;
 import com.as.orm.dbobject.DbObject;
 import com.as.util.EditPanelWithPhoto;
 import com.as.util.EmailFocusAdapter;
 import com.as.util.RecordEditPanel;
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.rmi.RemoteException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,11 +45,13 @@ class EditUserPanel extends EditPanelWithPhoto {
     private String tflbl;
     private JTextField passwdTF;
     private JTextField emailTF;
-    private JCheckBox isAdminCB;
+    //private JCheckBox isAdminCB;
     private JTextField firstNameTF;
     private JTextField lastNameTF;
     private JLabel emailLBL;
     private JTextField urlTF;
+    private JComboBox departmentCB;
+    private Hashtable<Integer, JCheckBox> roleCBtable;
 
     public EditUserPanel(DbObject dbObject) {
         super(dbObject);
@@ -58,7 +73,7 @@ class EditUserPanel extends EditPanelWithPhoto {
             "Email:",
             "URL:",
             "Password:",
-            "Is Admin:",
+            "Department:",
             ""
         };
 
@@ -75,7 +90,8 @@ class EditUserPanel extends EditPanelWithPhoto {
                 new JLabel("show password", SwingConstants.RIGHT),
                 showPwdCB = new JCheckBox()
             }),
-            isAdminCB = new JCheckBox(),
+            comboPanelWithLookupBtn(departmentCB = new JComboBox(ASAdmin.loadDepartments()),
+            new DepartmentLookupAction(departmentCB)),
             new JPanel()
         };
         idField.setEnabled(false);
@@ -95,6 +111,8 @@ class EditUserPanel extends EditPanelWithPhoto {
         });
 
         organizePanels(titles, edits, null);
+        add(getRolesListPanel(), BorderLayout.SOUTH);
+
         JLabel emailLBL = null;
         for (JLabel lbl : labels) {
             if (lbl.getText().equals("Email:")) {
@@ -109,17 +127,30 @@ class EditUserPanel extends EditPanelWithPhoto {
     public void loadData() {
         User usr = (User) getDbObject();
         if (usr != null) {
-            idField.setText(usr.getUserId().toString());
-            loginTF.setText(usr.getLogin());
-            passwdTF.setText(usr.getPassword());
-            passwdPwdF.setText(usr.getPassword());
-            emailTF.setText(usr.getEmail());
-            urlTF.setText(usr.getUrl());
-            firstNameTF.setText(usr.getFirstName());
-            lastNameTF.setText(usr.getLastName());
-            isAdminCB.setSelected(usr.getAdmin() != null && usr.getAdmin() == 1);
-            imageData = (byte[]) usr.getAvatar();
-            setImage(imageData);
+            try {
+                idField.setText(usr.getUserId().toString());
+                loginTF.setText(usr.getLogin());
+                passwdTF.setText(usr.getPassword());
+                passwdPwdF.setText(usr.getPassword());
+                emailTF.setText(usr.getEmail());
+                urlTF.setText(usr.getUrl());
+                firstNameTF.setText(usr.getFirstName());
+                lastNameTF.setText(usr.getLastName());
+                //isAdminCB.setSelected(usr.getAdmin() != null && usr.getAdmin() == 1);
+                selectComboItem(departmentCB, usr.getDepartmentId());
+                imageData = (byte[]) usr.getAvatar();
+                setImage(imageData);
+                DbObject[] roles = ASAdmin.getExchanger().getDbObjects(Usersrole.class, "user_id=" + usr.getUserId(), null);
+                for (DbObject obj : roles) {
+                    Usersrole ur = (Usersrole) obj;
+                    JCheckBox cb = roleCBtable.get(ur.getRoleId());
+                    if (cb != null) {
+                        cb.setSelected(true);
+                    }
+                }
+            } catch (RemoteException ex) {
+                ASAdmin.logAndShowMessage(ex);
+            }
         }
     }
 
@@ -138,8 +169,50 @@ class EditUserPanel extends EditPanelWithPhoto {
         usr.setPassword(passwdTF.getText());
         usr.setFirstName(firstNameTF.getText());
         usr.setLastName(lastNameTF.getText());
-        usr.setAdmin(isAdminCB.isSelected()?1:0);
+        usr.setDepartmentId(getSelectedCbItem(departmentCB));
         usr.setAvatar(imageData);
-        return saveDbRecord(usr, isNew);
+        boolean ok = saveDbRecord(usr, isNew);
+        Enumeration<Integer> roleKeys = roleCBtable.keys();
+        while (roleKeys.hasMoreElements()) {
+            Integer roleId = roleKeys.nextElement();
+            JCheckBox cb = roleCBtable.get(roleId);
+            DbObject[] dbObjArr = ASAdmin.getExchanger().getDbObjects(Usersrole.class,
+                    "user_id=" + usr.getUserId() + " and role_id=" + roleId, null);
+            if (cb.isSelected()) {
+                if (dbObjArr.length==0) {
+                    Usersrole ur = new Usersrole(null);
+                    ur.setUsersroleId(0);
+                    ur.setRoleId(roleId);
+                    ur.setUserId(usr.getUserId());
+                    ASAdmin.getExchanger().saveDbObject(ur);
+                }
+            } else {
+                if (dbObjArr.length > 0) {
+                    ASAdmin.getExchanger().deleteObject(dbObjArr[0]);
+                }
+            }
+        }
+        return ok;
+    }
+
+    private JPanel getRolesListPanel() {
+        JPanel panel = new JPanel();
+        try {
+            DbObject[] rolesList = ASAdmin.getExchanger().getDbObjects(Role.class, null, "role_name");
+            if (rolesList.length > 0) {
+                roleCBtable = new Hashtable<Integer, JCheckBox>(rolesList.length);
+                panel.setLayout(new FlowLayout());
+                for (DbObject o : rolesList) {
+                    Role r = (Role) o;
+                    JCheckBox cb;
+                    panel.add(cb = new JCheckBox(r.getRoleName()));
+                    roleCBtable.put(r.getRoleId(), cb);
+                }
+                panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Roles"));
+            }
+        } catch (RemoteException ex) {
+            ASAdmin.logAndShowMessage(ex);
+        }
+        return panel;
     }
 }

@@ -40,7 +40,7 @@ import javax.swing.SpinnerNumberModel;
  */
 public class ASAdmin {
 
-    private static final String version = "0.4";
+    private static final String version = "0.5";
     private static Logger logger = null;
     private static FileHandler fh;
     private static Properties props;
@@ -255,17 +255,18 @@ public class ASAdmin {
     }
 
     private static boolean matchVersions() {
-        try {
-            String servVersion = getExchanger().getServerVersion();
-            boolean match = removeTail(servVersion).equals(removeTail(version));
-            if (!match) {
-                GeneralFrame.errMessageBox("Error:", "Client's software version (" + version + ") doesn't match server (" + servVersion + ")");
-            }
-            return match;
-        } catch (RemoteException ex) {
-            logAndShowMessage(ex);
-        }
-        return false;
+        return true; //TODO: uncomment next
+//        try {
+//            String servVersion = getExchanger().getServerVersion();
+//            boolean match = removeTail(servVersion).equals(removeTail(version));
+//            if (!match) {
+//                GeneralFrame.errMessageBox("Error:", "Client's software version (" + version + ") doesn't match server (" + servVersion + ")");
+//            }
+//            return match;
+//        } catch (RemoteException ex) {
+//            logAndShowMessage(ex);
+//        }
+//        return false;
     }
 
     static void setCurrentUser(User curUser) {
@@ -296,7 +297,7 @@ public class ASAdmin {
     }
 
     public static List loadAdminLogins(String fld) {
-        return loadLogins(fld, "admin");
+        return loadLogins(fld, " user_id in (select user_id from usersrole ur,role r where r.role_id=ur.role_id and r.role_name='admin') ");
     }
 
     /**
@@ -350,6 +351,10 @@ public class ASAdmin {
                 + " from contact where customer_id=" + customer_id, null);
     }
 
+    public static ComboItem[] loadDepartments() {
+        return loadOnSelect("select 0,'' union select department_id,department_name from department",null);
+    }
+    
     public static String[] rigTankEquipment() {
         return loadStrings("select * from (select distinct rig_tank_eq "
                 + "from document "

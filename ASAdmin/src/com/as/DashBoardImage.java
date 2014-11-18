@@ -9,8 +9,10 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.HeadlessException;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -77,6 +79,7 @@ public class DashBoardImage extends JFrame {
     private GeneralGridPanel quotesGrid;
     private GeneralGridPanel invoicesGrid;
     private GeneralGridPanel ordersGrid;
+    private GeneralGridPanel departspmentGrid;
     private JTabbedPane setupPanel = null;
     private JTabbedPane customersPanel = null;
     private JPopupMenu sharePopup;
@@ -409,6 +412,11 @@ public class DashBoardImage extends JFrame {
                             protected void addRightBtnPanel(AbstractAction[] acts) {
                             }
                         });
+                ourInstance.setupPanel.add("Departments",
+                        ourInstance.departspmentGrid = new DepartsmentGrid(exchanger){
+                            protected void addRightBtnPanel(AbstractAction[] acts) {
+                            }
+                        }); 
                 ourInstance.setupPanel.add("PO types",
                         ourInstance.poGrid = new PoGrid(exchanger) {
                             protected void addRightBtnPanel(AbstractAction[] acts) {
@@ -553,6 +561,35 @@ public class DashBoardImage extends JFrame {
         }
     }
 
+    public static void centerWindow(JFrame frame) {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = frame.getSize();
+        if (frameSize.height > screenSize.height) {
+            frameSize.height = screenSize.height;
+        }
+        if (frameSize.width > screenSize.width) {
+            frameSize.width = screenSize.width;
+        }
+        frame.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+        frame.setExtendedState(Frame.NORMAL);
+        frame.validate();
+    }
+
+    public static float getXratio(JFrame frame) {
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        return (float) frame.getWidth() / d.width;
+    }
+
+    public static float getYratio(JFrame frame) {
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        return (float) frame.getHeight() / d.height;
+    }
+
+    public static void setSizes(JFrame frame, double x, double y) {
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setSize((int) (x * d.width), (int) (y * d.height));
+    }
+    
     protected void exit() {
         dispose();
         System.exit(1);

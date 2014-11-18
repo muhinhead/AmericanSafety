@@ -4,7 +4,8 @@ package com.as.util;
 //import com.mmi.admin.DashBoard;
 //import com.mmi.admin.GeneralFrame;
 import com.as.ASAdmin;
-import com.as.DashBoard;
+import com.as.DashBoardImage;
+import com.as.DashBoardImage;
 import com.as.GeneralFrame;
 import com.as.orm.dbobject.DbObject;
 import com.as.orm.dbobject.ForeignKeyViolationException;
@@ -112,7 +113,7 @@ public abstract class PagesPanel extends JPanel {
     }
 
     protected void reloadPages() throws RemoteException {
-        Image ic = ASAdmin.loadImage("newdoc.png", DashBoard.ourInstance);
+        Image ic = ASAdmin.loadImage("newdoc.png", DashBoardImage.ourInstance);
         NoFrameButton btn = new NoFrameButton(new ImageIcon(ic));
         btn.setText("Add");
         btn.setToolTipText("Attach document(s)");
@@ -123,7 +124,7 @@ public abstract class PagesPanel extends JPanel {
     protected static Image getImageOnExtension(IPage page) {
         String extension = page.getFileextension() == null ? "" : page.getFileextension().toLowerCase();
         String iconFile = imagemap.get(extension);
-        return ASAdmin.loadImage(iconFile == null ? "page.png" : iconFile, DashBoard.ourInstance);
+        return ASAdmin.loadImage(iconFile == null ? "page.png" : iconFile, DashBoardImage.ourInstance);
     }
 
     protected abstract void processFiles(File[] files)

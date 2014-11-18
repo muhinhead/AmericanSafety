@@ -20,24 +20,32 @@ public class UsersGrid extends GeneralGridPanel {
     static {
         maxWidths.put(0, 40);
         maxWidths.put(8, 40);
-//        maxWidths.put(3, 60);
-//        maxWidths.put(4, 130);
-//        maxWidths.put(5, 130);
-//        maxWidths.put(6, 130);
-//        maxWidths.put(7, 130);
     }
 
-    public UsersGrid(IMessageSender exchanger, boolean hideBtns) throws RemoteException {
-        super(exchanger, "select user_id \"Id\",first_name \"First Name\","
-                + "last_name \"Last Name\",login \"Login\",if(admin,'Admin','') \"Is admin\","
+    public UsersGrid(IMessageSender exchanger, Integer departmentId, boolean hideBtns) throws RemoteException {
+        super(exchanger,
+                "select user_id \"Id\",first_name \"First Name\","
+                + "last_name \"Last Name\",login \"Login\","
+                + "(select group_concat(role_name) from role r, usersrole ur where ur.role_id=r.role_id and ur.user_id=user.user_id) \"Roles\","
+                + "(select department_name from department where department_id=user.department_id) \"Department\","
                 + "DATE_FORMAT(created_at,'%m-%e-%Y %r') \"Created\", "
-                + "DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Updated\" from user", maxWidths, hideBtns);
+                + "DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Updated\" "
+                + "from user " + (departmentId != null ? " where department_id=" + departmentId : ""),
+                maxWidths, hideBtns);
+    }
+
+    public UsersGrid(IMessageSender exchanger, Integer departmentId) throws RemoteException {
+        this(exchanger, departmentId, false);
+    }
+    
+    public UsersGrid(IMessageSender exchanger, boolean hideBtns) throws RemoteException {
+        this(exchanger, null, hideBtns);
     }
 
     public UsersGrid(IMessageSender exchanger) throws RemoteException {
         this(exchanger, false);
     }
-    
+
     @Override
     public AbstractAction addAction() {
         return new AbstractAction("Add") {

@@ -18,8 +18,8 @@ import java.util.Properties;
  */
 public class ExchangeFactory {
 
-    private static final int DB_VERSION_ID = 1;
-    public static final String DB_VERSION = "0.1";
+    private static final int DB_VERSION_ID = 2;
+    public static final String DB_VERSION = "0.2";
     private static String[] fixLocalDBsqls = new String[]{
         "update dbversion set version_id = " + DB_VERSION_ID + ",version = '" + DB_VERSION + "'"
     };
