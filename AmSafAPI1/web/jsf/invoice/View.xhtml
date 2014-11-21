@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewInvoiceTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_invoiceId}"/>
+                    <h:outputText value="#{invoiceController.selected.invoiceId}" title="#{bundle.ViewInvoiceTitle_invoiceId}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_location}"/>
+                    <h:outputText value="#{invoiceController.selected.location}" title="#{bundle.ViewInvoiceTitle_location}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_contractor}"/>
+                    <h:outputText value="#{invoiceController.selected.contractor}" title="#{bundle.ViewInvoiceTitle_contractor}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_rigTankEq}"/>
+                    <h:outputText value="#{invoiceController.selected.rigTankEq}" title="#{bundle.ViewInvoiceTitle_rigTankEq}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_discount}"/>
+                    <h:outputText value="#{invoiceController.selected.discount}" title="#{bundle.ViewInvoiceTitle_discount}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_taxProc}"/>
+                    <h:outputText value="#{invoiceController.selected.taxProc}" title="#{bundle.ViewInvoiceTitle_taxProc}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_dateIn}"/>
+                    <h:outputText value="#{invoiceController.selected.dateIn}" title="#{bundle.ViewInvoiceTitle_dateIn}">
+                        <f:convertDateTime pattern="MM/dd/yyyy" />
+                    </h:outputText>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_dateOut}"/>
+                    <h:outputText value="#{invoiceController.selected.dateOut}" title="#{bundle.ViewInvoiceTitle_dateOut}">
+                        <f:convertDateTime pattern="MM/dd/yyyy" />
+                    </h:outputText>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_signature}"/>
+                    <h:outputText value="#{invoiceController.selected.signature}" title="#{bundle.ViewInvoiceTitle_signature}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_poNumber}"/>
+                    <h:outputText value="#{invoiceController.selected.poNumber}" title="#{bundle.ViewInvoiceTitle_poNumber}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_updatedAt}"/>
+                    <h:outputText value="#{invoiceController.selected.updatedAt}" title="#{bundle.ViewInvoiceTitle_updatedAt}">
+                        <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                    </h:outputText>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_createdAt}"/>
+                    <h:outputText value="#{invoiceController.selected.createdAt}" title="#{bundle.ViewInvoiceTitle_createdAt}">
+                        <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                    </h:outputText>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_subtotal}"/>
+                    <h:outputText value="#{invoiceController.selected.subtotal}" title="#{bundle.ViewInvoiceTitle_subtotal}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_wellName}"/>
+                    <h:outputText value="#{invoiceController.selected.wellName}" title="#{bundle.ViewInvoiceTitle_wellName}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_afeUww}"/>
+                    <h:outputText value="#{invoiceController.selected.afeUww}" title="#{bundle.ViewInvoiceTitle_afeUww}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_cai}"/>
+                    <h:outputText value="#{invoiceController.selected.cai}" title="#{bundle.ViewInvoiceTitle_cai}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_aprvrName}"/>
+                    <h:outputText value="#{invoiceController.selected.aprvrName}" title="#{bundle.ViewInvoiceTitle_aprvrName}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_dateStr}"/>
+                    <h:outputText value="#{invoiceController.selected.dateStr}" title="#{bundle.ViewInvoiceTitle_dateStr}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_contactId}"/>
+                    <h:outputText value="#{invoiceController.selected.contactId}" title="#{bundle.ViewInvoiceTitle_contactId}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_customerId}"/>
+                    <h:outputText value="#{invoiceController.selected.customerId}" title="#{bundle.ViewInvoiceTitle_customerId}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_poTypeId}"/>
+                    <h:outputText value="#{invoiceController.selected.poTypeId}" title="#{bundle.ViewInvoiceTitle_poTypeId}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_stampsId}"/>
+                    <h:outputText value="#{invoiceController.selected.stampsId}" title="#{bundle.ViewInvoiceTitle_stampsId}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_taxId}"/>
+                    <h:outputText value="#{invoiceController.selected.taxId}" title="#{bundle.ViewInvoiceTitle_taxId}"/>
+                    <h:outputText value="#{bundle.ViewInvoiceLabel_createdBy}"/>
+                    <h:outputText value="#{invoiceController.selected.createdBy}" title="#{bundle.ViewInvoiceTitle_createdBy}"/>
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{invoiceController.destroyAndView}" value="#{bundle.ViewInvoiceDestroyLink}"/>
+                <br />
+                <br />
+                <h:link outcome="Edit" value="#{bundle.ViewInvoiceEditLink}"/>
+                <br />
+                <h:commandLink action="#{invoiceController.prepareCreate}" value="#{bundle.ViewInvoiceCreateLink}" />
+                <br />
+                <h:commandLink action="#{invoiceController.prepareList}" value="#{bundle.ViewInvoiceShowAllLink}"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.ViewInvoiceIndexLink}"/>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
