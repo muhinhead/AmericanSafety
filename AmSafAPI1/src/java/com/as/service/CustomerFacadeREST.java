@@ -5,9 +5,14 @@
  */
 package com.as.service;
 
+import com.as.Contact;
 import com.as.Customer;
+import com.as.util.Param4newContact;
+import com.as.util.Param4newCustomer;
 import com.as.util.ParamMask;
+import com.as.util.ResponseCustomerID;
 import com.as.util.ResponseCustomerList;
+import com.as.util.ResponseNewCustomer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -30,6 +35,7 @@ import javax.ws.rs.Produces;
 @Stateless
 @Path("com.as.customer")
 public class CustomerFacadeREST extends AbstractFacade<Customer> {
+
     @PersistenceContext(unitName = "AmSafAPI1PU")
     private EntityManager em;
 
@@ -38,10 +44,38 @@ public class CustomerFacadeREST extends AbstractFacade<Customer> {
     }
 
     @POST
-    @Override
-    @Consumes({"application/xml", "application/json"})
-    public void create(Customer entity) {
-        super.create(entity);
+    @Produces("application/json")
+    @Consumes("application/json")
+    public ResponseNewCustomer createCustomer(Param4newCustomer param) {
+        Customer customer = new Customer();
+        String sid = null;
+        try {
+            customer.setCustomerName(param.getCustomerName());
+            customer.setCustomerAddress(param.getCustomerAddress());
+            sid = createAndReturnID(customer);
+            if (param.getContacts() != null) {
+                for (Param4newContact cnt : param.getContacts()) {
+                    Contact contact = new Contact();
+                    contact.setCustomerId(customer);
+                    contact.setTitle(cnt.getContactTitle());
+                    contact.setFirstName(cnt.getContactFirstName());
+                    contact.setLastName(cnt.getContactLastName());
+                    contact.setEmail(cnt.getContactEmail());
+                    contact.setPhone(cnt.getContactPhone());
+                    createContactAndReturnID(getEntityManager(), contact);
+                }
+            }
+            return new ResponseNewCustomer(new Integer(Integer.parseInt(sid)));
+        } catch (Exception e) {
+            if (customer != null && sid != null) {
+                try {
+                    getEntityManager().remove(getEntityManager().merge(customer));
+                } catch (Exception ne) {
+                }
+            }
+            e.printStackTrace();
+            return new ResponseNewCustomer(e.getMessage());
+        }
     }
 
     @POST
@@ -51,13 +85,13 @@ public class CustomerFacadeREST extends AbstractFacade<Customer> {
     public ResponseCustomerList findOnMask(ParamMask mask) {
         try {
             Query qry = getEntityManager().createNativeQuery(
-                    "SELECT customer_id FROM customer WHERE customer_name LIKE '"+mask.getMask()+"%' "
-                            + " ORDER BY customer_name LIMIT " + (mask.getOffset() != null ? mask.getOffset().toString() + "," : "")
+                    "SELECT customer_id FROM customer WHERE customer_name LIKE '" + mask.getMask() + "%' "
+                    + " ORDER BY customer_name LIMIT " + (mask.getOffset() != null ? mask.getOffset().toString() + "," : "")
                     + (mask.getLimit() != null ? mask.getLimit().toString() : "9999999999999999999"));
             List<Integer> cids = qry.getResultList();
             List<Customer> clst = new ArrayList<Customer>(cids.size());
             for (Integer cid : cids) {
-                Customer c = (Customer)getEntityManager().createNamedQuery("Customer.findByCustomerId")
+                Customer c = (Customer) getEntityManager().createNamedQuery("Customer.findByCustomerId")
                         .setParameter("customerId", cid).getSingleResult();
                 clst.add(c);
             }
@@ -65,8 +99,8 @@ public class CustomerFacadeREST extends AbstractFacade<Customer> {
         } catch (Exception e) {
             return new ResponseCustomerList(null, new String[]{e.getMessage()});
         }
-    }    
-    
+    }
+
     @PUT
     @Path("{id}")
     @Consumes({"application/xml", "application/json"})
@@ -112,5 +146,5 @@ public class CustomerFacadeREST extends AbstractFacade<Customer> {
     protected EntityManager getEntityManager() {
         return em;
     }
-    
+
 }

@@ -64,7 +64,10 @@ public class Login implements Serializable {
     @NotNull
     @Column(name = "department_id")
     private int departmentId;
-
+    @Lob
+    @Column(name = "avatar")
+    private byte[] avatar;
+    
     public Login() {
     }
 
@@ -162,6 +165,20 @@ public class Login implements Serializable {
      */
     public void setDepartmentID(int departmentId) {
         this.departmentId = departmentId;
+    }
+
+    /**
+     * @return the avatar
+     */
+    public byte[] getAvatar() {
+        return avatar;
+    }
+
+    /**
+     * @param avatar the avatar to set
+     */
+    public void setAvatar(byte[] avatar) {
+        this.avatar = avatar;
     }
     
 }

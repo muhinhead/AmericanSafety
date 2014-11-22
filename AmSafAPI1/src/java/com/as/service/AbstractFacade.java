@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -69,6 +70,7 @@ public abstract class AbstractFacade<T> {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         Set<ConstraintViolation<T>> constraintViolations = validator.validate(entity);
+        BigInteger lastID = new BigInteger("0");
         if (constraintViolations.size() > 0) {
             StringBuilder sb = new StringBuilder();
             Iterator<ConstraintViolation<T>> iterator = constraintViolations.iterator();
@@ -81,8 +83,9 @@ public abstract class AbstractFacade<T> {
             throw (new ConstraintViolationException(sb.toString(), constraintViolations));
         } else {
             getEntityManager().persist(entity);
+            lastID = (BigInteger) getEntityManager().createNativeQuery("select last_id from last_inserted_id").getSingleResult();
         }
-        return "0";
+        return String.valueOf(lastID);
     }
 
     public String createList(List<T> entityList) {
@@ -282,5 +285,27 @@ public abstract class AbstractFacade<T> {
             ex.printStackTrace();
         }
         return false;
+    }
+    
+    public static String createContactAndReturnID(EntityManager em, Contact entity) {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<Contact>> constraintViolations = validator.validate(entity);
+        BigInteger lastID = new BigInteger("0");
+        if (constraintViolations.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            Iterator<ConstraintViolation<Contact>> iterator = constraintViolations.iterator();
+            while (iterator.hasNext()) {
+                ConstraintViolation<Contact> cv = iterator.next();
+                String errElement = cv.getRootBeanClass().getName() + "." + cv.getPropertyPath() + " " + cv.getMessage();
+                System.err.println(errElement);
+                sb.append(errElement).append("\n");
+            }
+            throw (new ConstraintViolationException(sb.toString(), constraintViolations));
+        } else {
+            em.persist(entity);
+            lastID = (BigInteger) em.createNativeQuery("select last_id from last_inserted_id").getSingleResult();
+        }
+        return String.valueOf(lastID);
     }
 }
