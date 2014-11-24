@@ -40,7 +40,7 @@ import javax.swing.SpinnerNumberModel;
  */
 public class ASAdmin {
 
-    private static final String version = "0.5";
+    private static final String version = "0.5.3";
     private static Logger logger = null;
     private static FileHandler fh;
     private static Properties props;

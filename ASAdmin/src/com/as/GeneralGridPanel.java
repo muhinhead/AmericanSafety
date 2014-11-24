@@ -20,6 +20,7 @@ public abstract class GeneralGridPanel extends DbTableGridPanel {
     private String select;
     protected IMessageSender exchanger;
     public boolean isExternalView = false;
+    private String sortOrder = null;
     //public static final String SELECTLIMIT = "LIMIT 0,300";
 
     public GeneralGridPanel(IMessageSender exchanger, String select,
@@ -113,8 +114,9 @@ public abstract class GeneralGridPanel extends DbTableGridPanel {
     public void refresh() {
         int id = getSelectedID();
         try {
+            String slct;
             GeneralFrame.updateGrid(exchanger, getTableView(),
-                    getTableDoc(), getSelect(), id, getPageSelector().getSelectedIndex());
+                    getTableDoc(), slct = getSelect(), id, getPageSelector().getSelectedIndex());
             refreshTotalRows();
         } catch (RemoteException ex) {
             ASAdmin.logAndShowMessage(ex);
@@ -170,4 +172,19 @@ public abstract class GeneralGridPanel extends DbTableGridPanel {
     public void setIsMultilineSelection(boolean b) {
         getTableView().setIsMultilineSelection(b);
     }
+
+    /**
+     * @return the sortOrder
+     */
+    public String getSortOrder() {
+        return sortOrder;
+    }
+
+    /**
+     * @param sortOrder the sortOrder to set
+     */
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
 }

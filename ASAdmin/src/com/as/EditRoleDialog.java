@@ -5,7 +5,8 @@
  */
 package com.as;
 
-import com.as.orm.Department;
+import static com.as.EditDepartmentDialog.okPressed;
+import com.as.orm.Role;
 import com.as.orm.dbobject.DbObject;
 import com.as.util.EditRecordDialog;
 
@@ -13,19 +14,19 @@ import com.as.util.EditRecordDialog;
  *
  * @author nick
  */
-class EditDepartmentDialog extends EditRecordDialog {
-
+class EditRoleDialog extends EditRecordDialog {
+    
     public static boolean okPressed;
     
-    public EditDepartmentDialog(String title, DbObject obj) {
+    public EditRoleDialog(String title, DbObject obj) {
         super(title, obj);
     }
-     
+
     @Override
     protected void fillContent() {
-        super.fillContent(new EditDepartmentPanel((DbObject) getObject()));
+        super.fillContent(new EditRolePanel((DbObject) getObject()));
     }
-
+    
     @Override
     protected void setOkPressed(boolean b) {
         okPressed = b;

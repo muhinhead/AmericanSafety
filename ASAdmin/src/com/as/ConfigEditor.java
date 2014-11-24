@@ -57,10 +57,10 @@ public class ConfigEditor extends PopupDialog {
      * @return the protocol
      */
     public static String getProtocol() {
-        return protocol;
+        return protocol == null ? "jdbc" : protocol;
     }
     private JRadioButton appServerRB;
-    
+
     public ConfigEditor(String title, Object obj) {
         super(null, title, obj);
     }
@@ -69,7 +69,6 @@ public class ConfigEditor extends PopupDialog {
 //    protected Object getHeaderBackground() {
 //        return "dialog_hdr.png";//ASAdmin.HDR_COLOR;
 //    }
-
     protected void fillContent() {
         super.fillContent();
         String theme = ASAdmin.readProperty("LookAndFeel",
@@ -79,7 +78,7 @@ public class ConfigEditor extends PopupDialog {
             SwingUtilities.updateComponentTreeUI(this);
         } catch (Exception ex) {
         }
-        
+
         ASAdmin.setWindowIcon(this, "cust_sol16.png");
 
         JComponent[] comps = (JComponent[]) getObject();
@@ -247,5 +246,5 @@ public class ConfigEditor extends PopupDialog {
             }
         };
     }
-    
+
 }

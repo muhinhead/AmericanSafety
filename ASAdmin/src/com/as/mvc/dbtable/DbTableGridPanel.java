@@ -5,6 +5,7 @@ import com.as.mvc.Controller;
 import com.as.util.PopupListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -32,6 +33,7 @@ public class DbTableGridPanel extends JPanel {
     private AbstractAction addAction = null;
     private AbstractAction editAction = null;
     private AbstractAction delAction = null;
+    private AbstractAction sortAction = null;
     private JButton addButton = null;
     private JButton editButton = null;
     private JButton delButton = null;
@@ -75,6 +77,7 @@ public class DbTableGridPanel extends JPanel {
         this.setAddAction(acts.length > 0 ? acts[0] : null);
         this.setEditAction(acts.length > 1 ? acts[1] : null);
         this.setDelAction(acts.length > 2 ? acts[2] : null);
+        this.setSortAction(acts.length > 3 ? acts[3] : null);
 
         tableView = (tabView == null ? new DbTableView() : tabView);
         if (maxWidths != null) {
@@ -103,7 +106,7 @@ public class DbTableGridPanel extends JPanel {
                 }
             }
         });
-        activatePopup(getAddAction(), getEditAction(), getDelAction());
+        activatePopup(getAddAction(), getEditAction(), getDelAction(), getSortAction());
     }
 
     protected void addRightBtnPanel(AbstractAction[] acts) {
@@ -137,13 +140,14 @@ public class DbTableGridPanel extends JPanel {
     }
 
     protected void activatePopup(AbstractAction addAction,
-            final AbstractAction editAction,
-            AbstractAction delAction) {
+            AbstractAction editAction,
+            AbstractAction delAction,
+            AbstractAction sortAction) {
         popMenu = new JPopupMenu();
-
         popMenu.add(addAction);
         popMenu.add(editAction);
         popMenu.add(delAction);
+        popMenu.add(sortAction);
         tableView.addMouseListener(new PopupListener(popMenu));
         sp.addMouseListener(new PopupListener(popMenu));
     }
@@ -239,6 +243,13 @@ public class DbTableGridPanel extends JPanel {
     }
 
     /**
+     * @return the delAction
+     */
+    public AbstractAction getSortAction() {
+        return sortAction;
+    }
+    
+    /**
      * @return the addButton
      */
     public JButton getAddButton() {
@@ -287,6 +298,10 @@ public class DbTableGridPanel extends JPanel {
         this.delAction = delAction;
     }
 
+    public void setSortAction(AbstractAction sortAction) {
+        this.sortAction = sortAction;
+    }
+    
     /**
      * @return the controller
      */
@@ -306,5 +321,10 @@ public class DbTableGridPanel extends JPanel {
      */
     public JProgressBar getProgressBar() {
         return progressBar;
+    }
+
+    public boolean setCustomSort(Frame frame) {
+        new CustomSort4Grid(frame,this);
+        return CustomSort4Grid.okPressed;
     }
 }

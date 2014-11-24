@@ -28,6 +28,7 @@ public class DbTableDocument extends Document {
     private Connection connection;
     private static final String errDb = "Database error:";
     private String filterText = null;
+    private String originalSelectStatement = null;
 
     public DbTableDocument(String name, Object[] body) {
         super(name);
@@ -45,10 +46,10 @@ public class DbTableDocument extends Document {
     }
 
     protected void initialize(Object initObject) {
-        if (colNames == null) {
+        if (getColNames() == null) {
             colNames = new Vector();
         } else {
-            colNames.clear();
+            getColNames().clear();
         }
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -67,7 +68,7 @@ public class DbTableDocument extends Document {
             rs = ps.executeQuery();
             ResultSetMetaData md = rs.getMetaData();
             for (int i = 0; i < md.getColumnCount(); i++) {
-                colNames.add(md.getColumnLabel(i + 1));
+                getColNames().add(md.getColumnLabel(i + 1));
             }
         } catch (SQLException se) {
             JOptionPane.showMessageDialog(null, se.toString(), errDb, JOptionPane.ERROR_MESSAGE);
@@ -107,7 +108,7 @@ public class DbTableDocument extends Document {
             boolean filtered = true;
             while (rs.next()) {
                 line = new Vector();
-                for (i = 1; i <= colNames.size(); i++) {
+                for (i = 1; i <= getColNames().size(); i++) {
                     String ceil = rs.getString(i);
                     ceil = ceil == null ? "" : ceil;
                     if (filterText != null && filterText.trim().length() > 0) {
@@ -146,7 +147,7 @@ public class DbTableDocument extends Document {
                 rowData = loadData();
             }
         }
-        Object[] content = new Object[]{colNames, rowData};
+        Object[] content = new Object[]{getColNames(), rowData};
         return content;
     }
 
@@ -211,6 +212,10 @@ public class DbTableDocument extends Document {
     }
 
     public void generateHTML(File expFile) throws Exception {
+        generateHTML(expFile, null);
+    }    
+    
+    public void generateHTML(File expFile, String header) throws Exception {
         if (expFile == null) {
             return;
         }
@@ -222,6 +227,11 @@ public class DbTableDocument extends Document {
             bufferedOutput = new BufferedOutputStream(new FileOutputStream(expFile));
             bufferedOutput.write("<html>\n".getBytes());
             bufferedOutput.write("<head>\n".getBytes());
+            if (header!=null) {
+                bufferedOutput.write("<center><H2>".getBytes());
+                bufferedOutput.write(header.getBytes());
+                bufferedOutput.write("</H2></center>".getBytes());
+            }
             bufferedOutput.write("</head>\n".getBytes());
             bufferedOutput.write(("<style type=\"text/css\">"
                     + "table.mystyle"
@@ -290,6 +300,24 @@ public class DbTableDocument extends Document {
      * @param selectStatement the selectStatement to set
      */
     public void setSelectStatement(String selectStatement) {
+        if (getOriginalSelectStatement() == null) {
+            originalSelectStatement = selectStatement;
+        }
         this.selectStatement = selectStatement;
     }
+
+    /**
+     * @return the originalSelectStatement
+     */
+    public String getOriginalSelectStatement() {
+        return originalSelectStatement;
+    }
+
+    /**
+     * @return the colNames
+     */
+    public Vector getColNames() {
+        return colNames;
+    }
+
 }

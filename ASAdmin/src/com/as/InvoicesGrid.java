@@ -7,7 +7,7 @@ package com.as;
 
 import com.as.orm.IDocument;
 import com.as.orm.Invoice;
-import com.as.orm.Quote;
+import com.as.orm.Invoiceitem;
 import com.as.orm.dbobject.DbObject;
 import com.as.remote.IMessageSender;
 import java.awt.event.ActionEvent;
@@ -87,6 +87,11 @@ public class InvoicesGrid extends GeneralGridPanel {
                         IDocument doc = (IDocument) exchanger.loadDbObjectOnID(Invoice.class, id);
                         if(doc!=null && GeneralFrame.yesNo("Attention!",
                                     "Do you want to delete this document?") == JOptionPane.YES_OPTION) {
+                            Integer invoiceID = doc.getPK_ID();
+                            for (DbObject itm : exchanger.getDbObjects(Invoiceitem.class, 
+                                    "invoice_id="+invoiceID, null)) {
+                                exchanger.deleteObject(itm);
+                            }                            
                             exchanger.deleteObject((DbObject) doc);
                             refresh();
                         }

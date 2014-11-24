@@ -1,12 +1,15 @@
 package com.as;
 
+import static com.as.GeneralFrame.errMessageBox;
 import com.as.mvc.dbtable.DbTableDocument;
+import com.as.mvc.dbtable.DbTableView.MyTableModel;
 import com.as.remote.IMessageSender;
 import com.as.util.FileFilterOnExtension;
 import com.as.util.ImagePanel;
 import com.as.util.TexturedPanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -14,6 +17,9 @@ import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -25,18 +31,31 @@ import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 /**
  *
  * @author Nick Mukhin
  */
 public class DashBoardImage extends JFrame {
+
+    private static final String ATTENTION = "Attention!";
+    private static final String NO_OPEN_GRIDS = "No open grids";
 
     private static final String ORDERS = "ORDERS";
     private static final String INVOICES = "INVOICES";
@@ -57,7 +76,7 @@ public class DashBoardImage extends JFrame {
             public void stateChanged(ChangeEvent e) {
                 if (e.getSource() instanceof JTabbedPane) {
                     JTabbedPane tp = (JTabbedPane) e.getSource();
-                    activeGridPanel = (GeneralGridPanel) tp.getSelectedComponent();
+                    activatePanel((GeneralGridPanel) tp.getSelectedComponent());
                 }
             }
         };
@@ -80,10 +99,54 @@ public class DashBoardImage extends JFrame {
     private GeneralGridPanel invoicesGrid;
     private GeneralGridPanel ordersGrid;
     private GeneralGridPanel departspmentGrid;
+    private GeneralGridPanel rolesGrid;
     private JTabbedPane setupPanel = null;
     private JTabbedPane customersPanel = null;
     private JPopupMenu sharePopup;
     private ImagePanel shareImg;
+    private JTextField searchField;
+
+    private static void disableSearchField() {
+        ourInstance.searchField.setText("");
+        ourInstance.highlightFound();
+        ourInstance.searchField.setEnabled(false);
+    }
+
+    private KeyAdapter getSrcFieldKeyListener() {
+        return new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                highlightFound();
+            }
+        };
+    }
+
+    private void highlightFound() {
+        if (activeGridPanel != null) {
+            try {
+                RowFilter<MyTableModel, Object> rf = RowFilter.regexFilter("(?i)" + searchField.getText());
+                activeGridPanel.getTableView().getSorter().setRowFilter(rf);
+            } catch (Exception ex) {
+                ASAdmin.log(ex);
+            }
+        }
+    }
+
+    private static class SortAction extends AbstractAction {
+
+        private GeneralGridPanel grid;
+
+        SortAction(GeneralGridPanel grid) {
+            this.grid = grid;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (grid.setCustomSort(ourInstance)) {
+                grid.refresh();
+            }
+        }
+    }
 
     private AbstractAction notImplementedAction() {
         return new AbstractAction() {
@@ -102,7 +165,7 @@ public class DashBoardImage extends JFrame {
                 if (activeGridPanel != null && activeGridPanel.getAddAction() != null) {
                     activeGridPanel.getAddAction().actionPerformed(null);
                 } else {
-                    GeneralFrame.notImplementedYet();
+                    GeneralFrame.errMessageBox(ATTENTION, NO_OPEN_GRIDS);
                 }
             }
 
@@ -117,7 +180,7 @@ public class DashBoardImage extends JFrame {
                 if (activeGridPanel != null && activeGridPanel.getDelAction() != null) {
                     activeGridPanel.getDelAction().actionPerformed(null);
                 } else {
-                    GeneralFrame.notImplementedYet();
+                    GeneralFrame.errMessageBox(ATTENTION, NO_OPEN_GRIDS);
                 }
             }
 
@@ -132,10 +195,45 @@ public class DashBoardImage extends JFrame {
                 if (activeGridPanel != null && activeGridPanel.getDelAction() != null) {
                     activeGridPanel.getEditAction().actionPerformed(null);
                 } else {
-                    GeneralFrame.notImplementedYet();
+                    GeneralFrame.errMessageBox(ATTENTION, NO_OPEN_GRIDS);
                 }
             }
 
+        };
+    }
+
+    private AbstractAction sortGridRowAction() {
+        return new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (activeGridPanel != null && activeGridPanel.getSortAction() != null) {
+                    activeGridPanel.getSortAction().actionPerformed(null);
+                } else {
+                    GeneralFrame.errMessageBox(ATTENTION, NO_OPEN_GRIDS);
+                }
+            }
+
+        };
+    }
+
+    private AbstractAction findGridAction() {
+        return new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (activeGridPanel != null) {
+                    if (searchField.isEnabled()) {
+                        searchField.setText("");
+                        highlightFound();
+                    } else {
+                        searchField.requestFocus();
+                    }
+                    searchField.setEnabled(!searchField.isEnabled());
+                } else {
+                    GeneralFrame.errMessageBox(ATTENTION, NO_OPEN_GRIDS);
+                }
+            }
         };
     }
 
@@ -197,7 +295,8 @@ public class DashBoardImage extends JFrame {
                     DbTableDocument doc = (DbTableDocument) activeGridPanel.getController().getDocument();
                     try {
                         File htmlFile;
-                        doc.generateHTML(htmlFile = chooseFileForExport("html"));
+                        String header = JOptionPane.showInputDialog(rootPane, "Enter title for the document:", "Title");
+                        doc.generateHTML(htmlFile = chooseFileForExport("html"), header);
                         if (htmlFile != null) {
                             Desktop desktop = Desktop.getDesktop();
                             desktop.open(htmlFile);
@@ -230,7 +329,32 @@ public class DashBoardImage extends JFrame {
         sharePopup.add(new JMenuItem(new AbstractAction("As PDF") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GeneralFrame.notImplementedYet();
+                //GeneralFrame.notImplementedYet();
+                DbTableDocument doc = (DbTableDocument) activeGridPanel.getController().getDocument();
+                File pdfFile = null, htmlFile = null;
+                try {
+                    String header = JOptionPane.showInputDialog(rootPane, "Enter title for the document:", "Title");
+                    pdfFile = chooseFileForExport("pdf");
+                    String htmlFileName = pdfFile.getName() + ".html";
+                    doc.generateHTML(htmlFile = new File(htmlFileName), header);
+
+                    Document document = new Document();
+                    PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+                    document.open();
+                    XMLWorkerHelper.getInstance().parseXHtml(writer, document,
+                            new FileInputStream(htmlFile));
+                    document.close();
+                    if (pdfFile != null) {
+                        Desktop desktop = Desktop.getDesktop();
+                        desktop.open(pdfFile);
+                    }
+                } catch (Exception ex) {
+                    ASAdmin.logAndShowMessage(ex);
+                } finally {
+                    if (htmlFile != null) {
+                        htmlFile.delete();
+                    }
+                }
             }
         }));
     }
@@ -285,13 +409,13 @@ public class DashBoardImage extends JFrame {
 
         img = new ImagePanel(ASAdmin.loadImage("Sort1.png", this),
                 ASAdmin.loadImage("Sort.jpg", this),
-                null, notImplementedAction());
+                null, sortGridRowAction());
         img.setBounds(292, 50, img.getWidth(), img.getHeight());
         headerLeft.add(img);
 
         img = new ImagePanel(ASAdmin.loadImage("Find1.png", this),
                 ASAdmin.loadImage("Find.jpg", this),
-                null, notImplementedAction());
+                null, findGridAction());
         img.setBounds(345, 50, img.getWidth(), img.getHeight());
         headerLeft.add(img);
 
@@ -305,6 +429,13 @@ public class DashBoardImage extends JFrame {
                 });
         shareImg.setBounds(398, 50, shareImg.getWidth(), shareImg.getHeight());
         headerLeft.add(shareImg);
+
+        searchField = new JTextField(20);
+        searchField.setToolTipText("Enter search string here");
+        searchField.setBounds(500, 68, searchField.getPreferredSize().width, searchField.getPreferredSize().height);
+        headerLeft.add(searchField);
+        searchField.setEnabled(false);
+        searchField.addKeyListener(getSrcFieldKeyListener());
 
         JPanel header = new JPanel(new BorderLayout());
         header.add(headerLeft, BorderLayout.NORTH);
@@ -403,34 +534,68 @@ public class DashBoardImage extends JFrame {
 
     }
 
+    private static GeneralGridPanel activatePanel(GeneralGridPanel p) {
+        activeGridPanel = p;
+        disableSearchField();
+        return activeGridPanel;
+    }
+
     public static void showAdminsFrame() {
         try {
             if (ourInstance.setupPanel == null) {
                 ourInstance.main.add(ourInstance.setupPanel = new JTabbedPane(), SETUP);
                 ourInstance.setupPanel.add("Users List",
-                        activeGridPanel = ourInstance.usersGrid = new UsersGrid(exchanger) {
+                        activatePanel(ourInstance.usersGrid = new UsersGrid(exchanger) {
                             protected void addRightBtnPanel(AbstractAction[] acts) {
+                            }
+
+                            public AbstractAction getSortAction() {
+                                return new SortAction(ourInstance.usersGrid);
+                            }
+                        }));
+                ourInstance.setupPanel.add("Roles",
+                        ourInstance.rolesGrid = new RolesGrid(exchanger) {
+                            protected void addRightBtnPanel(AbstractAction[] acts) {
+                            }
+
+                            public AbstractAction getSortAction() {
+                                return new SortAction(ourInstance.rolesGrid);
                             }
                         });
                 ourInstance.setupPanel.add("Departments",
-                        ourInstance.departspmentGrid = new DepartsmentGrid(exchanger){
+                        ourInstance.departspmentGrid = new DepartsmentGrid(exchanger) {
                             protected void addRightBtnPanel(AbstractAction[] acts) {
                             }
-                        }); 
+
+                            public AbstractAction getSortAction() {
+                                return new SortAction(ourInstance.departspmentGrid);
+                            }
+                        });
                 ourInstance.setupPanel.add("PO types",
                         ourInstance.poGrid = new PoGrid(exchanger) {
                             protected void addRightBtnPanel(AbstractAction[] acts) {
                             }
+
+                            public AbstractAction getSortAction() {
+                                return new SortAction(ourInstance.poGrid);
+                            }
                         });
-                ourInstance.setupPanel.add("Stamps", ourInstance.stampsGrid = new StampsGrid(exchanger) {
-                    protected void addRightBtnPanel(AbstractAction[] acts) {
-                    }
-                });
+                ourInstance.setupPanel.add("Stamps",
+                        ourInstance.stampsGrid = new StampsGrid(exchanger) {
+                            protected void addRightBtnPanel(AbstractAction[] acts) {
+                            }
+
+                            public AbstractAction getSortAction() {
+                                return new SortAction(ourInstance.stampsGrid);
+                            }
+                        });
                 ourInstance.setupPanel.addChangeListener(getChangeTabListener());
             }
             CardLayout cl = (CardLayout) ourInstance.main.getLayout();
             ourInstance.poGrid.refresh();
             ourInstance.stampsGrid.refresh();
+            ourInstance.rolesGrid.refresh();
+            ourInstance.departspmentGrid.refresh();
             cl.show(ourInstance.main, SETUP);
             SwingUtilities.updateComponentTreeUI(ourInstance);
         } catch (Exception ex) {
@@ -443,13 +608,21 @@ public class DashBoardImage extends JFrame {
             if (ourInstance.customersPanel == null) {
                 ourInstance.main.add(ourInstance.customersPanel = new JTabbedPane(), CUSTOMERS);
                 ourInstance.customersPanel.add("Customers",
-                        activeGridPanel = ourInstance.custGrid = new CustomerGrid(exchanger) {
+                        activatePanel(ourInstance.custGrid = new CustomerGrid(exchanger) {
                             protected void addRightBtnPanel(AbstractAction[] acts) {
                             }
-                        });
+
+                            public AbstractAction getSortAction() {
+                                return new SortAction(ourInstance.custGrid);
+                            }
+                        }));
                 ourInstance.customersPanel.add("Contacts",
                         ourInstance.contactGrid = new ContactGrid(exchanger) {
                             protected void addRightBtnPanel(AbstractAction[] acts) {
+                            }
+
+                            public AbstractAction getSortAction() {
+                                return new SortAction(ourInstance.contactGrid);
                             }
                         });
                 ourInstance.customersPanel.addChangeListener(getChangeTabListener());
@@ -459,7 +632,6 @@ public class DashBoardImage extends JFrame {
             ourInstance.contactGrid.refresh();
             cl.show(ourInstance.main, CUSTOMERS);
             SwingUtilities.updateComponentTreeUI(ourInstance);
-            //activeGridPanel = ourInstance.customersPanel.get;
         } catch (Exception ex) {
             ASAdmin.logAndShowMessage(ex);
         }
@@ -469,16 +641,20 @@ public class DashBoardImage extends JFrame {
         try {
             if (ourInstance.itemsGrid == null) {
                 ourInstance.main.add(
-                        ourInstance.itemsGrid = activeGridPanel = new ItemsGrid(exchanger) {
+                        ourInstance.itemsGrid = activatePanel(new ItemsGrid(exchanger) {
                             protected void addRightBtnPanel(AbstractAction[] acts) {
                             }
-                        }, PRODUCTS);
+
+                            public AbstractAction getSortAction() {
+                                return new SortAction(ourInstance.itemsGrid);
+                            }
+                        }), PRODUCTS);
             }
             CardLayout cl = (CardLayout) ourInstance.main.getLayout();
             ourInstance.itemsGrid.refresh();
             cl.show(ourInstance.main, PRODUCTS);
             SwingUtilities.updateComponentTreeUI(ourInstance);
-            activeGridPanel = ourInstance.itemsGrid;
+            activatePanel(ourInstance.itemsGrid);
         } catch (Exception ex) {
             ASAdmin.logAndShowMessage(ex);
         }
@@ -488,54 +664,66 @@ public class DashBoardImage extends JFrame {
         try {
             if (ourInstance.ordersGrid == null) {
                 ourInstance.main.add(
-                        ourInstance.ordersGrid = activeGridPanel = new OrdersGrid(exchanger) {
+                        ourInstance.ordersGrid = activatePanel(new OrdersGrid(exchanger) {
                             protected void addRightBtnPanel(AbstractAction[] acts) {
                             }
-                        }, ORDERS);
+
+                            public AbstractAction getSortAction() {
+                                return new SortAction(ourInstance.ordersGrid);
+                            }
+                        }), ORDERS);
             }
             CardLayout cl = (CardLayout) ourInstance.main.getLayout();
             ourInstance.ordersGrid.refresh();
             cl.show(ourInstance.main, ORDERS);
             SwingUtilities.updateComponentTreeUI(ourInstance);
-            activeGridPanel = ourInstance.ordersGrid;
+            activatePanel(ourInstance.ordersGrid);
         } catch (Exception ex) {
             ASAdmin.logAndShowMessage(ex);
         }
     }
-    
+
     private void showInvoices() {
         try {
             if (ourInstance.invoicesGrid == null) {
                 ourInstance.main.add(
-                        ourInstance.invoicesGrid = activeGridPanel = new InvoicesGrid(exchanger) {
+                        ourInstance.invoicesGrid = activatePanel(new InvoicesGrid(exchanger) {
                             protected void addRightBtnPanel(AbstractAction[] acts) {
                             }
-                        }, INVOICES);
+
+                            public AbstractAction getSortAction() {
+                                return new SortAction(ourInstance.invoicesGrid);
+                            }
+                        }), INVOICES);
             }
             CardLayout cl = (CardLayout) ourInstance.main.getLayout();
             ourInstance.invoicesGrid.refresh();
             cl.show(ourInstance.main, INVOICES);
             SwingUtilities.updateComponentTreeUI(ourInstance);
-            activeGridPanel = ourInstance.invoicesGrid;
+            activatePanel(ourInstance.invoicesGrid);
         } catch (Exception ex) {
             ASAdmin.logAndShowMessage(ex);
         }
     }
-    
+
     private void showQuotes() {
         try {
             if (ourInstance.quotesGrid == null) {
                 ourInstance.main.add(
-                        ourInstance.quotesGrid = activeGridPanel = new QuotesGrid(exchanger) {
+                        ourInstance.quotesGrid = activatePanel(new QuotesGrid(exchanger) {
                             protected void addRightBtnPanel(AbstractAction[] acts) {
                             }
-                        }, QUOTES);
+
+                            public AbstractAction getSortAction() {
+                                return new SortAction(ourInstance.quotesGrid);
+                            }
+                        }), QUOTES);
             }
             CardLayout cl = (CardLayout) ourInstance.main.getLayout();
             ourInstance.quotesGrid.refresh();
             cl.show(ourInstance.main, QUOTES);
             SwingUtilities.updateComponentTreeUI(ourInstance);
-            activeGridPanel = ourInstance.quotesGrid;
+            activatePanel(ourInstance.quotesGrid);
         } catch (Exception ex) {
             ASAdmin.logAndShowMessage(ex);
         }
@@ -589,7 +777,7 @@ public class DashBoardImage extends JFrame {
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize((int) (x * d.width), (int) (y * d.height));
     }
-    
+
     protected void exit() {
         dispose();
         System.exit(1);
