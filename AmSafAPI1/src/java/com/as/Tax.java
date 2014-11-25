@@ -35,9 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Tax.findAll", query = "SELECT t FROM Tax t"),
     @NamedQuery(name = "Tax.findByTaxId", query = "SELECT t FROM Tax t WHERE t.taxId = :taxId"),
-    @NamedQuery(name = "Tax.findByTaxDescription", query = "SELECT t FROM Tax t WHERE t.taxDescription = :taxDescription"),
-    @NamedQuery(name = "Tax.findByUpdatedAt", query = "SELECT t FROM Tax t WHERE t.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Tax.findByCreatedAt", query = "SELECT t FROM Tax t WHERE t.createdAt = :createdAt")})
+    @NamedQuery(name = "Tax.findByTaxDescription", query = "SELECT t FROM Tax t WHERE t.taxDescription = :taxDescription")})
 public class Tax implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -50,16 +48,6 @@ public class Tax implements Serializable {
     @Size(min = 1, max = 32)
     @Column(name = "tax_description")
     private String taxDescription;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
     @OneToMany(mappedBy = "taxId")
     private Collection<Quote> quoteCollection;
     @OneToMany(mappedBy = "taxId")
@@ -72,13 +60,6 @@ public class Tax implements Serializable {
 
     public Tax(Integer taxId) {
         this.taxId = taxId;
-    }
-
-    public Tax(Integer taxId, String taxDescription, Date updatedAt, Date createdAt) {
-        this.taxId = taxId;
-        this.taxDescription = taxDescription;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
     }
 
     public Integer getTaxId() {
@@ -95,22 +76,6 @@ public class Tax implements Serializable {
 
     public void setTaxDescription(String taxDescription) {
         this.taxDescription = taxDescription;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
     }
 
     @XmlTransient

@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author nick
  */
 @Entity
-@Table(name = "order")
+@Table(name = "`order`")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Order1.findAll", query = "SELECT o FROM Order1 o"),
@@ -48,8 +48,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Order1.findByPoNumber", query = "SELECT o FROM Order1 o WHERE o.poNumber = :poNumber"),
     @NamedQuery(name = "Order1.findByDateIn", query = "SELECT o FROM Order1 o WHERE o.dateIn = :dateIn"),
     @NamedQuery(name = "Order1.findByDateOut", query = "SELECT o FROM Order1 o WHERE o.dateOut = :dateOut"),
-    @NamedQuery(name = "Order1.findByUpdatedAt", query = "SELECT o FROM Order1 o WHERE o.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Order1.findByCreatedAt", query = "SELECT o FROM Order1 o WHERE o.createdAt = :createdAt"),
     @NamedQuery(name = "Order1.findBySubtotal", query = "SELECT o FROM Order1 o WHERE o.subtotal = :subtotal"),
     @NamedQuery(name = "Order1.findByWellName", query = "SELECT o FROM Order1 o WHERE o.wellName = :wellName"),
     @NamedQuery(name = "Order1.findByAfeUww", query = "SELECT o FROM Order1 o WHERE o.afeUww = :afeUww"),
@@ -90,12 +88,10 @@ public class Order1 implements Serializable, IDocument {
     @Column(name = "signature")
     private byte[] signature;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;

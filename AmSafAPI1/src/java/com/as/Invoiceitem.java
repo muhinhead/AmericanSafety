@@ -36,8 +36,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Invoiceitem.findByInvoiceitemId", query = "SELECT i FROM Invoiceitem i WHERE i.invoiceitemId = :invoiceitemId"),
     @NamedQuery(name = "Invoiceitem.findByQty", query = "SELECT i FROM Invoiceitem i WHERE i.qty = :qty"),
     @NamedQuery(name = "Invoiceitem.findByPrice", query = "SELECT i FROM Invoiceitem i WHERE i.price = :price"),
-    @NamedQuery(name = "Invoiceitem.findByUpdatedAt", query = "SELECT i FROM Invoiceitem i WHERE i.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Invoiceitem.findByCreatedAt", query = "SELECT i FROM Invoiceitem i WHERE i.createdAt = :createdAt"),
     @NamedQuery(name = "Invoiceitem.findByTax", query = "SELECT i FROM Invoiceitem i WHERE i.tax = :tax")})
 public class Invoiceitem implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -54,15 +52,6 @@ public class Invoiceitem implements Serializable {
     @Column(name = "price")
     private BigDecimal price;
     @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
     @Column(name = "tax")
     private Boolean tax;
     @JoinColumn(name = "invoice_id", referencedColumnName = "invoice_id")
@@ -77,13 +66,6 @@ public class Invoiceitem implements Serializable {
 
     public Invoiceitem(Integer invoiceitemId) {
         this.invoiceitemId = invoiceitemId;
-    }
-
-    public Invoiceitem(Integer invoiceitemId, int qty, Date updatedAt, Date createdAt) {
-        this.invoiceitemId = invoiceitemId;
-        this.qty = qty;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
     }
 
     public Integer getInvoiceitemId() {
@@ -108,22 +90,6 @@ public class Invoiceitem implements Serializable {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
     }
 
     public Boolean getTax() {

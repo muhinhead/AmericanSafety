@@ -35,9 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Stamps.findAll", query = "SELECT s FROM Stamps s"),
     @NamedQuery(name = "Stamps.findByStampsId", query = "SELECT s FROM Stamps s WHERE s.stampsId = :stampsId"),
-    @NamedQuery(name = "Stamps.findByStamps", query = "SELECT s FROM Stamps s WHERE s.stamps = :stamps"),
-    @NamedQuery(name = "Stamps.findByUpdatedAt", query = "SELECT s FROM Stamps s WHERE s.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Stamps.findByCreatedAt", query = "SELECT s FROM Stamps s WHERE s.createdAt = :createdAt")})
+    @NamedQuery(name = "Stamps.findByStamps", query = "SELECT s FROM Stamps s WHERE s.stamps = :stamps")})
 public class Stamps implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -50,16 +48,14 @@ public class Stamps implements Serializable {
     @Size(min = 1, max = 32)
     @Column(name = "stamps")
     private String stamps;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+//    @Basic(optional = false)
+//    @Column(name = "updated_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date updatedAt;
+//    @Basic(optional = false)
+//    @Column(name = "created_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date createdAt;
     @OneToMany(mappedBy = "stampsId")
     private Collection<Quote> quoteCollection;
     @OneToMany(mappedBy = "stampsId")
@@ -74,12 +70,12 @@ public class Stamps implements Serializable {
         this.stampsId = stampsId;
     }
 
-    public Stamps(Integer stampsId, String stamps, Date updatedAt, Date createdAt) {
-        this.stampsId = stampsId;
-        this.stamps = stamps;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-    }
+//    public Stamps(Integer stampsId, String stamps, Date updatedAt, Date createdAt) {
+//        this.stampsId = stampsId;
+//        this.stamps = stamps;
+//        this.updatedAt = updatedAt;
+//        this.createdAt = createdAt;
+//    }
 
     public Integer getStampsId() {
         return stampsId;
@@ -97,21 +93,21 @@ public class Stamps implements Serializable {
         this.stamps = stamps;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public Date getUpdatedAt() {
+//        return updatedAt;
+//    }
+//
+//    public void setUpdatedAt(Date updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
+//
+//    public Date getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(Date createdAt) {
+//        this.createdAt = createdAt;
+//    }
 
     @XmlTransient
     public Collection<Quote> getQuoteCollection() {

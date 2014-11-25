@@ -34,6 +34,7 @@ public class LoginWIthRoleList implements Serializable {
         setUrl(login.getUrl());
         setDepartmentId(login.getDepartmentID());
         setAvatar(login.getAvatar());
+//        setImageUrl(createImageUrl(login.getUserID()));
         setRoles(login.getRoles().split(","));
     }
     
@@ -158,6 +159,11 @@ public class LoginWIthRoleList implements Serializable {
      */
     public void setAvatar(byte[] avatar) {
         this.avatar = avatar;
+    }
+
+
+    private String createImageUrl(Integer userID) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

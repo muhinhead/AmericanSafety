@@ -88,13 +88,13 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
     @Produces("application/json")
     public ResponseDocumentList findDocuments(DocumentsParams parms) {
         try {
-            if (parms.getDocumentType() != null
-                    && !parms.getDocumentType().equals("order")
-                    && !parms.getDocumentType().equals("invoice")
-                    && !parms.getDocumentType().equals("quote")) {
-                return new ResponseDocumentList(null, new String[]{
-                    "Wrong document type '" + parms.getDocumentType() + "'! Specify 'order' or 'invoice' or 'quote'"});
-            }
+//            if (parms.getDocumentType() != null
+//                    && !parms.getDocumentType().equals("order")
+//                    && !parms.getDocumentType().equals("invoice")
+//                    && !parms.getDocumentType().equals("quote")) {
+//                return new ResponseDocumentList(null, new String[]{
+//                    "Wrong document type '" + parms.getDocumentType() + "'! Specify 'order' or 'invoice' or 'quote'"});
+//            }
             String sql;
             Query qry = getEntityManager().createNativeQuery(
                     sql = "SELECT concat(document_id,' ',doc_type) FROM document"
@@ -103,7 +103,7 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
                             " AND created_by in (select user_id from user where department_id=" + parms.getDepartmentID()+")")
                     + (parms.getUserID() == null ? "" : " AND created_by=" + parms.getUserID())
                     + (parms.getPoNumber() == null ? "" : " AND po_number='" + parms.getPoNumber() + "'")        
-                    + (parms.getDocumentType() == null ? "" : " AND doc_type='" + parms.getDocumentType() + "'")
+                    + (parms.getDocumentType() == null && parms.getDocumentType().length>0 ? "" : " AND doc_type in ('" + createTypeList(parms.getDocumentType()) + "')")
                     + (parms.getStartFirstRangeTime() == null ? "" : " AND date_in>='" + dateFormat.format(parms.getStartFirstRangeTime()) + "'")
                     + (parms.getStartSecondRangeTime() == null ? "" : " AND date_in<='" + dateFormat.format(parms.getStartSecondRangeTime()) + "'")
                     + (parms.getFinishFirstRangeTime() == null ? "" : " AND date_out>='" + dateFormat.format(parms.getFinishFirstRangeTime()))
@@ -293,6 +293,17 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
             invoiceItems.add(ii);
         }
         return invoiceItems;
+    }
+
+    private String createTypeList(String[] documentType) {
+        StringBuilder sb = new StringBuilder();
+        for (String docType : documentType) {
+            if (sb.length()>0) {
+                sb.append("','");
+            }
+            sb.append(docType);
+        }
+        return sb.toString();
     }
     
     

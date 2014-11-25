@@ -48,8 +48,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Invoice.findByDateIn", query = "SELECT i FROM Invoice i WHERE i.dateIn = :dateIn"),
     @NamedQuery(name = "Invoice.findByDateOut", query = "SELECT i FROM Invoice i WHERE i.dateOut = :dateOut"),
     @NamedQuery(name = "Invoice.findByPoNumber", query = "SELECT i FROM Invoice i WHERE i.poNumber = :poNumber"),
-    @NamedQuery(name = "Invoice.findByUpdatedAt", query = "SELECT i FROM Invoice i WHERE i.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Invoice.findByCreatedAt", query = "SELECT i FROM Invoice i WHERE i.createdAt = :createdAt"),
     @NamedQuery(name = "Invoice.findBySubtotal", query = "SELECT i FROM Invoice i WHERE i.subtotal = :subtotal"),
     @NamedQuery(name = "Invoice.findByWellName", query = "SELECT i FROM Invoice i WHERE i.wellName = :wellName"),
     @NamedQuery(name = "Invoice.findByAfeUww", query = "SELECT i FROM Invoice i WHERE i.afeUww = :afeUww"),
@@ -89,16 +87,14 @@ public class Invoice implements Serializable, IDocument {
     @Size(max = 32)
     @Column(name = "po_number")
     private String poNumber;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+//    @Basic(optional = false)
+//    @Column(name = "updated_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date updatedAt;
+//    @Basic(optional = false)
+//    @Column(name = "created_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date createdAt;
     @Column(name = "subtotal")
     private BigDecimal subtotal;
     @Size(max = 64)
@@ -144,11 +140,11 @@ public class Invoice implements Serializable, IDocument {
         this.invoiceId = invoiceId;
     }
 
-    public Invoice(Integer invoiceId, Date updatedAt, Date createdAt) {
-        this.invoiceId = invoiceId;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-    }
+//    public Invoice(Integer invoiceId, Date updatedAt, Date createdAt) {
+//        this.invoiceId = invoiceId;
+//        this.updatedAt = updatedAt;
+//        this.createdAt = createdAt;
+//    }
 
     public Integer getInvoiceId() {
         return invoiceId;
@@ -230,21 +226,21 @@ public class Invoice implements Serializable, IDocument {
         this.poNumber = poNumber;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public Date getUpdatedAt() {
+//        return updatedAt;
+//    }
+//
+//    public void setUpdatedAt(Date updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
+//
+//    public Date getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(Date createdAt) {
+//        this.createdAt = createdAt;
+//    }
 
     public BigDecimal getSubtotal() {
         return subtotal;

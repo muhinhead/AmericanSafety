@@ -23,7 +23,7 @@ public class DocumentsParams implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date date;
     private Integer userID;
-    private String documentType;
+    private String[] documentType;
     private Integer customerID;
     @Temporal(TemporalType.DATE)
     private Date startFirstRangeTime;
@@ -102,14 +102,14 @@ public class DocumentsParams implements Serializable {
     /**
      * @return the documentType
      */
-    public String getDocumentType() {
+    public String[] getDocumentType() {
         return documentType;
     }
 
     /**
      * @param documentType the documentType to set
      */
-    public void setDocumentType(String documentType) {
+    public void setDocumentType(String[] documentType) {
         this.documentType = documentType;
     }
 

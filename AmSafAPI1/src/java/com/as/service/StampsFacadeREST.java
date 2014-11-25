@@ -6,10 +6,14 @@
 package com.as.service;
 
 import com.as.Stamps;
+import com.as.util.ParamPage;
+import com.as.util.ResponseStampsList;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -33,6 +37,30 @@ public class StampsFacadeREST extends AbstractFacade<Stamps> {
         super(Stamps.class);
     }
 
+@POST
+    @Path("/find")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public ResponseStampsList findStamps(ParamPage parms) {
+        try {
+            Query qry = getEntityManager().createNativeQuery("SELECT stamps_id FROM stamps "
+                    + " LIMIT " + (parms.getOffset() != null ? parms.getOffset().toString() + "," : "")
+                    + (parms.getLimit() != null ? parms.getLimit().toString() : "9999999999999999999"));
+            //System.out.println("!!sql:"+sql);
+            List<Integer> stampsIds = qry.getResultList();
+            
+            List<Stamps> stampsList = new ArrayList<Stamps>(stampsIds.size());
+            for (Integer stampsID : stampsIds) {
+                Stamps stamps = (Stamps) getEntityManager().createNamedQuery("Stamps.findByStampsId")
+                        .setParameter("stampsId", stampsID).getSingleResult();
+                stampsList.add(stamps);
+            }
+            return new ResponseStampsList(stampsList, null);
+        } catch (Exception e) {
+            return new ResponseStampsList(null, new String[]{e.getMessage()});
+        }
+    }    
+    
     @POST
     @Override
     @Consumes({"application/xml", "application/json"})

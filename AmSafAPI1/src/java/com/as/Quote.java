@@ -47,8 +47,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Quote.findByTaxProc", query = "SELECT q FROM Quote q WHERE q.taxProc = :taxProc"),
     @NamedQuery(name = "Quote.findByPoNumber", query = "SELECT q FROM Quote q WHERE q.poNumber = :poNumber"),
     @NamedQuery(name = "Quote.findByDateIn", query = "SELECT q FROM Quote q WHERE q.dateIn = :dateIn"),
-    @NamedQuery(name = "Quote.findByUpdatedAt", query = "SELECT q FROM Quote q WHERE q.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Quote.findByCreatedAt", query = "SELECT q FROM Quote q WHERE q.createdAt = :createdAt"),
     @NamedQuery(name = "Quote.findBySubtotal", query = "SELECT q FROM Quote q WHERE q.subtotal = :subtotal"),
     @NamedQuery(name = "Quote.findByWellName", query = "SELECT q FROM Quote q WHERE q.wellName = :wellName"),
     @NamedQuery(name = "Quote.findByAfeUww", query = "SELECT q FROM Quote q WHERE q.afeUww = :afeUww"),
@@ -85,16 +83,6 @@ public class Quote implements Serializable, IDocument {
     @Lob
     @Column(name = "signature")
     private byte[] signature;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
     @Column(name = "subtotal")
     private BigDecimal subtotal;
     @Size(max = 64)
@@ -138,12 +126,6 @@ public class Quote implements Serializable, IDocument {
 
     public Quote(Integer quoteId) {
         this.quoteId = quoteId;
-    }
-
-    public Quote(Integer quoteId, Date updatedAt, Date createdAt) {
-        this.quoteId = quoteId;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
     }
 
     public Integer getQuoteId() {
@@ -216,22 +198,6 @@ public class Quote implements Serializable, IDocument {
 
     public void setSignature(byte[] signature) {
         this.signature = signature;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
     }
 
     public BigDecimal getSubtotal() {
