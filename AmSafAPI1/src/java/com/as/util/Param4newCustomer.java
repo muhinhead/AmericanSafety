@@ -58,5 +58,5 @@ public class Param4newCustomer implements Serializable {
     public void setContacts(Collection<Param4newContact> contacts) {
         this.contacts = contacts;
     }
-    
+
 }

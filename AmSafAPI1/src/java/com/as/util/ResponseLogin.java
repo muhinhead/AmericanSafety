@@ -37,13 +37,13 @@ public class ResponseLogin implements Serializable {
     private String[] errorMsg;
     @JoinColumn(name = "login_id", referencedColumnName = "userID")
     @ManyToOne
-    private Login response;
+    private LoginWIthRoleList response;
 
     public ResponseLogin() {
     }
 
     public ResponseLogin(Login login, String[] errMsg) {
-        setResponse(login);
+        setResponse(login!=null?new LoginWIthRoleList(login):null);
         setErrorMsg(errMsg);
     }
 
@@ -67,11 +67,11 @@ public class ResponseLogin implements Serializable {
         this.errorMsg = errorMsg;
     }
 
-    public Login getResponse() {
+    public LoginWIthRoleList getResponse() {
         return response;
     }
 
-    public void setResponse(Login response) {
+    public void setResponse(LoginWIthRoleList response) {
         this.response = response;
     }
 

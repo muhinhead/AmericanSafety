@@ -10,7 +10,6 @@ import com.as.Customer;
 import com.as.util.Param4newContact;
 import com.as.util.Param4newCustomer;
 import com.as.util.ParamMask;
-import com.as.util.ResponseCustomerID;
 import com.as.util.ResponseCustomerList;
 import com.as.util.ResponseNewCustomer;
 import java.util.ArrayList;

@@ -36,7 +36,7 @@ public class ResponseDocumentList implements Serializable {
                 rd.setStartRangeTime(doc.getDateIn());
                 rd.setFinishRangeTime(doc.getDateOut());
                 rd.setDocumentType(doc.getDocumentPK().getDocType());
-                rd.setSetPO(doc.getPoNumber() == null);
+                rd.setPoNumber(doc.getPoNumber());
                 rd.setCustomerID(doc.getCustomerId());
                 rd.setUserID(doc.getCreatedBy());
                 response.add(rd);

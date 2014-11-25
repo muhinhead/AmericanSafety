@@ -23,7 +23,7 @@ public class ResponseDoc implements Serializable {
     
     @Temporal(TemporalType.DATE)
     private Date finishRangeTime;
-    private Boolean setPO;
+    private String poNumber;
     
     private Integer customerID;
     private Integer userID;
@@ -84,19 +84,6 @@ public class ResponseDoc implements Serializable {
         this.finishRangeTime = finishRangeTime;
     }
 
-    /**
-     * @return the setPO
-     */
-    public Boolean getSetPO() {
-        return setPO;
-    }
-
-    /**
-     * @param setPO the setPO to set
-     */
-    public void setSetPO(Boolean setPO) {
-        this.setPO = setPO;
-    }
 
     /**
      * @return the customerID
@@ -150,6 +137,20 @@ public class ResponseDoc implements Serializable {
     @Override
     public String toString() {
         return "com.as.util.ResponseDoc[ id=" + userID + " ]";
+    }
+
+    /**
+     * @return the poNumber
+     */
+    public String getPoNumber() {
+        return poNumber;
+    }
+
+    /**
+     * @param poNumber the poNumber to set
+     */
+    public void setPoNumber(String poNumber) {
+        this.poNumber = poNumber;
     }
     
 }

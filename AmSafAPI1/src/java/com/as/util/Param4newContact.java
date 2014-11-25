@@ -13,6 +13,7 @@ import java.io.Serializable;
  */
 public class Param4newContact implements Serializable {
 
+    private Integer customerID; //ignored on Customer creation, used on single Contact creation
     private String contactTitle, contactFirstName, contactLastName, contactEmail, contactPhone;
 
     /**
@@ -83,5 +84,19 @@ public class Param4newContact implements Serializable {
      */
     public void setContactTitle(String contactTitle) {
         this.contactTitle = contactTitle;
+    }
+
+    /**
+     * @return the customerID
+     */
+    public Integer getCustomerID() {
+        return customerID;
+    }
+
+    /**
+     * @param customerID the customerID to set
+     */
+    public void setCustomerID(Integer customerID) {
+        this.customerID = customerID;
     }
 }

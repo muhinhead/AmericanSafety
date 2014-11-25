@@ -102,6 +102,7 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
                     + (parms.getDepartmentID() == null ? "" : 
                             " AND created_by in (select user_id from user where department_id=" + parms.getDepartmentID()+")")
                     + (parms.getUserID() == null ? "" : " AND created_by=" + parms.getUserID())
+                    + (parms.getPoNumber() == null ? "" : " AND po_number='" + parms.getPoNumber() + "'")        
                     + (parms.getDocumentType() == null ? "" : " AND doc_type='" + parms.getDocumentType() + "'")
                     + (parms.getStartFirstRangeTime() == null ? "" : " AND date_in>='" + dateFormat.format(parms.getStartFirstRangeTime()) + "'")
                     + (parms.getStartSecondRangeTime() == null ? "" : " AND date_in<='" + dateFormat.format(parms.getStartSecondRangeTime()) + "'")

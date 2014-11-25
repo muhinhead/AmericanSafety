@@ -33,7 +33,7 @@ public class DocumentsParams implements Serializable {
     private Date finishFirstRangeTime;
     @Temporal(TemporalType.DATE)
     private Date finishSecondRangeTime;
-    private Boolean setPO;
+    private String poNumber;
     private Integer offset;
     private Integer limit;
     private Integer departmentID;
@@ -183,19 +183,19 @@ public class DocumentsParams implements Serializable {
         this.finishSecondRangeTime = finishSecondRangeTime;
     }
 
-    /**
-     * @return the setPO
-     */
-    public Boolean getSetPO() {
-        return setPO;
-    }
-
-    /**
-     * @param setPO the setPO to set
-     */
-    public void setSetPO(Boolean setPO) {
-        this.setPO = setPO;
-    }
+//    /**
+//     * @return the setPO
+//     */
+//    public Boolean getSetPO() {
+//        return setPO;
+//    }
+//
+//    /**
+//     * @param setPO the setPO to set
+//     */
+//    public void setSetPO(Boolean setPO) {
+//        this.setPO = setPO;
+//    }
 
     /**
      * @return the offset
@@ -237,6 +237,20 @@ public class DocumentsParams implements Serializable {
      */
     public void setDepartmentID(Integer departmentID) {
         this.departmentID = departmentID;
+    }
+
+    /**
+     * @return the poNumber
+     */
+    public String getPoNumber() {
+        return poNumber;
+    }
+
+    /**
+     * @param poNumber the poNumber to set
+     */
+    public void setPoNumber(String poNumber) {
+        this.poNumber = poNumber;
     }
 
 }
