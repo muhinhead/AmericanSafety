@@ -5,6 +5,7 @@
  */
 package com.as.service;
 
+import com.as.Department;
 import com.as.Document;
 import com.as.DocumentPK;
 import com.as.IDocument;
@@ -14,6 +15,8 @@ import com.as.Order1;
 import com.as.Orderitem;
 import com.as.Quote;
 import com.as.Quoteitem;
+import com.as.User;
+import com.as.Usersrole;
 import com.as.util.DocumentsParams;
 import com.as.util.ParamDocItem;
 import com.as.util.ParamDocument4Submit;
@@ -23,6 +26,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
@@ -153,6 +157,10 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
                 docID = InvoiceFacadeREST.createAndReturnId(invoice, getEntityManager());
                 invoice.setInvoiceitemCollection(createInvoiceItemsCollection(invoice, pars.getItems()));
                 output = "{\"invoiceID\":\"" + String.valueOf(docID) + "\"}";
+                if (!notifyAccountManagers(pars.getUserID(), invoice)) {
+                    Logger.getLogger(DocumentFacadeREST.class.getName()).log(Level.SEVERE, null, 
+                            "Warning! No account managers found to notify from userID="+pars.getUserID());
+                }
             }
         } catch (Exception ex) {
             Logger.getLogger(DocumentFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
@@ -304,6 +312,37 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
             sb.append(docType);
         }
         return sb.toString();
+    }
+
+    private boolean notifyAccountManagers(Integer userID, Invoice invoice) {
+        boolean sent = false;
+        User user = (User) getEntityManager()
+                .createNamedQuery("User.findByUserId")
+                .setParameter("userId", userID).getSingleResult();
+        if (user!=null) {
+            Department dpt = user.getDepartmentId();
+            for (User mngr : dpt.getUserCollection()) {
+                Collection<Usersrole> rolesCollection = mngr.getUsersroleCollection();
+                for (Usersrole ur : rolesCollection) {
+                    if (ur.getRoleId().getRoleName().equalsIgnoreCase("account manager")) {
+                        sendEmail(mngr.getEmail(), "Notification on Invoice submission for "+mngr.getLogin(), 
+                                        "Attention please!\n\n" + user.getFirstName()
+                                        + " "+user.getLastName()+" ("+user.getLogin()+") has submitted Invoice# "
+                                        + invoice.getInvoiceId()+" for client "
+                                        + invoice.getCustomerId().getCustomerName()
+                                        + " in the amount of $" + invoice.getSubtotal()
+                                        + " "+(invoice.getDateIn()!=null?" started on " + invoice.getDateIn().toString():"")
+                                        + " "+(invoice.getDateOut()!=null?" and completed on " + invoice.getDateOut().toString():"")
+                                        + " "+invoice.getPoTypeId().getPoDescription()+"# "+invoice.getPoNumber()+"\n\n"
+                                        + "Please don't answer this email since it was sent by robot at "
+                                        + Calendar.getInstance().getTime().toString()
+                        );
+                        sent = true;
+                    }
+                }
+            }
+        }
+        return sent;
     }
     
     
