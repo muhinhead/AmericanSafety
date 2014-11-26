@@ -6,6 +6,7 @@
 package com.as.util;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,8 +29,8 @@ public class ResponseNewCustomer implements Serializable {
     public ResponseNewCustomer() {
     }
 
-    public ResponseNewCustomer(Integer id) {
-        response = new ResponseCustomerID(id);
+    public ResponseNewCustomer(Integer id, Collection<Param4newContact> contacts) {
+        response = new ResponseCustomerID(id, contacts);
     }
 
     public ResponseNewCustomer(String err) {

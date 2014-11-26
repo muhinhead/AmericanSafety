@@ -61,10 +61,11 @@ public class CustomerFacadeREST extends AbstractFacade<Customer> {
                     contact.setLastName(cnt.getContactLastName());
                     contact.setEmail(cnt.getContactEmail());
                     contact.setPhone(cnt.getContactPhone());
-                    createContactAndReturnID(getEntityManager(), contact);
+                    cnt.setContactID(new Integer(Integer.parseInt(
+                            createContactAndReturnID(getEntityManager(), contact))));
                 }
             }
-            return new ResponseNewCustomer(new Integer(Integer.parseInt(sid)));
+            return new ResponseNewCustomer(new Integer(Integer.parseInt(sid)),param.getContacts());
         } catch (Exception e) {
             if (customer != null && sid != null) {
                 try {
