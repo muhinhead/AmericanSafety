@@ -8,44 +8,38 @@ import com.as.orm.dbobject.Triggers;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class Po extends DbObject  {
+public class Role extends DbObject  {
     private static Triggers activeTriggers = null;
-    private Integer poId = null;
-    private String poDescription = null;
-    private Timestamp updatedAt = null;
-    private Timestamp createdAt = null;
+    private Integer roleId = null;
+    private String roleName = null;
 
-    public Po(Connection connection) {
-        super(connection, "po", "po_id");
-        setColumnNames(new String[]{"po_id", "po_description", "updated_at", "created_at"});
+    public Role(Connection connection) {
+        super(connection, "role", "role_id");
+        setColumnNames(new String[]{"role_id", "role_name"});
     }
 
-    public Po(Connection connection, Integer poId, String poDescription, Timestamp updatedAt, Timestamp createdAt) {
-        super(connection, "po", "po_id");
-        setNew(poId.intValue() <= 0);
-//        if (poId.intValue() != 0) {
-            this.poId = poId;
+    public Role(Connection connection, Integer roleId, String roleName) {
+        super(connection, "role", "role_id");
+        setNew(roleId.intValue() <= 0);
+//        if (roleId.intValue() != 0) {
+            this.roleId = roleId;
 //        }
-        this.poDescription = poDescription;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
+        this.roleName = roleName;
     }
 
     public DbObject loadOnId(int id) throws SQLException, ForeignKeyViolationException {
-        Po po = null;
+        Role role = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String stmt = "SELECT po_id,po_description,updated_at,created_at FROM po WHERE po_id=" + id;
+        String stmt = "SELECT role_id,role_name FROM role WHERE role_id=" + id;
         try {
             ps = getConnection().prepareStatement(stmt);
             rs = ps.executeQuery();
             if (rs.next()) {
-                po = new Po(getConnection());
-                po.setPoId(new Integer(rs.getInt(1)));
-                po.setPoDescription(rs.getString(2));
-                po.setUpdatedAt(rs.getTimestamp(3));
-                po.setCreatedAt(rs.getTimestamp(4));
-                po.setNew(false);
+                role = new Role(getConnection());
+                role.setRoleId(new Integer(rs.getInt(1)));
+                role.setRoleName(rs.getString(2));
+                role.setNew(false);
             }
         } finally {
             try {
@@ -54,7 +48,7 @@ public class Po extends DbObject  {
                 if (ps != null) ps.close();
             }
         }
-        return po;
+        return role;
     }
 
     protected void insert() throws SQLException, ForeignKeyViolationException {
@@ -63,28 +57,26 @@ public class Po extends DbObject  {
          }
          PreparedStatement ps = null;
          String stmt =
-                "INSERT INTO po ("+(getPoId().intValue()!=0?"po_id,":"")+"po_description,updated_at,created_at) values("+(getPoId().intValue()!=0?"?,":"")+"?,?,?)";
+                "INSERT INTO role ("+(getRoleId().intValue()!=0?"role_id,":"")+"role_name) values("+(getRoleId().intValue()!=0?"?,":"")+"?)";
          try {
              ps = getConnection().prepareStatement(stmt);
              int n = 0;
-             if (getPoId().intValue()!=0) {
-                 ps.setObject(++n, getPoId());
+             if (getRoleId().intValue()!=0) {
+                 ps.setObject(++n, getRoleId());
              }
-             ps.setObject(++n, getPoDescription());
-             ps.setObject(++n, getUpdatedAt());
-             ps.setObject(++n, getCreatedAt());
+             ps.setObject(++n, getRoleName());
              ps.execute();
          } finally {
              if (ps != null) ps.close();
          }
          ResultSet rs = null;
-         if (getPoId().intValue()==0) {
-             stmt = "SELECT max(po_id) FROM po";
+         if (getRoleId().intValue()==0) {
+             stmt = "SELECT max(role_id) FROM role";
              try {
                  ps = getConnection().prepareStatement(stmt);
                  rs = ps.executeQuery();
                  if (rs.next()) {
-                     setPoId(new Integer(rs.getInt(1)));
+                     setRoleId(new Integer(rs.getInt(1)));
                  }
              } finally {
                  try {
@@ -110,14 +102,12 @@ public class Po extends DbObject  {
             }
             PreparedStatement ps = null;
             String stmt =
-                    "UPDATE po " +
-                    "SET po_description = ?, updated_at = ?, created_at = ?" + 
-                    " WHERE po_id = " + getPoId();
+                    "UPDATE role " +
+                    "SET role_name = ?" + 
+                    " WHERE role_id = " + getRoleId();
             try {
                 ps = getConnection().prepareStatement(stmt);
-                ps.setObject(1, getPoDescription());
-                ps.setObject(2, getUpdatedAt());
-                ps.setObject(3, getCreatedAt());
+                ps.setObject(1, getRoleName());
                 ps.execute();
             } finally {
                 if (ps != null) ps.close();
@@ -130,43 +120,37 @@ public class Po extends DbObject  {
     }
 
     public void delete() throws SQLException, ForeignKeyViolationException {
-        if (Order.exists(getConnection(),"po_type_id = " + getPoId())) {
-            throw new ForeignKeyViolationException("Can't delete, foreign key violation: order_po_fk");
-        }
-        if (Invoice.exists(getConnection(),"po_type_id = " + getPoId())) {
-            throw new ForeignKeyViolationException("Can't delete, foreign key violation: invoice_po_fk");
-        }
-        if (Quote.exists(getConnection(),"po_type_id = " + getPoId())) {
-            throw new ForeignKeyViolationException("Can't delete, foreign key violation: quote_po_fk");
+        if (Usersrole.exists(getConnection(),"role_id = " + getRoleId())) {
+            throw new ForeignKeyViolationException("Can't delete, foreign key violation: usersrole_role_fk");
         }
         if (getTriggers() != null) {
             getTriggers().beforeDelete(this);
         }
         PreparedStatement ps = null;
         String stmt =
-                "DELETE FROM po " +
-                "WHERE po_id = " + getPoId();
+                "DELETE FROM role " +
+                "WHERE role_id = " + getRoleId();
         try {
             ps = getConnection().prepareStatement(stmt);
             ps.execute();
         } finally {
             if (ps != null) ps.close();
         }
-        setPoId(new Integer(-getPoId().intValue()));
+        setRoleId(new Integer(-getRoleId().intValue()));
         if (getTriggers() != null) {
             getTriggers().afterDelete(this);
         }
     }
 
     public boolean isDeleted() {
-        return (getPoId().intValue() < 0);
+        return (getRoleId().intValue() < 0);
     }
 
     public static DbObject[] load(Connection con,String whereCondition,String orderCondition) throws SQLException {
         ArrayList lst = new ArrayList();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String stmt = "SELECT po_id,po_description,updated_at,created_at FROM po " +
+        String stmt = "SELECT role_id,role_name FROM role " +
                 ((whereCondition != null && whereCondition.length() > 0) ?
                 " WHERE " + whereCondition : "") +
                 ((orderCondition != null && orderCondition.length() > 0) ?
@@ -176,7 +160,7 @@ public class Po extends DbObject  {
             rs = ps.executeQuery();
             while (rs.next()) {
                 DbObject dbObj;
-                lst.add(dbObj=new Po(con,new Integer(rs.getInt(1)),rs.getString(2),rs.getTimestamp(3),rs.getTimestamp(4)));
+                lst.add(dbObj=new Role(con,new Integer(rs.getInt(1)),rs.getString(2)));
                 dbObj.setNew(false);
             }
         } finally {
@@ -186,10 +170,10 @@ public class Po extends DbObject  {
                 if (ps != null) ps.close();
             }
         }
-        Po[] objects = new Po[lst.size()];
+        Role[] objects = new Role[lst.size()];
         for (int i = 0; i < lst.size(); i++) {
-            Po po = (Po) lst.get(i);
-            objects[i] = po;
+            Role role = (Role) lst.get(i);
+            objects[i] = role;
         }
         return objects;
     }
@@ -201,7 +185,7 @@ public class Po extends DbObject  {
         boolean ok = false;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String stmt = "SELECT po_id FROM po " +
+        String stmt = "SELECT role_id FROM role " +
                 ((whereCondition != null && whereCondition.length() > 0) ?
                 "WHERE " + whereCondition : "");
         try {
@@ -219,61 +203,41 @@ public class Po extends DbObject  {
     }
 
     //public String toString() {
-    //    return getPoId() + getDelimiter();
+    //    return getRoleId() + getDelimiter();
     //}
 
     public Integer getPK_ID() {
-        return poId;
+        return roleId;
     }
 
     public void setPK_ID(Integer id) throws ForeignKeyViolationException {
         boolean prevIsNew = isNew();
-        setPoId(id);
+        setRoleId(id);
         setNew(prevIsNew);
     }
 
-    public Integer getPoId() {
-        return poId;
+    public Integer getRoleId() {
+        return roleId;
     }
 
-    public void setPoId(Integer poId) throws ForeignKeyViolationException {
-        setWasChanged(this.poId != null && this.poId != poId);
-        this.poId = poId;
-        setNew(poId.intValue() == 0);
+    public void setRoleId(Integer roleId) throws ForeignKeyViolationException {
+        setWasChanged(this.roleId != null && this.roleId != roleId);
+        this.roleId = roleId;
+        setNew(roleId.intValue() == 0);
     }
 
-    public String getPoDescription() {
-        return poDescription;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setPoDescription(String poDescription) throws SQLException, ForeignKeyViolationException {
-        setWasChanged(this.poDescription != null && !this.poDescription.equals(poDescription));
-        this.poDescription = poDescription;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) throws SQLException, ForeignKeyViolationException {
-        setWasChanged(this.updatedAt != null && !this.updatedAt.equals(updatedAt));
-        this.updatedAt = updatedAt;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) throws SQLException, ForeignKeyViolationException {
-        setWasChanged(this.createdAt != null && !this.createdAt.equals(createdAt));
-        this.createdAt = createdAt;
+    public void setRoleName(String roleName) throws SQLException, ForeignKeyViolationException {
+        setWasChanged(this.roleName != null && !this.roleName.equals(roleName));
+        this.roleName = roleName;
     }
     public Object[] getAsRow() {
-        Object[] columnValues = new Object[4];
-        columnValues[0] = getPoId();
-        columnValues[1] = getPoDescription();
-        columnValues[2] = getUpdatedAt();
-        columnValues[3] = getCreatedAt();
+        Object[] columnValues = new Object[2];
+        columnValues[0] = getRoleId();
+        columnValues[1] = getRoleName();
         return columnValues;
     }
 
@@ -290,12 +254,10 @@ public class Po extends DbObject  {
     public void fillFromString(String row) throws ForeignKeyViolationException, SQLException {
         String[] flds = splitStr(row, delimiter);
         try {
-            setPoId(Integer.parseInt(flds[0]));
+            setRoleId(Integer.parseInt(flds[0]));
         } catch(NumberFormatException ne) {
-            setPoId(null);
+            setRoleId(null);
         }
-        setPoDescription(flds[1]);
-        setUpdatedAt(toTimeStamp(flds[2]));
-        setCreatedAt(toTimeStamp(flds[3]));
+        setRoleName(flds[1]);
     }
 }

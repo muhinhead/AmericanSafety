@@ -8,44 +8,38 @@ import com.as.orm.dbobject.Triggers;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class Po extends DbObject  {
+public class Department extends DbObject  {
     private static Triggers activeTriggers = null;
-    private Integer poId = null;
-    private String poDescription = null;
-    private Timestamp updatedAt = null;
-    private Timestamp createdAt = null;
+    private Integer departmentId = null;
+    private String departmentName = null;
 
-    public Po(Connection connection) {
-        super(connection, "po", "po_id");
-        setColumnNames(new String[]{"po_id", "po_description", "updated_at", "created_at"});
+    public Department(Connection connection) {
+        super(connection, "department", "department_id");
+        setColumnNames(new String[]{"department_id", "department_name"});
     }
 
-    public Po(Connection connection, Integer poId, String poDescription, Timestamp updatedAt, Timestamp createdAt) {
-        super(connection, "po", "po_id");
-        setNew(poId.intValue() <= 0);
-//        if (poId.intValue() != 0) {
-            this.poId = poId;
+    public Department(Connection connection, Integer departmentId, String departmentName) {
+        super(connection, "department", "department_id");
+        setNew(departmentId.intValue() <= 0);
+//        if (departmentId.intValue() != 0) {
+            this.departmentId = departmentId;
 //        }
-        this.poDescription = poDescription;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
+        this.departmentName = departmentName;
     }
 
     public DbObject loadOnId(int id) throws SQLException, ForeignKeyViolationException {
-        Po po = null;
+        Department department = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String stmt = "SELECT po_id,po_description,updated_at,created_at FROM po WHERE po_id=" + id;
+        String stmt = "SELECT department_id,department_name FROM department WHERE department_id=" + id;
         try {
             ps = getConnection().prepareStatement(stmt);
             rs = ps.executeQuery();
             if (rs.next()) {
-                po = new Po(getConnection());
-                po.setPoId(new Integer(rs.getInt(1)));
-                po.setPoDescription(rs.getString(2));
-                po.setUpdatedAt(rs.getTimestamp(3));
-                po.setCreatedAt(rs.getTimestamp(4));
-                po.setNew(false);
+                department = new Department(getConnection());
+                department.setDepartmentId(new Integer(rs.getInt(1)));
+                department.setDepartmentName(rs.getString(2));
+                department.setNew(false);
             }
         } finally {
             try {
@@ -54,7 +48,7 @@ public class Po extends DbObject  {
                 if (ps != null) ps.close();
             }
         }
-        return po;
+        return department;
     }
 
     protected void insert() throws SQLException, ForeignKeyViolationException {
@@ -63,28 +57,26 @@ public class Po extends DbObject  {
          }
          PreparedStatement ps = null;
          String stmt =
-                "INSERT INTO po ("+(getPoId().intValue()!=0?"po_id,":"")+"po_description,updated_at,created_at) values("+(getPoId().intValue()!=0?"?,":"")+"?,?,?)";
+                "INSERT INTO department ("+(getDepartmentId().intValue()!=0?"department_id,":"")+"department_name) values("+(getDepartmentId().intValue()!=0?"?,":"")+"?)";
          try {
              ps = getConnection().prepareStatement(stmt);
              int n = 0;
-             if (getPoId().intValue()!=0) {
-                 ps.setObject(++n, getPoId());
+             if (getDepartmentId().intValue()!=0) {
+                 ps.setObject(++n, getDepartmentId());
              }
-             ps.setObject(++n, getPoDescription());
-             ps.setObject(++n, getUpdatedAt());
-             ps.setObject(++n, getCreatedAt());
+             ps.setObject(++n, getDepartmentName());
              ps.execute();
          } finally {
              if (ps != null) ps.close();
          }
          ResultSet rs = null;
-         if (getPoId().intValue()==0) {
-             stmt = "SELECT max(po_id) FROM po";
+         if (getDepartmentId().intValue()==0) {
+             stmt = "SELECT max(department_id) FROM department";
              try {
                  ps = getConnection().prepareStatement(stmt);
                  rs = ps.executeQuery();
                  if (rs.next()) {
-                     setPoId(new Integer(rs.getInt(1)));
+                     setDepartmentId(new Integer(rs.getInt(1)));
                  }
              } finally {
                  try {
@@ -110,14 +102,12 @@ public class Po extends DbObject  {
             }
             PreparedStatement ps = null;
             String stmt =
-                    "UPDATE po " +
-                    "SET po_description = ?, updated_at = ?, created_at = ?" + 
-                    " WHERE po_id = " + getPoId();
+                    "UPDATE department " +
+                    "SET department_name = ?" + 
+                    " WHERE department_id = " + getDepartmentId();
             try {
                 ps = getConnection().prepareStatement(stmt);
-                ps.setObject(1, getPoDescription());
-                ps.setObject(2, getUpdatedAt());
-                ps.setObject(3, getCreatedAt());
+                ps.setObject(1, getDepartmentName());
                 ps.execute();
             } finally {
                 if (ps != null) ps.close();
@@ -130,43 +120,37 @@ public class Po extends DbObject  {
     }
 
     public void delete() throws SQLException, ForeignKeyViolationException {
-        if (Order.exists(getConnection(),"po_type_id = " + getPoId())) {
-            throw new ForeignKeyViolationException("Can't delete, foreign key violation: order_po_fk");
-        }
-        if (Invoice.exists(getConnection(),"po_type_id = " + getPoId())) {
-            throw new ForeignKeyViolationException("Can't delete, foreign key violation: invoice_po_fk");
-        }
-        if (Quote.exists(getConnection(),"po_type_id = " + getPoId())) {
-            throw new ForeignKeyViolationException("Can't delete, foreign key violation: quote_po_fk");
+        if (User.exists(getConnection(),"department_id = " + getDepartmentId())) {
+            throw new ForeignKeyViolationException("Can't delete, foreign key violation: user_department_fk");
         }
         if (getTriggers() != null) {
             getTriggers().beforeDelete(this);
         }
         PreparedStatement ps = null;
         String stmt =
-                "DELETE FROM po " +
-                "WHERE po_id = " + getPoId();
+                "DELETE FROM department " +
+                "WHERE department_id = " + getDepartmentId();
         try {
             ps = getConnection().prepareStatement(stmt);
             ps.execute();
         } finally {
             if (ps != null) ps.close();
         }
-        setPoId(new Integer(-getPoId().intValue()));
+        setDepartmentId(new Integer(-getDepartmentId().intValue()));
         if (getTriggers() != null) {
             getTriggers().afterDelete(this);
         }
     }
 
     public boolean isDeleted() {
-        return (getPoId().intValue() < 0);
+        return (getDepartmentId().intValue() < 0);
     }
 
     public static DbObject[] load(Connection con,String whereCondition,String orderCondition) throws SQLException {
         ArrayList lst = new ArrayList();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String stmt = "SELECT po_id,po_description,updated_at,created_at FROM po " +
+        String stmt = "SELECT department_id,department_name FROM department " +
                 ((whereCondition != null && whereCondition.length() > 0) ?
                 " WHERE " + whereCondition : "") +
                 ((orderCondition != null && orderCondition.length() > 0) ?
@@ -176,7 +160,7 @@ public class Po extends DbObject  {
             rs = ps.executeQuery();
             while (rs.next()) {
                 DbObject dbObj;
-                lst.add(dbObj=new Po(con,new Integer(rs.getInt(1)),rs.getString(2),rs.getTimestamp(3),rs.getTimestamp(4)));
+                lst.add(dbObj=new Department(con,new Integer(rs.getInt(1)),rs.getString(2)));
                 dbObj.setNew(false);
             }
         } finally {
@@ -186,10 +170,10 @@ public class Po extends DbObject  {
                 if (ps != null) ps.close();
             }
         }
-        Po[] objects = new Po[lst.size()];
+        Department[] objects = new Department[lst.size()];
         for (int i = 0; i < lst.size(); i++) {
-            Po po = (Po) lst.get(i);
-            objects[i] = po;
+            Department department = (Department) lst.get(i);
+            objects[i] = department;
         }
         return objects;
     }
@@ -201,7 +185,7 @@ public class Po extends DbObject  {
         boolean ok = false;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String stmt = "SELECT po_id FROM po " +
+        String stmt = "SELECT department_id FROM department " +
                 ((whereCondition != null && whereCondition.length() > 0) ?
                 "WHERE " + whereCondition : "");
         try {
@@ -219,61 +203,41 @@ public class Po extends DbObject  {
     }
 
     //public String toString() {
-    //    return getPoId() + getDelimiter();
+    //    return getDepartmentId() + getDelimiter();
     //}
 
     public Integer getPK_ID() {
-        return poId;
+        return departmentId;
     }
 
     public void setPK_ID(Integer id) throws ForeignKeyViolationException {
         boolean prevIsNew = isNew();
-        setPoId(id);
+        setDepartmentId(id);
         setNew(prevIsNew);
     }
 
-    public Integer getPoId() {
-        return poId;
+    public Integer getDepartmentId() {
+        return departmentId;
     }
 
-    public void setPoId(Integer poId) throws ForeignKeyViolationException {
-        setWasChanged(this.poId != null && this.poId != poId);
-        this.poId = poId;
-        setNew(poId.intValue() == 0);
+    public void setDepartmentId(Integer departmentId) throws ForeignKeyViolationException {
+        setWasChanged(this.departmentId != null && this.departmentId != departmentId);
+        this.departmentId = departmentId;
+        setNew(departmentId.intValue() == 0);
     }
 
-    public String getPoDescription() {
-        return poDescription;
+    public String getDepartmentName() {
+        return departmentName;
     }
 
-    public void setPoDescription(String poDescription) throws SQLException, ForeignKeyViolationException {
-        setWasChanged(this.poDescription != null && !this.poDescription.equals(poDescription));
-        this.poDescription = poDescription;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) throws SQLException, ForeignKeyViolationException {
-        setWasChanged(this.updatedAt != null && !this.updatedAt.equals(updatedAt));
-        this.updatedAt = updatedAt;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) throws SQLException, ForeignKeyViolationException {
-        setWasChanged(this.createdAt != null && !this.createdAt.equals(createdAt));
-        this.createdAt = createdAt;
+    public void setDepartmentName(String departmentName) throws SQLException, ForeignKeyViolationException {
+        setWasChanged(this.departmentName != null && !this.departmentName.equals(departmentName));
+        this.departmentName = departmentName;
     }
     public Object[] getAsRow() {
-        Object[] columnValues = new Object[4];
-        columnValues[0] = getPoId();
-        columnValues[1] = getPoDescription();
-        columnValues[2] = getUpdatedAt();
-        columnValues[3] = getCreatedAt();
+        Object[] columnValues = new Object[2];
+        columnValues[0] = getDepartmentId();
+        columnValues[1] = getDepartmentName();
         return columnValues;
     }
 
@@ -290,12 +254,10 @@ public class Po extends DbObject  {
     public void fillFromString(String row) throws ForeignKeyViolationException, SQLException {
         String[] flds = splitStr(row, delimiter);
         try {
-            setPoId(Integer.parseInt(flds[0]));
+            setDepartmentId(Integer.parseInt(flds[0]));
         } catch(NumberFormatException ne) {
-            setPoId(null);
+            setDepartmentId(null);
         }
-        setPoDescription(flds[1]);
-        setUpdatedAt(toTimeStamp(flds[2]));
-        setCreatedAt(toTimeStamp(flds[3]));
+        setDepartmentName(flds[1]);
     }
 }

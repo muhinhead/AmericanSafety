@@ -15,6 +15,8 @@ public interface IMessageSender extends java.rmi.Remote {
     public void deleteObject(DbObject dbob) throws java.rmi.RemoteException;
     public DbObject loadDbObjectOnID(Class dbobClass, int id) 
             throws java.rmi.RemoteException;
+    public DbObject loadDbObjectOnIDwoCache(Class dbobClass, int id) 
+            throws java.rmi.RemoteException;
     public Vector[] getTableBody(String select) throws java.rmi.RemoteException;
     public Vector[] getTableBody(String select, int page, int pagesize) throws java.rmi.RemoteException;
     public Vector getColNames(String select) throws java.rmi.RemoteException;
