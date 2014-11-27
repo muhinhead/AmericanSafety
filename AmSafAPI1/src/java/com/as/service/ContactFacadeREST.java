@@ -123,9 +123,5 @@ public class ContactFacadeREST extends AbstractFacade<Contact> {
         return em;
     }
 
-    private Collection<Contact> reloadContactCollection(Customer customer) {
-        return (Collection<Contact>) getEntityManager().createNamedQuery("Contact.findByCustomerId")
-                .setParameter("customerId", customer).getResultList();
-    }
 
 }

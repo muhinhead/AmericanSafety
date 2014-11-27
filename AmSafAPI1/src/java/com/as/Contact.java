@@ -66,7 +66,7 @@ public class Contact implements Serializable {
     @Size(max = 128)
     @Column(name = "email")
     private String email;
-    @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Bad phone format (should be xxx-xxx-xxxx)")//if the field contains phone or fax number consider using this annotation to enforce field validation
+    //@Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Bad phone format (should be xxx-xxx-xxxx)")//if the field contains phone or fax number consider using this annotation to enforce field validation
     @Size(max = 32)
     @Column(name = "phone")
     private String phone;

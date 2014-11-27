@@ -45,7 +45,7 @@ public class LoginFacadeREST extends AbstractFacade<Login> {
         super(Login.class);
     }
 
-//    @POST
+    @POST
     @Path("/uploadavatar")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces("application/json")

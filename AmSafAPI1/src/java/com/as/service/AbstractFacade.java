@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -307,5 +308,9 @@ public abstract class AbstractFacade<T> {
             lastID = (BigInteger) em.createNativeQuery("select last_id from last_inserted_id").getSingleResult();
         }
         return String.valueOf(lastID);
+    }
+
+    protected Collection<Contact> reloadContactCollection(Customer customer) {
+        return (Collection<Contact>) getEntityManager().createNamedQuery("Contact.findByCustomerId").setParameter("customerId", customer).getResultList();
     }
 }

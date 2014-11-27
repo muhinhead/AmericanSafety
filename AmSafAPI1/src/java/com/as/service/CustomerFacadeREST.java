@@ -13,6 +13,7 @@ import com.as.util.ParamMask;
 import com.as.util.ResponseCustomerList;
 import com.as.util.ResponseNewCustomer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -64,6 +65,7 @@ public class CustomerFacadeREST extends AbstractFacade<Customer> {
                     cnt.setContactID(new Integer(Integer.parseInt(
                             createContactAndReturnID(getEntityManager(), contact))));
                 }
+                customer.setContactCollection(loadContactsForCustomer(customer));
             }
             return new ResponseNewCustomer(new Integer(Integer.parseInt(sid)),param.getContacts());
         } catch (Exception e) {
@@ -93,6 +95,7 @@ public class CustomerFacadeREST extends AbstractFacade<Customer> {
             for (Integer cid : cids) {
                 Customer c = (Customer) getEntityManager().createNamedQuery("Customer.findByCustomerId")
                         .setParameter("customerId", cid).getSingleResult();
+                c.setContactCollection(loadContactsForCustomer(c));
                 clst.add(c);
             }
             return new ResponseCustomerList(clst, null);
@@ -145,6 +148,11 @@ public class CustomerFacadeREST extends AbstractFacade<Customer> {
     @Override
     protected EntityManager getEntityManager() {
         return em;
+    }
+
+    private Collection<Contact> loadContactsForCustomer(Customer customer) {
+        return getEntityManager().createNamedQuery("Contact.findByCustomerId")
+                .setParameter("customerId", customer).getResultList();
     }
 
 }
