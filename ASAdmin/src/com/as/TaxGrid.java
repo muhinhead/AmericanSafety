@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.as;
 
-import com.as.orm.Stamps;
 import com.as.orm.Tax;
 import com.as.remote.IMessageSender;
 import java.awt.event.ActionEvent;
@@ -16,20 +10,19 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author nick
+ * @author Nick Mukhin
  */
-public class StampsGrid extends GeneralGridPanel {
-
+public class TaxGrid extends GeneralGridPanel {
     private static HashMap<Integer, Integer> maxWidths = new HashMap<Integer, Integer>();
 
     static {
         maxWidths.put(0, 40);
     }
 
-    public StampsGrid(IMessageSender exchanger) throws RemoteException {
-        super(exchanger, "select stamps_id \"Id\",stamps \"Stamp\","
+    public TaxGrid(IMessageSender exchanger) throws RemoteException {
+        super(exchanger, "select tax_id \"Id\",tax_description \"Description\","
                 + "DATE_FORMAT(created_at,'%m-%e-%Y %r') \"Created\", "
-                + "DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Updated\" from stamps", maxWidths, false);
+                + "DATE_FORMAT(updated_at,'%m-%e-%Y %r') \"Updated\" from tax", maxWidths, false);
     }
 
     @Override
@@ -37,10 +30,10 @@ public class StampsGrid extends GeneralGridPanel {
         return new AbstractAction("Add") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                EditStampsDialog ed = new EditStampsDialog("New Stamp", null);
-                if (EditStampsDialog.okPressed) {
-                    Stamps stamp = (Stamps) ed.getEditPanel().getDbObject();
-                    refresh(stamp.getStampsId());
+                EditTaxDialog ed = new EditTaxDialog("New Tax", null);
+                if (EditRoleDialog.okPressed) {
+                    Tax tax = (Tax) ed.getEditPanel().getDbObject();
+                    refresh(tax.getTaxId());
                 }
             }
         };    
@@ -54,9 +47,9 @@ public class StampsGrid extends GeneralGridPanel {
                 int id = getSelectedID();
                 if (id != 0) {
                     try {
-                        Stamps stamp = (Stamps) exchanger.loadDbObjectOnID(Stamps.class, id);
-                        new EditStampsDialog("Edit Stamp", stamp);
-                        if (EditStampsDialog.okPressed) {
+                        Tax tax = (Tax) exchanger.loadDbObjectOnID(Tax.class, id);
+                        new EditTaxDialog("Edit Tax", tax);
+                        if (EditTaxDialog.okPressed) {
                             refresh();
                         }
                     } catch (RemoteException ex) {
@@ -75,11 +68,11 @@ public class StampsGrid extends GeneralGridPanel {
                 int id = getSelectedID();
                 if (id != 0) {
                     try {
-                        Stamps stamp = (Stamps) exchanger.loadDbObjectOnID(Stamps.class, id);
-                        if (stamp != null) {
+                        Tax tax = (Tax) exchanger.loadDbObjectOnID(Tax.class, id);
+                        if (tax!=null) {
                             if (GeneralFrame.yesNo("Attention!",
                                     "Do you want to delete this record?") == JOptionPane.YES_OPTION) {
-                                exchanger.deleteObject(stamp);
+                                exchanger.deleteObject(tax);
                                 refresh();
                             }
                         }
@@ -90,4 +83,5 @@ public class StampsGrid extends GeneralGridPanel {
             }
         };
     }
+    
 }

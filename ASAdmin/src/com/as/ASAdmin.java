@@ -40,7 +40,7 @@ import javax.swing.SpinnerNumberModel;
  */
 public class ASAdmin {
 
-    private static final String version = "0.5.3";
+    private static final String version = "0.6";
     private static Logger logger = null;
     private static FileHandler fh;
     private static Properties props;
@@ -322,6 +322,11 @@ public class ASAdmin {
                 }
                 if (getExchanger() != null && matchVersions() && login(getExchanger())) {
 //                    new DashBoard("ASAdmin v." + version, exchanger);
+                    String homeDir = System.getProperty("user.home") + File.separator;
+                    System.setProperty("user.dir", homeDir);
+                    String current = new java.io.File(".").getCanonicalPath();
+//                    log("!!! Current directory:"+current);
+//                    log("!!! Home directory:"+homeDir);
                     new DashBoardImage("ASAdmin v." + version, exchanger);
                     break;
                 } else {

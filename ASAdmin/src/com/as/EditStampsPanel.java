@@ -5,7 +5,7 @@
  */
 package com.as;
 
-import com.as.orm.Role;
+import com.as.orm.Stamps;
 import com.as.orm.dbobject.DbObject;
 import com.as.util.RecordEditPanel;
 import static com.as.util.RecordEditPanel.getGridPanel;
@@ -16,23 +16,23 @@ import javax.swing.JTextField;
  *
  * @author nick
  */
-class EditRolePanel extends RecordEditPanel {
+class EditStampsPanel extends RecordEditPanel {
     private JTextField idField;
-    private JTextField roleNameTF;
+    private JTextField stampsTF;
 
-    public EditRolePanel(DbObject dbObject) {
+    public EditStampsPanel(DbObject dbObject) {
         super(dbObject);
     }
-
+    
     @Override
     protected void fillContent() {
         String titles[] = new String[]{
             "ID:",
-            "Role Name:"
+            "Stamp description:"
         };
         JComponent[] edits = new JComponent[]{
             getGridPanel(idField = new JTextField(), 4),
-            roleNameTF = new JTextField(30)
+            stampsTF = new JTextField(30)
         };
         idField.setEnabled(false);
         organizePanels(titles, edits, null);
@@ -40,24 +40,24 @@ class EditRolePanel extends RecordEditPanel {
     
     @Override
     public void loadData() {
-        Role role = (Role) getDbObject();
-        if (role != null) {
-            idField.setText(role.getRoleId().toString());
-            roleNameTF.setText(role.getRoleName());
+        Stamps stamp = (Stamps) getDbObject();
+        if (stamp != null) {
+            idField.setText(stamp.getStampsId().toString());
+            stampsTF.setText(stamp.getStamps());
         }
     }
     
     @Override
     public boolean save() throws Exception {
         boolean isNew = false;
-        Role role = (Role) getDbObject();
-        if (role == null) {
-            role = new Role(null);
-            role.setRoleId(0);
+        Stamps stamp = (Stamps) getDbObject();
+        if (stamp == null) {
+            stamp = new Stamps(null);
+            stamp.setStampsId(0);
             isNew = true;
         }
-        role.setRoleName(roleNameTF.getText());
-        return saveDbRecord(role, isNew);
+        stamp.setStamps(stampsTF.getText());
+        return saveDbRecord(stamp, isNew);
     }
     
 }

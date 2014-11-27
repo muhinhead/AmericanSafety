@@ -5,7 +5,7 @@
  */
 package com.as;
 
-import com.as.orm.Role;
+import com.as.orm.Tax;
 import com.as.orm.dbobject.DbObject;
 import com.as.util.RecordEditPanel;
 import static com.as.util.RecordEditPanel.getGridPanel;
@@ -16,11 +16,12 @@ import javax.swing.JTextField;
  *
  * @author nick
  */
-class EditRolePanel extends RecordEditPanel {
-    private JTextField idField;
-    private JTextField roleNameTF;
+class EditTaxPanel extends RecordEditPanel {
 
-    public EditRolePanel(DbObject dbObject) {
+    private JTextField idField;
+    private JTextField taxTF;
+
+    public EditTaxPanel(DbObject dbObject) {
         super(dbObject);
     }
 
@@ -28,11 +29,11 @@ class EditRolePanel extends RecordEditPanel {
     protected void fillContent() {
         String titles[] = new String[]{
             "ID:",
-            "Role Name:"
+            "Tax:"
         };
         JComponent[] edits = new JComponent[]{
             getGridPanel(idField = new JTextField(), 4),
-            roleNameTF = new JTextField(30)
+            taxTF = new JTextField(30)
         };
         idField.setEnabled(false);
         organizePanels(titles, edits, null);
@@ -40,24 +41,23 @@ class EditRolePanel extends RecordEditPanel {
     
     @Override
     public void loadData() {
-        Role role = (Role) getDbObject();
-        if (role != null) {
-            idField.setText(role.getRoleId().toString());
-            roleNameTF.setText(role.getRoleName());
+        Tax tax = (Tax) getDbObject();
+        if (tax != null) {
+            idField.setText(tax.getTaxId().toString());
+            taxTF.setText(tax.getTaxDescription());
         }
     }
     
     @Override
     public boolean save() throws Exception {
         boolean isNew = false;
-        Role role = (Role) getDbObject();
-        if (role == null) {
-            role = new Role(null);
-            role.setRoleId(0);
+        Tax tax = (Tax) getDbObject();
+        if (tax == null) {
+            tax = new Tax(null);
+            tax.setTaxId(0);
             isNew = true;
         }
-        role.setRoleName(roleNameTF.getText());
-        return saveDbRecord(role, isNew);
-    }
-    
+        tax.setTaxDescription(taxTF.getText());
+        return saveDbRecord(tax, isNew);
+    }    
 }

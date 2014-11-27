@@ -2,15 +2,16 @@ package com.as;
 
 import com.as.orm.Item;
 import com.as.orm.dbobject.DbObject;
+import com.as.util.NotEmptyFocusAdapter;
 import com.as.util.RecordEditPanel;
 import static com.as.util.RecordEditPanel.getBorderPanel;
 import static com.as.util.RecordEditPanel.getGridPanel;
 import com.as.util.SelectedDateSpinner;
 import com.as.util.SelectedNumberSpinner;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.Dimension;
+import javax.swing.JLabel;
 import javax.swing.JSpinner;
 
 /**
@@ -57,6 +58,19 @@ class EditItemsPanel extends RecordEditPanel {
         createdSP.setEditor(new JSpinner.DateEditor(createdSP, "yyyy-MM-dd hh:mm"));
         updatedSP.setEditor(new JSpinner.DateEditor(createdSP, "yyyy-MM-dd hh:mm"));
         organizePanels(titles, edits, null);
+        
+        JLabel itemNumLBL = null;
+        JLabel itemNameLBL = null;
+        for (JLabel lbl : labels) {
+            if (lbl.getText().equals("Item Number:")) {
+                itemNumLBL = lbl;
+            }
+            if (lbl.getText().equals("Item Name:")) {
+                itemNameLBL = lbl;
+            }
+        }
+        itmNumberTF.addFocusListener(new NotEmptyFocusAdapter(itemNumLBL,itmNumberTF));
+        itmNameTF.addFocusListener(new NotEmptyFocusAdapter(itemNameLBL,itmNameTF));
     }
 
     @Override
@@ -79,6 +93,16 @@ class EditItemsPanel extends RecordEditPanel {
 
     @Override
     public boolean save() throws Exception {
+        if(itmNumberTF.getText().isEmpty()) {
+            GeneralFrame.errMessageBox("Attention!", "Enter number of product please");
+            itmNumberTF.requestFocus();
+            return false;
+        }
+        if(itmNameTF.getText().isEmpty()) {
+            GeneralFrame.errMessageBox("Attention!", "Enter name of product please");
+            itmNameTF.requestFocus();
+            return false;
+        }
         boolean isNew = false;
         Item itm = (Item) getDbObject();
         if (itm == null) {

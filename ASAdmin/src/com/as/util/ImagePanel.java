@@ -29,7 +29,7 @@ public class ImagePanel extends JPanel {
     }
     private AbstractAction action;
 
-    public ImagePanel(Image orig, Image hovered, Image clicked, AbstractAction action) {
+    public ImagePanel(Image orig, final Image hovered, Image clicked, final AbstractAction action) {
         this(orig, null);
         hoveredImg = hovered;
         clickedImg = clicked;

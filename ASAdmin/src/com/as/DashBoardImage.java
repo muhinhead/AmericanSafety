@@ -93,6 +93,7 @@ public class DashBoardImage extends JFrame {
     private GeneralGridPanel itemsGrid;
     private GeneralGridPanel custGrid;
     private GeneralGridPanel poGrid;
+    private GeneralGridPanel taxGrid;
     private GeneralGridPanel stampsGrid;
     private GeneralGridPanel contactGrid;
     private GeneralGridPanel quotesGrid;
@@ -337,16 +338,30 @@ public class DashBoardImage extends JFrame {
                     pdfFile = chooseFileForExport("pdf");
                     String htmlFileName = pdfFile.getName() + ".html";
                     doc.generateHTML(htmlFile = new File(htmlFileName), header);
-
-                    Document document = new Document();
-                    PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
-                    document.open();
-                    XMLWorkerHelper.getInstance().parseXHtml(writer, document,
-                            new FileInputStream(htmlFile));
-                    document.close();
-                    if (pdfFile != null) {
-                        Desktop desktop = Desktop.getDesktop();
-                        desktop.open(pdfFile);
+                    if (htmlFile != null) {
+                        Document document = new Document();
+                        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+                        document.open();
+                        XMLWorkerHelper.getInstance().parseXHtml(writer, document,
+                                new FileInputStream(htmlFile));
+                        document.close();
+                        if (pdfFile != null) {
+                            Desktop desktop = Desktop.getDesktop();
+                            desktop.open(pdfFile);
+                            JOptionPane.showMessageDialog(rootPane,
+                                    "File " + pdfFile.getAbsolutePath() + " generated",
+                                    "Ok!", JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(rootPane,
+                                    "Can't create file " + pdfFile.getAbsolutePath()
+                                    + "! Check the target folder permissions", "Error!",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                            JOptionPane.showMessageDialog(rootPane,
+                                    "Can't create temporary file " + htmlFileName
+                                    + "! Check the target folder permissions", "Error!",
+                                    JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (Exception ex) {
                     ASAdmin.logAndShowMessage(ex);
@@ -524,7 +539,7 @@ public class DashBoardImage extends JFrame {
         addNotify();
         img = new ImagePanel(ASAdmin.loadImage(BACKGROUNDIMAGE, this));
         Insets insets = getInsets();
-        dashWidth = img.getWidth() * 3 / 4;
+        dashWidth = img.getWidth() * 2 / 3;
         dashHeight = img.getHeight() + TOOLBAR_HEIGHT;
         this.setPreferredSize(new Dimension(dashWidth + insets.left + insets.right, dashHeight + insets.top + insets.bottom));
         this.setMinimumSize(new Dimension(dashWidth + insets.left + insets.right, 200));
@@ -578,6 +593,15 @@ public class DashBoardImage extends JFrame {
 
                             public AbstractAction getSortAction() {
                                 return new SortAction(ourInstance.poGrid);
+                            }
+                        });
+                ourInstance.setupPanel.add("Taxes",
+                        ourInstance.taxGrid = new TaxGrid(exchanger) {
+                            protected void addRightBtnPanel(AbstractAction[] acts) {
+                            }
+
+                            public AbstractAction getSortAction() {
+                                return new SortAction(ourInstance.taxGrid);
                             }
                         });
                 ourInstance.setupPanel.add("Stamps",

@@ -5,7 +5,7 @@
  */
 package com.as;
 
-import com.as.orm.Role;
+import com.as.orm.Po;
 import com.as.orm.dbobject.DbObject;
 import com.as.util.RecordEditPanel;
 import static com.as.util.RecordEditPanel.getGridPanel;
@@ -16,11 +16,11 @@ import javax.swing.JTextField;
  *
  * @author nick
  */
-class EditRolePanel extends RecordEditPanel {
+public class EditPoPanel extends RecordEditPanel {
     private JTextField idField;
-    private JTextField roleNameTF;
+    private JTextField poNameTF;
 
-    public EditRolePanel(DbObject dbObject) {
+    public EditPoPanel(DbObject dbObject) {
         super(dbObject);
     }
 
@@ -28,11 +28,11 @@ class EditRolePanel extends RecordEditPanel {
     protected void fillContent() {
         String titles[] = new String[]{
             "ID:",
-            "Role Name:"
+            "PO type:"
         };
         JComponent[] edits = new JComponent[]{
             getGridPanel(idField = new JTextField(), 4),
-            roleNameTF = new JTextField(30)
+            poNameTF = new JTextField(30)
         };
         idField.setEnabled(false);
         organizePanels(titles, edits, null);
@@ -40,24 +40,24 @@ class EditRolePanel extends RecordEditPanel {
     
     @Override
     public void loadData() {
-        Role role = (Role) getDbObject();
-        if (role != null) {
-            idField.setText(role.getRoleId().toString());
-            roleNameTF.setText(role.getRoleName());
+        Po po = (Po) getDbObject();
+        if (po != null) {
+            idField.setText(po.getPoId().toString());
+            poNameTF.setText(po.getPoDescription());
         }
     }
     
     @Override
     public boolean save() throws Exception {
         boolean isNew = false;
-        Role role = (Role) getDbObject();
-        if (role == null) {
-            role = new Role(null);
-            role.setRoleId(0);
+        Po po = (Po) getDbObject();
+        if (po == null) {
+            po = new Po(null);
+            po.setPoId(0);
             isNew = true;
         }
-        role.setRoleName(roleNameTF.getText());
-        return saveDbRecord(role, isNew);
+        po.setPoDescription(poNameTF.getText());
+        return saveDbRecord(po, isNew);
     }
     
 }
