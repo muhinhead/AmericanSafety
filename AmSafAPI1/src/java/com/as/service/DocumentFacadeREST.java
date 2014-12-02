@@ -11,6 +11,7 @@ import com.as.DocumentPK;
 import com.as.IDocument;
 import com.as.Invoice;
 import com.as.Invoiceitem;
+import com.as.Item;
 import com.as.Order1;
 import com.as.Orderitem;
 import com.as.Quote;
@@ -22,6 +23,7 @@ import com.as.util.ParamDocItem;
 import com.as.util.ParamDocument4Submit;
 import com.as.util.ResponseDocumentList;
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -116,14 +118,28 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
                     + " LIMIT " + (parms.getOffset() != null ? parms.getOffset().toString() + "," : "")
                     + (parms.getLimit() != null ? parms.getLimit().toString() : "9999999999999999999"));
             List<String> rids = qry.getResultList();
-            List<Document> doclist = new ArrayList<Document>(rids.size());
+            List<IDocument> doclist = new ArrayList<IDocument>(rids.size());
             for (String docIDtype : rids) {
                 int p = docIDtype.indexOf(' ');
                 Integer docID = Integer.parseInt(docIDtype.substring(0,p));
                 String docType = docIDtype.substring(p+1);
-                Document doc = (Document) getEntityManager()
-                        .createNamedQuery("Document.findByDocumentIDandType")
-                        .setParameter("documentID", docID).setParameter("docType", docType).getSingleResult();
+//                Document doc = (Document) getEntityManager()
+//                        .createNamedQuery("Document.findByDocumentIDandType")
+//                        .setParameter("documentID", docID).setParameter("docType", docType).getSingleResult();
+                IDocument doc;
+                if (docType.equals("order")) {
+                    doc = (IDocument) getEntityManager()
+                        .createNamedQuery("Order1.findByOrderId")
+                            .setParameter("orderId", docID).getSingleResult();
+                } else if (docType.equals("quote")) {
+                    doc = (IDocument) getEntityManager()
+                        .createNamedQuery("Quote.findByQuoteId")
+                            .setParameter("quoteId", docID).getSingleResult();
+                } else {
+                    doc = (IDocument) getEntityManager()
+                        .createNamedQuery("Invoice.findByInvoiceId")
+                            .setParameter("invoiceId", docID).getSingleResult();
+                }
                 doclist.add(doc);
             }
             ResponseDocumentList rdl = new ResponseDocumentList(doclist, null);
@@ -243,21 +259,21 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
         idoc.setAfeUww(pd.getAfeUww());
         idoc.setAprvrName(pd.getAprvrName());
         idoc.setCai(pd.getCai());
-        idoc.setContactId(loadContactOnId(pd.getContactID()));
+        idoc.setContact(loadContactOnId(pd.getContactID()));
         idoc.setContractor(pd.getContractor());
         idoc.setCreatedBy(loadUserOnId(pd.getUserID()));
-        idoc.setCustomerId(loadCustomerOnId(pd.getCustomerID()));
+        idoc.setCustomer(loadCustomerOnId(pd.getCustomerID()));
         idoc.setDateIn(pd.getDateIn());
         idoc.setDateOut(pd.getDateOut());
         idoc.setDateStr(pd.getDateStr());
         idoc.setDiscount(pd.getDiscount());
         idoc.setLocation(pd.getLocation());
         idoc.setPoNumber(pd.getPoNumber());
-        idoc.setPoTypeId(loadPoTypeOnID(pd.getPoTypeID()));
+        idoc.setPoType(loadPoTypeOnID(pd.getPoTypeID()));
         idoc.setRigTankEq(pd.getRigTankEquipment());
         idoc.setSignature(pd.getImageSignature());
-        idoc.setTaxId(loadTaxOnID(pd.getTaxID()));
-        idoc.setStampsId(loadStampsOnId(pd.getStampID()));
+        idoc.setTax(loadTaxOnID(pd.getTaxID()));
+        idoc.setStamp(loadStampsOnId(pd.getStampID()));
         return idoc;
     }
 
@@ -282,9 +298,13 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
             oi.setQty(itm.getQty());
             oi.setPrice(itm.getSum().divide(BigDecimal.valueOf(itm.getQty().longValue()),2,BigDecimal.ROUND_DOWN));
             oi.setOrderId(order);
-            oi.setItemId(loadItemOnID(itm.getItemID()));
+            Item item;
+            oi.setItemId(item = loadItemOnID(itm.getItemID()));
             OrderitemFacadeREST.createAndReturnId(oi, getEntityManager());
             orderItems.add(oi);
+            // set last price for the product item
+            item.setLastPrice(oi.getPrice());
+            getEntityManager().merge(item);
         }
         return orderItems;
     }
@@ -329,11 +349,11 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
                                         "Attention please!\n\n" + user.getFirstName()
                                         + " "+user.getLastName()+" ("+user.getLogin()+") has submitted Invoice# "
                                         + invoice.getInvoiceId()+" for client "
-                                        + invoice.getCustomerId().getCustomerName()
+                                        + invoice.getCustomer().getCustomerName()
                                         + " in the amount of $" + invoice.getSubtotal()
                                         + " "+(invoice.getDateIn()!=null?" started on " + invoice.getDateIn().toString():"")
                                         + " "+(invoice.getDateOut()!=null?" and completed on " + invoice.getDateOut().toString():"")
-                                        + " "+invoice.getPoTypeId().getPoDescription()+"# "+invoice.getPoNumber()+"\n\n"
+                                        + " "+invoice.getPoType().getPoDescription()+"# "+invoice.getPoNumber()+"\n\n"
                                         + "Please don't answer this email since it was sent by robot at "
                                         + Calendar.getInstance().getTime().toString()
                         );

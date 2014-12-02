@@ -7,7 +7,6 @@ package com.as;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,8 +19,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -70,14 +67,14 @@ public class Contact implements Serializable {
     @Size(max = 32)
     @Column(name = "phone")
     private String phone;
-    @Basic(optional = false)
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+//    @Basic(optional = false)
+//    @Column(name = "updated_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date updatedAt;
+//    @Basic(optional = false)
+//    @Column(name = "created_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date createdAt;
     @OneToMany(mappedBy = "contactId")
     private Collection<Quote> quoteCollection;
     @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
@@ -143,21 +140,21 @@ public class Contact implements Serializable {
         this.phone = phone;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public Date getUpdatedAt() {
+//        return updatedAt;
+//    }
+//
+//    public void setUpdatedAt(Date updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
+//
+//    public Date getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(Date createdAt) {
+//        this.createdAt = createdAt;
+//    }
 
     @XmlTransient
     public Collection<Quote> getQuoteCollection() {
@@ -168,6 +165,7 @@ public class Contact implements Serializable {
         this.quoteCollection = quoteCollection;
     }
 
+    @XmlTransient
     public Customer getCustomerId() {
         return customerId;
     }

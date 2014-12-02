@@ -10,6 +10,8 @@ import com.as.util.ParamMask;
 import com.as.util.ResponseItemList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -49,20 +51,29 @@ public class ItemFacadeREST extends AbstractFacade<Item> {
     @Consumes("application/json")
     @Produces("application/json")
     public ResponseItemList findStamps(ParamMask parms) {
+        Logger.getLogger(ItemFacadeREST.class.getName()).log(Level.INFO, 
+                "!!item/find INPUT:"+parms.toString());
         try {
+            String sql;
             Query qry = getEntityManager().createNativeQuery(
-                    "SELECT item_id FROM item"
+                    sql = "SELECT item_id FROM item"
                     + (parms.getMask() != null ? 
                             " WHERE concat(item_name,' ',item_description) LIKE '%" + parms.getMask() + "%'" : "")
                     + " LIMIT " + (parms.getOffset() != null ? parms.getOffset().toString() + "," : "")
                     + (parms.getLimit() != null ? parms.getLimit().toString() : "9999999999999999999"));
+            Logger.getLogger(ItemFacadeREST.class.getName()).log(Level.INFO,  
+                "!!item/find SQL: "+sql);
             List<Integer> itemIds = qry.getResultList();
+            Logger.getLogger(ItemFacadeREST.class.getName()).log(Level.INFO,  
+                "!!item/find QUERY RETURNS: "+itemIds.size()+" ITEMS");
             List<Item> itemsList = new ArrayList<Item>(itemIds.size());
             for (Integer stampsID : itemIds) {
                 Item item = (Item) getEntityManager().createNamedQuery("Item.findByItemId")
                         .setParameter("itemId", stampsID).getSingleResult();
                 itemsList.add(item);
             }
+            Logger.getLogger(ItemFacadeREST.class.getName()).log(Level.INFO,  
+                "!!item/find OUTPUT LENGTH: "+itemsList.size()+" ITEMS");
             return new ResponseItemList(itemsList, null);
         } catch (Exception e) {
             return new ResponseItemList(null, new String[]{e.getMessage()});

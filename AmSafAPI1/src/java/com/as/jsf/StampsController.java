@@ -224,7 +224,7 @@ public class StampsController implements Serializable {
             }
             if (object instanceof Stamps) {
                 Stamps o = (Stamps) object;
-                return getStringKey(o.getStampsId());
+                return getStringKey(o.getStampId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Stamps.class.getName());
             }

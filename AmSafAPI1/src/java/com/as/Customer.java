@@ -53,14 +53,14 @@ public class Customer implements Serializable {
     @Size(max = 512)
     @Column(name = "customer_address")
     private String customerAddress;
-    @Basic(optional = false)
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+//    @Basic(optional = false)
+//    @Column(name = "updated_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date updatedAt;
+//    @Basic(optional = false)
+//    @Column(name = "created_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date createdAt;
     @OneToMany(mappedBy = "customerId")
     private Collection<Quote> quoteCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerId")
@@ -101,21 +101,21 @@ public class Customer implements Serializable {
         this.customerAddress = customerAddress;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public Date getUpdatedAt() {
+//        return updatedAt;
+//    }
+//
+//    public void setUpdatedAt(Date updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
+//
+//    public Date getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(Date createdAt) {
+//        this.createdAt = createdAt;
+//    }
 
     @XmlTransient
     public Collection<Quote> getQuoteCollection() {

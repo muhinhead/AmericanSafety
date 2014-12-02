@@ -35,9 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Po.findAll", query = "SELECT p FROM Po p"),
     @NamedQuery(name = "Po.findByPoId", query = "SELECT p FROM Po p WHERE p.poId = :poId"),
-    @NamedQuery(name = "Po.findByPoDescription", query = "SELECT p FROM Po p WHERE p.poDescription = :poDescription"),
-    @NamedQuery(name = "Po.findByUpdatedAt", query = "SELECT p FROM Po p WHERE p.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Po.findByCreatedAt", query = "SELECT p FROM Po p WHERE p.createdAt = :createdAt")})
+    @NamedQuery(name = "Po.findByPoDescription", query = "SELECT p FROM Po p WHERE p.poDescription = :poDescription")})
 public class Po implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -50,16 +48,16 @@ public class Po implements Serializable {
     @Size(min = 1, max = 32)
     @Column(name = "po_description")
     private String poDescription;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+//    @Basic(optional = false)
+//    @NotNull
+//    @Column(name = "updated_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date updatedAt;
+//    @Basic(optional = false)
+//    @NotNull
+//    @Column(name = "created_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date createdAt;
     @OneToMany(mappedBy = "poTypeId")
     private Collection<Quote> quoteCollection;
     @OneToMany(mappedBy = "poTypeId")
@@ -74,12 +72,12 @@ public class Po implements Serializable {
         this.poId = poId;
     }
 
-    public Po(Integer poId, String poDescription, Date updatedAt, Date createdAt) {
-        this.poId = poId;
-        this.poDescription = poDescription;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-    }
+//    public Po(Integer poId, String poDescription, Date updatedAt, Date createdAt) {
+//        this.poId = poId;
+//        this.poDescription = poDescription;
+//        this.updatedAt = updatedAt;
+//        this.createdAt = createdAt;
+//    }
 
     public Integer getPoId() {
         return poId;
@@ -97,21 +95,21 @@ public class Po implements Serializable {
         this.poDescription = poDescription;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public Date getUpdatedAt() {
+//        return updatedAt;
+//    }
+//
+//    public void setUpdatedAt(Date updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
+//
+//    public Date getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(Date createdAt) {
+//        this.createdAt = createdAt;
+//    }
 
     @XmlTransient
     public Collection<Quote> getQuoteCollection() {

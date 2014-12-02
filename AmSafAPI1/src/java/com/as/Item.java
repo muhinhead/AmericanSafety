@@ -40,9 +40,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Item.findByItemNumber", query = "SELECT i FROM Item i WHERE i.itemNumber = :itemNumber"),
     @NamedQuery(name = "Item.findByItemName", query = "SELECT i FROM Item i WHERE i.itemName = :itemName"),
     @NamedQuery(name = "Item.findByItemDescription", query = "SELECT i FROM Item i WHERE i.itemDescription = :itemDescription"),
-    @NamedQuery(name = "Item.findByLastPrice", query = "SELECT i FROM Item i WHERE i.lastPrice = :lastPrice"),
-    @NamedQuery(name = "Item.findByUpdatedAt", query = "SELECT i FROM Item i WHERE i.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Item.findByCreatedAt", query = "SELECT i FROM Item i WHERE i.createdAt = :createdAt")})
+    @NamedQuery(name = "Item.findByLastPrice", query = "SELECT i FROM Item i WHERE i.lastPrice = :lastPrice")})
 public class Item implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -66,16 +64,16 @@ public class Item implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "last_price")
     private BigDecimal lastPrice;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+//    @Basic(optional = false)
+//    @NotNull
+//    @Column(name = "updated_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date updatedAt;
+//    @Basic(optional = false)
+//    @NotNull
+//    @Column(name = "created_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date createdAt;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "itemId")
     private Collection<Invoiceitem> invoiceitemCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "itemId")
@@ -90,13 +88,13 @@ public class Item implements Serializable {
         this.itemId = itemId;
     }
 
-    public Item(Integer itemId, String itemNumber, String itemName, Date updatedAt, Date createdAt) {
-        this.itemId = itemId;
-        this.itemNumber = itemNumber;
-        this.itemName = itemName;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-    }
+//    public Item(Integer itemId, String itemNumber, String itemName, Date updatedAt, Date createdAt) {
+//        this.itemId = itemId;
+//        this.itemNumber = itemNumber;
+//        this.itemName = itemName;
+//        this.updatedAt = updatedAt;
+//        this.createdAt = createdAt;
+//    }
 
     public Integer getItemId() {
         return itemId;
@@ -138,22 +136,22 @@ public class Item implements Serializable {
         this.lastPrice = lastPrice;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
+//    public Date getUpdatedAt() {
+//        return updatedAt;
+//    }
+//
+//    public void setUpdatedAt(Date updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
+//
+//    public Date getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(Date createdAt) {
+//        this.createdAt = createdAt;
+//    }
+//
     @XmlTransient
     public Collection<Invoiceitem> getInvoiceitemCollection() {
         return invoiceitemCollection;

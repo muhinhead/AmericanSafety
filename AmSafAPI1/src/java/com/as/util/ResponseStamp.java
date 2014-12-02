@@ -29,8 +29,8 @@ public class ResponseStamp implements Serializable {
 
     public ResponseStamp(Stamps st) 
     {
-        setStampID(st.getStampsId());
-        setStamp(st.getStamps());
+        setStampID(st.getStampId());
+        setStamp(st.getStamp());
     }
     
     @Override

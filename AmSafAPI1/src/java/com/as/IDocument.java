@@ -5,7 +5,9 @@
  */
 package com.as;
 
+import com.as.util.ResponseDocItem;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -32,14 +34,14 @@ public interface IDocument {
     /**
      * @return the contactId
      */
-    Contact getContactId();
+    Contact getContact();
 
     String getContractor();
 
     /**
      * @return the customerId
      */
-    Customer getCustomerId();
+    Customer getCustomer();
 
     Date getDateIn();
 
@@ -56,15 +58,15 @@ public interface IDocument {
 
     String getPoNumber();
 
-    Po getPoTypeId();
+    Po getPoType();
 
     String getRigTankEq();
 
     byte[] getSignature();
 
-    Stamps getStampsId();
+    Stamps getStamp();
     
-    Tax getTaxId();
+    Tax getTax();
 
     /**
      * @return the subtotal
@@ -78,6 +80,9 @@ public interface IDocument {
      */
     String getWellName();
 
+    String getDocumentType();
+    void setDocumentType(String docType);
+    
     /**
      * @param afeUww the afeUww to set
      */
@@ -96,7 +101,7 @@ public interface IDocument {
     /**
      * @param contactId the contactId to set
      */
-    void setContactId(Contact contactId);
+    void setContact(Contact contactId);
 
     void setContractor(String contractor);
 
@@ -108,7 +113,7 @@ public interface IDocument {
     /**
      * @param customerId the customerId to set
      */
-    void setCustomerId(Customer customerId);
+    void setCustomer(Customer customerId);
 
     void setDateIn(Date dateIn);
 
@@ -125,20 +130,20 @@ public interface IDocument {
 
     void setPoNumber(String poNumber);
 
-    void setPoTypeId(Po poTypeId);
+    void setPoType(Po poTypeId);
 
     void setRigTankEq(String rigTankEq);
 
     void setSignature(byte[] signature);
 
-    void setStampsId(Stamps stampsId);
+    void setStamp(Stamps stampsId);
 
     /**
      * @param subtotal the subtotal to set
      */
     void setSubtotal(BigDecimal subtotal);
 
-    void setTaxId(Tax taxId);
+    void setTax(Tax taxId);
 
     void setTaxProc(BigDecimal taxProc);
 
@@ -147,4 +152,18 @@ public interface IDocument {
      */
     void setWellName(String wellName);
     
+    void setDocumentId(Integer docID);
+    
+    Integer getDocumentId();
+    
+    void setDocItems(Collection<ResponseDocItem> docitms);
+    
+    Collection<ResponseDocItem> getDocItems();
+    
+//    Collection<Invoiceitem> getInvoiceitemCollection();
+//    void setInvoiceitemCollection(Collection<Invoiceitem> invoiceitemCollection);
+//    Collection<Orderitem> getOrderitemCollection();
+//    void setOrderitemCollection(Collection<Orderitem> orderitemCollection);
+//    Collection<Quoteitem> getQuoteitemCollection();
+//    void setQuoteitemCollection(Collection<Quoteitem> quoteitemCollection);
 }

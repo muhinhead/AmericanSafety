@@ -55,7 +55,8 @@ public class ParamMask implements Serializable {
 
     @Override
     public String toString() {
-        return "com.as.util.ParamMask[ id=" + id + " ]";
+        return "com.as.util.ParamMask[ mask="+(mask==null?"NULL":mask)+" offset="
+                +(offset==null?"NULL":offset)+" limit="+(limit==null?"NULL":limit)+" ]";
     }
 
     /**

@@ -5,8 +5,10 @@
  */
 package com.as;
 
+import com.as.util.ResponseDocItem;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -257,43 +259,43 @@ public class Quote implements Serializable, IDocument {
         this.quoteitemCollection = quoteitemCollection;
     }
 
-    public Contact getContactId() {
+    public Contact getContact() {
         return contactId;
     }
 
-    public void setContactId(Contact contactId) {
+    public void setContact(Contact contactId) {
         this.contactId = contactId;
     }
 
-    public Customer getCustomerId() {
+    public Customer getCustomer() {
         return customerId;
     }
 
-    public void setCustomerId(Customer customerId) {
+    public void setCustomer(Customer customerId) {
         this.customerId = customerId;
     }
 
-    public Po getPoTypeId() {
+    public Po getPoType() {
         return poTypeId;
     }
 
-    public void setPoTypeId(Po poTypeId) {
+    public void setPoType(Po poTypeId) {
         this.poTypeId = poTypeId;
     }
 
-    public Stamps getStampsId() {
+    public Stamps getStamp() {
         return stampsId;
     }
 
-    public void setStampsId(Stamps stampsId) {
+    public void setStamp(Stamps stampsId) {
         this.stampsId = stampsId;
     }
 
-    public Tax getTaxId() {
+    public Tax getTax() {
         return taxId;
     }
 
-    public void setTaxId(Tax taxId) {
+    public void setTax(Tax taxId) {
         this.taxId = taxId;
     }
 
@@ -338,4 +340,35 @@ public class Quote implements Serializable, IDocument {
     @Override
     public void setDateOut(Date dateOut) {
     }    
+
+    @Override
+    public String getDocumentType() {
+        return "quote";
+    }
+
+    @Override
+    public void setDocumentType(String docType) {}
+
+    @Override
+    public void setDocumentId(Integer docID) {
+    }
+
+    @Override
+    public Integer getDocumentId() {
+        return quoteId;
+    }
+    
+    @Override
+    public void setDocItems(Collection<ResponseDocItem> docitms) {
+    }
+
+    @Override
+    public Collection<ResponseDocItem> getDocItems() {
+        ArrayList<ResponseDocItem> itmlist = new ArrayList<ResponseDocItem>(getQuoteitemCollection().size());
+        for (Quoteitem qitm : getQuoteitemCollection()) {
+            itmlist.add(new ResponseDocItem(qitm));
+        }
+        return itmlist;
+    }
+    
 }

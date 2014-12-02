@@ -1,6 +1,7 @@
 package com.as.util;
 
 import com.as.Document;
+import com.as.IDocument;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
@@ -21,26 +22,27 @@ public class ResponseDocumentList implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Collection<ResponseDoc> response;
+//    private Collection<ResponseDoc> response;
+    private Collection<IDocument> response;
     private String[] errorMsg;
 
     public ResponseDocumentList() {
     }
 
-    public ResponseDocumentList(List<Document> doclist, String[] errmsg) {
+    public ResponseDocumentList(List<IDocument> doclist, String[] errmsg) {
         if (doclist != null) {
-            response = new ArrayList<ResponseDoc>(doclist.size());
-            for (Document doc : doclist) {
-//                ResponseDocument rd = new ResponseDocument();
-                ResponseDoc rd = new ResponseDoc();
-                rd.setStartRangeTime(doc.getDateIn());
-                rd.setFinishRangeTime(doc.getDateOut());
-                rd.setDocumentType(doc.getDocumentPK().getDocType());
-                rd.setPoNumber(doc.getPoNumber());
-                rd.setCustomerID(doc.getCustomerId());
-                rd.setUserID(doc.getCreatedBy());
-                response.add(rd);
-            }
+            response = doclist;
+//                    new ArrayList<ResponseDoc>(doclist.size());
+//            for (Document doc : doclist) {
+//                ResponseDoc rd = new ResponseDoc();
+//                rd.setStartRangeTime(doc.getDateIn());
+//                rd.setFinishRangeTime(doc.getDateOut());
+//                rd.setDocumentType(doc.getDocumentPK().getDocType());
+//                rd.setPoNumber(doc.getPoNumber());
+//                rd.setCustomerID(doc.getCustomerId());
+//                rd.setUserID(doc.getCreatedBy());
+//                response.add(rd);
+//            }
         } else {
             errorMsg = errmsg;
         }
@@ -82,14 +84,16 @@ public class ResponseDocumentList implements Serializable {
     /**
      * @return the response
      */
-    public Collection<ResponseDoc> getResponse() {
+//    public Collection<ResponseDoc> getResponse() {
+    public Collection<IDocument> getResponse() {
         return response;
     }
 
     /**
      * @param response the response to set
      */
-    public void setResponse(Collection<ResponseDoc> response) {
+//    public void setResponse(Collection<ResponseDoc> response) {
+    public void setResponse(Collection<IDocument> response) {
         this.response = response;
     }
 

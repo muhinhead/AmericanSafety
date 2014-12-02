@@ -5,8 +5,10 @@
  */
 package com.as;
 
+import com.as.util.ResponseDocItem;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -25,7 +27,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -55,6 +56,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Order1.findByAprvrName", query = "SELECT o FROM Order1 o WHERE o.aprvrName = :aprvrName"),
     @NamedQuery(name = "Order1.findByDateStr", query = "SELECT o FROM Order1 o WHERE o.dateStr = :dateStr")})
 public class Order1 implements Serializable, IDocument {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -87,14 +89,14 @@ public class Order1 implements Serializable, IDocument {
     @Lob
     @Column(name = "signature")
     private byte[] signature;
-    @Basic(optional = false)
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-    @Basic(optional = false)
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+//    @Basic(optional = false)
+//    @Column(name = "updated_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date updatedAt;
+//    @Basic(optional = false)
+//    @Column(name = "created_at")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date createdAt;
     @Column(name = "subtotal")
     private BigDecimal subtotal;
     @Size(max = 64)
@@ -140,12 +142,11 @@ public class Order1 implements Serializable, IDocument {
         this.orderId = orderId;
     }
 
-    public Order1(Integer orderId, Date updatedAt, Date createdAt) {
-        this.orderId = orderId;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-    }
-
+//    public Order1(Integer orderId, Date updatedAt, Date createdAt) {
+//        this.orderId = orderId;
+//        this.updatedAt = updatedAt;
+//        this.createdAt = createdAt;
+//    }
     public Integer getOrderId() {
         return orderId;
     }
@@ -211,6 +212,9 @@ public class Order1 implements Serializable, IDocument {
     }
 
     public Date getDateOut() {
+        if (dateOut.getYear() <= 70) {
+            return null;
+        }
         return dateOut;
     }
 
@@ -226,22 +230,21 @@ public class Order1 implements Serializable, IDocument {
         this.signature = signature;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
+//    public Date getUpdatedAt() {
+//        return updatedAt;
+//    }
+//
+//    public void setUpdatedAt(Date updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
+//
+//    public Date getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(Date createdAt) {
+//        this.createdAt = createdAt;
+//    }
     public BigDecimal getSubtotal() {
         return subtotal;
     }
@@ -299,43 +302,43 @@ public class Order1 implements Serializable, IDocument {
         this.orderitemCollection = orderitemCollection;
     }
 
-    public Contact getContactId() {
+    public Contact getContact() {
         return contactId;
     }
 
-    public void setContactId(Contact contactId) {
+    public void setContact(Contact contactId) {
         this.contactId = contactId;
     }
 
-    public Customer getCustomerId() {
+    public Customer getCustomer() {
         return customerId;
     }
 
-    public void setCustomerId(Customer customerId) {
+    public void setCustomer(Customer customerId) {
         this.customerId = customerId;
     }
 
-    public Po getPoTypeId() {
+    public Po getPoType() {
         return poTypeId;
     }
 
-    public void setPoTypeId(Po poTypeId) {
+    public void setPoType(Po poTypeId) {
         this.poTypeId = poTypeId;
     }
 
-    public Stamps getStampsId() {
+    public Stamps getStamp() {
         return stampsId;
     }
 
-    public void setStampsId(Stamps stampsId) {
+    public void setStamp(Stamps stampsId) {
         this.stampsId = stampsId;
     }
 
-    public Tax getTaxId() {
+    public Tax getTax() {
         return taxId;
     }
 
-    public void setTaxId(Tax taxId) {
+    public void setTax(Tax taxId) {
         this.taxId = taxId;
     }
 
@@ -371,5 +374,35 @@ public class Order1 implements Serializable, IDocument {
     public String toString() {
         return "com.as.Order1[ orderId=" + orderId + " ]";
     }
-    
+
+    @Override
+    public String getDocumentType() {
+        return "order";
+    }
+
+    @Override
+    public void setDocumentType(String docType) {
+    }
+
+    @Override
+    public void setDocumentId(Integer docID) {
+    }
+
+    @Override
+    public Integer getDocumentId() {
+        return orderId;
+    }
+
+    @Override
+    public void setDocItems(Collection<ResponseDocItem> docitms) {
+    }
+
+    @Override
+    public Collection<ResponseDocItem> getDocItems() {
+        ArrayList<ResponseDocItem> itmlist = new ArrayList<ResponseDocItem>(getOrderitemCollection().size());
+        for (Orderitem oitm : getOrderitemCollection()) {
+            itmlist.add(new ResponseDocItem(oitm));
+        }
+        return itmlist;
+    }
 }

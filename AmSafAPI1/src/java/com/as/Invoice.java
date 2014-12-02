@@ -5,8 +5,10 @@
  */
 package com.as;
 
+import com.as.util.ResponseDocItem;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -203,6 +205,9 @@ public class Invoice implements Serializable, IDocument {
     }
 
     public Date getDateOut() {
+        if (dateOut.getYear() <= 70) {
+            return null;
+        }
         return dateOut;
     }
 
@@ -299,43 +304,43 @@ public class Invoice implements Serializable, IDocument {
         this.invoiceitemCollection = invoiceitemCollection;
     }
 
-    public Contact getContactId() {
+    public Contact getContact() {
         return contactId;
     }
 
-    public void setContactId(Contact contactId) {
+    public void setContact(Contact contactId) {
         this.contactId = contactId;
     }
 
-    public Customer getCustomerId() {
+    public Customer getCustomer() {
         return customerId;
     }
 
-    public void setCustomerId(Customer customerId) {
+    public void setCustomer(Customer customerId) {
         this.customerId = customerId;
     }
 
-    public Po getPoTypeId() {
+    public Po getPoType() {
         return poTypeId;
     }
 
-    public void setPoTypeId(Po poTypeId) {
+    public void setPoType(Po poTypeId) {
         this.poTypeId = poTypeId;
     }
 
-    public Stamps getStampsId() {
+    public Stamps getStamp() {
         return stampsId;
     }
 
-    public void setStampsId(Stamps stampsId) {
+    public void setStamp(Stamps stampsId) {
         this.stampsId = stampsId;
     }
 
-    public Tax getTaxId() {
+    public Tax getTax() {
         return taxId;
     }
 
-    public void setTaxId(Tax taxId) {
+    public void setTax(Tax taxId) {
         this.taxId = taxId;
     }
 
@@ -370,6 +375,36 @@ public class Invoice implements Serializable, IDocument {
     @Override
     public String toString() {
         return "com.as.Invoice[ invoiceId=" + invoiceId + " ]";
+    }
+
+    @Override
+    public String getDocumentType() {
+        return "invoice";
+    }
+
+    @Override
+    public void setDocumentType(String docType) {}
+
+    @Override
+    public void setDocumentId(Integer docID) {
+    }
+
+    @Override
+    public Integer getDocumentId() {
+        return invoiceId;
+    }
+
+    @Override
+    public void setDocItems(Collection<ResponseDocItem> docitms) {
+    }
+
+    @Override
+    public Collection<ResponseDocItem> getDocItems() {
+        ArrayList<ResponseDocItem> itmlist = new ArrayList<ResponseDocItem>(getInvoiceitemCollection().size());
+        for (Invoiceitem iitm : getInvoiceitemCollection()) {
+            itmlist.add(new ResponseDocItem(iitm));
+        }
+        return itmlist;
     }
     
 }
