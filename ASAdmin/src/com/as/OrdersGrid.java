@@ -46,7 +46,7 @@ public class OrdersGrid  extends GeneralGridPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 EditOrderDialog ed = new EditOrderDialog("New Order", null);
-                if (EditOrderDialog.okPressed) {
+                if (ed.getOkPressed()) {
                     Order order = (Order) ed.getEditPanel().getDbObject();
                     refresh(order.getOrderId());
                 }

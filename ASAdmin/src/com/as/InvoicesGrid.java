@@ -47,7 +47,7 @@ public class InvoicesGrid extends GeneralGridPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 EditInvoiceDialog ed = new EditInvoiceDialog("New Invoice", null);
-                if (EditQuoteDialog.okPressed) {
+                if (ed.getOkPressed()) {
                     Invoice invoice = (Invoice) ed.getEditPanel().getDbObject();
                     refresh(invoice.getInvoiceId());
                 }

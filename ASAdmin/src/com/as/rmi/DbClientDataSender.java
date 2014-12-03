@@ -124,6 +124,27 @@ public class DbClientDataSender implements IMessageSender {
     }
 
     @Override
+    public DbObject loadDbObjectOnIDwoCache(Class dbobClass, int id) throws RemoteException {
+        String key = dbobClass.getName() + "#" + id;
+        DbObject dbob;
+        Connection con = null;
+        try {
+            Constructor constructor = dbobClass.getConstructor(Connection.class);
+            dbob = (DbObject) constructor.newInstance(con = DbConnection.getConnection());
+            dbob = dbob.loadOnId(id);
+            put2cache(key, dbob);
+        } catch (Exception ex) {
+            throw new java.rmi.RemoteException("Can't save DB object:", ex);
+        } finally {
+            try {
+                DbConnection.closeConnection(con);
+            } catch (SQLException ex) {
+            }
+        }
+        return dbob;
+    }
+
+    @Override
     public DbObject loadDbObjectOnID(Class dbobClass, int id) throws RemoteException {
         String key = dbobClass.getName() + "#" + id;
         DbObject dbob = getFromCache(key);
@@ -253,7 +274,7 @@ public class DbClientDataSender implements IMessageSender {
                 throw ex;               ///
             }
         } catch (SQLException ex) {
-                System.out.println("!!select:["+select+"]");
+            System.out.println("!!select:[" + select + "]");
             throw new java.rmi.RemoteException(ex.getMessage());
         } finally {
             try {

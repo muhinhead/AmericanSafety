@@ -32,7 +32,7 @@ class EditOrderPanel extends EditDocumentPanel {
 
     @Override
     public IDocument createDocument() {
-        return new Order(null);
+        return (IDocument) new Order(null);
     }
 
     @Override

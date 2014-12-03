@@ -25,7 +25,7 @@ class EditQuotePanel extends EditDocumentPanel {
     
     @Override
     public IDocument createDocument() {
-        return new Quote(null);
+        return (IDocument) new Quote(null);
     }
 
 }

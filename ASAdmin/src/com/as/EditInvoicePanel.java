@@ -22,7 +22,7 @@ class EditInvoicePanel extends EditDocumentPanel {
 
     @Override
     public IDocument createDocument() {
-        return new Invoice(null);
+        return (IDocument) new Invoice(null);
     }
 
     @Override

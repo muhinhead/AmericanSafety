@@ -8,7 +8,6 @@ package com.as;
 import com.as.orm.Orderitem;
 import com.as.remote.IMessageSender;
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
 import java.rmi.RemoteException;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -17,19 +16,13 @@ import javax.swing.JOptionPane;
  *
  * @author Nick Mukhin
  */
-class OrderItemsGrid extends GeneralGridPanel {
-
-    private static HashMap<Integer, Integer> maxWidths = new HashMap<Integer, Integer>();
-
-    static {
-        maxWidths.put(0, 40);
-    }
+class OrderItemsGrid extends DocItemsGrid {
     
     public OrderItemsGrid(IMessageSender exchanger, Integer pkID) throws RemoteException {
         super(exchanger, "select orderitem_id \"Id\","
                 + "item_number \"Itm No_\",item_name \"Name\","
                 + "qty \"Qty\",price,if(tax,'Yes','No') \"Tax\" from "
-                + "orderitem,item where orderitem.item_id=item.item_id and order_id="+pkID.toString(), maxWidths, false);
+                + "orderitem,item where orderitem.item_id=item.item_id and order_id=", pkID);
     }
 
     @Override

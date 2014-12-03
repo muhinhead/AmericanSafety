@@ -40,7 +40,7 @@ import javax.swing.SpinnerNumberModel;
  */
 public class ASAdmin {
 
-    private static final String version = "0.6";
+    private static final String version = "0.6.1";
     private static Logger logger = null;
     private static FileHandler fh;
     private static Properties props;
@@ -277,6 +277,8 @@ public class ASAdmin {
         return loadOnSelect("select user_id,login from user", null);
     }
 
+    
+    
     public static List loadLogins(String fld, String whereCond) {
         try {
             DbObject[] admins = exchanger.getDbObjects(User.class,
@@ -421,6 +423,10 @@ public class ASAdmin {
 
     static ComboItem[] loadPOtypes() {
         return loadOnSelect("select po_id,po_description from po", null);
+    }
+
+    static ComboItem[] loadTaxTypes() {
+        return loadOnSelect("select tax_id,tax_description from tax", null);
     }
 
     static ComboItem[] loadStamps() {

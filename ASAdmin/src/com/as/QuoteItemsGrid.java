@@ -3,29 +3,21 @@ package com.as;
 import com.as.orm.Quoteitem;
 import com.as.remote.IMessageSender;
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
 import java.rmi.RemoteException;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author Nick Mukhin
  */
-class QuoteItemsGrid extends GeneralGridPanel {
-
-    private static HashMap<Integer, Integer> maxWidths = new HashMap<Integer, Integer>();
-
-    static {
-        maxWidths.put(0, 40);
-    }
+class QuoteItemsGrid extends DocItemsGrid {
 
     public QuoteItemsGrid(IMessageSender exchanger, Integer pkID) throws RemoteException {
         super(exchanger, "select quoteitem_id \"Id\","
                 + "item_number \"Itm No_\",item_name \"Name\","
                 + "qty \"Qty\",price,if(tax,'Yes','No') \"Tax\" from "
-                + "quoteitem,item where quoteitem.item_id=item.item_id and quote_id=" + pkID.toString(), maxWidths, false);
+                + "quoteitem,item where quoteitem.item_id=item.item_id and quote_id=", pkID);
     }
 
     @Override

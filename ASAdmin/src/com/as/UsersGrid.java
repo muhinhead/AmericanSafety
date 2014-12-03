@@ -67,7 +67,7 @@ public class UsersGrid extends GeneralGridPanel {
                 int id = getSelectedID();
                 if (id != 0) {
                     try {
-                        User user = (User) exchanger.loadDbObjectOnID(User.class, id);
+                        User user = (User) exchanger.loadDbObjectOnIDwoCache(User.class, id);
                         new EditUserDialog("Edit User", user);
                         if (EditUserDialog.okPressed) {
                             refresh();

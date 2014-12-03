@@ -44,7 +44,7 @@ public class QuotesGrid extends GeneralGridPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 EditQuoteDialog ed = new EditQuoteDialog("New Quote", null);
-                if (EditQuoteDialog.okPressed) {
+                if (ed.getOkPressed()) {
                     Quote quote = (Quote) ed.getEditPanel().getDbObject();
                     refresh(quote.getQuoteId());
                 }
