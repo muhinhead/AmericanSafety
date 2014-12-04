@@ -59,6 +59,7 @@ import javax.ws.rs.core.Response;
 @Stateless
 @Path("com.as.document")
 public class DocumentFacadeREST extends AbstractFacade<Document> {
+
     @PersistenceContext(unitName = "AmSafAPI1PU")
     private EntityManager em;
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -105,13 +106,13 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
             Query qry = getEntityManager().createNativeQuery(
                     sql = "SELECT concat(document_id,' ',doc_type) FROM document"
                     + " WHERE 1=1 "
-                    + (parms.getDepartmentID() == null ? "" : 
-                            " AND created_by in (select user_id from user where department_id=" + parms.getDepartmentID()+")")
+                    + (parms.getDepartmentID() == null ? ""
+                            : " AND created_by in (select user_id from user where department_id=" + parms.getDepartmentID() + ")")
                     + (parms.getUserID() == null ? "" : " AND created_by=" + parms.getUserID())
-                    + (parms.getPoNumber() == null ? "" : " AND po_number='" + parms.getPoNumber() + "'")        
-                    + (parms.getPo() == null ? (parms.getIsPo()==null?"":(parms.getIsPo().equalsIgnoreCase("Yes")?" AND po_type_id IS NOT NULL":" AND po_type_id IS NULL")) 
-                            : " AND po_type_id in (" + createIntList(parms.getPo())+")")   
-                    + (parms.getDocumentType() == null || parms.getDocumentType().length==0 ? "" : " AND doc_type in ('" + createTypeList(parms.getDocumentType()) + "')")
+                    + (parms.getPoNumber() == null ? "" : " AND po_number='" + parms.getPoNumber() + "'")
+                    + (parms.getPo() == null ? createPoNullCondition(parms.getIsPo())
+                            : " AND po_type_id in (" + createIntList(parms.getPo()) + ")")
+                    + (parms.getDocumentType() == null || parms.getDocumentType().length == 0 ? "" : " AND doc_type in ('" + createTypeList(parms.getDocumentType()) + "')")
                     + (parms.getStartFirstRangeTime() == null ? "" : " AND date_in>='" + dateFormat.format(parms.getStartFirstRangeTime()) + "'")
                     + (parms.getStartSecondRangeTime() == null ? "" : " AND date_in<='" + dateFormat.format(parms.getStartSecondRangeTime()) + "'")
                     + (parms.getFinishFirstRangeTime() == null ? "" : " AND date_out>='" + dateFormat.format(parms.getFinishFirstRangeTime()))
@@ -123,23 +124,23 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
             List<IDocument> doclist = new ArrayList<IDocument>(rids.size());
             for (String docIDtype : rids) {
                 int p = docIDtype.indexOf(' ');
-                Integer docID = Integer.parseInt(docIDtype.substring(0,p));
-                String docType = docIDtype.substring(p+1);
+                Integer docID = Integer.parseInt(docIDtype.substring(0, p));
+                String docType = docIDtype.substring(p + 1);
 //                Document doc = (Document) getEntityManager()
 //                        .createNamedQuery("Document.findByDocumentIDandType")
 //                        .setParameter("documentID", docID).setParameter("docType", docType).getSingleResult();
                 IDocument doc;
                 if (docType.equals("order")) {
                     doc = (IDocument) getEntityManager()
-                        .createNamedQuery("Order1.findByOrderId")
+                            .createNamedQuery("Order1.findByOrderId")
                             .setParameter("orderId", docID).getSingleResult();
                 } else if (docType.equals("quote")) {
                     doc = (IDocument) getEntityManager()
-                        .createNamedQuery("Quote.findByQuoteId")
+                            .createNamedQuery("Quote.findByQuoteId")
                             .setParameter("quoteId", docID).getSingleResult();
                 } else {
                     doc = (IDocument) getEntityManager()
-                        .createNamedQuery("Invoice.findByInvoiceId")
+                            .createNamedQuery("Invoice.findByInvoiceId")
                             .setParameter("invoiceId", docID).getSingleResult();
                 }
                 doclist.add(doc);
@@ -176,8 +177,8 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
                 invoice.setInvoiceitemCollection(createInvoiceItemsCollection(invoice, pars.getItems()));
                 output = "{\"invoiceID\":\"" + String.valueOf(docID) + "\"}";
                 if (!notifyAccountManagers(pars.getUserID(), invoice)) {
-                    Logger.getLogger(DocumentFacadeREST.class.getName()).log(Level.SEVERE, null, 
-                            "Warning! No account managers found to notify from userID="+pars.getUserID());
+                    Logger.getLogger(DocumentFacadeREST.class.getName()).log(Level.SEVERE, null,
+                            "Warning! No account managers found to notify from userID=" + pars.getUserID());
                 }
             }
         } catch (Exception ex) {
@@ -187,8 +188,8 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
         }
         return Response.status(code).entity(output).build();
     }
-    
-    @POST    
+
+    @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces("application/json")
@@ -243,7 +244,7 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
     protected EntityManager getEntityManager() {
         return em;
     }
-    
+
     public IDocument createDocument(ParamDocument4Submit pd) {
         IDocument idoc = null;
         if (pd.getDocumentType().equalsIgnoreCase("quote")) {
@@ -284,7 +285,7 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
         for (ParamDocItem itm : items) {
             Quoteitem qi = new Quoteitem();
             qi.setQty(itm.getQty());
-            qi.setPrice(itm.getSum().divide(BigDecimal.valueOf(itm.getQty().longValue()),2,BigDecimal.ROUND_DOWN));
+            qi.setPrice(itm.getSum().divide(BigDecimal.valueOf(itm.getQty().longValue()), 2, BigDecimal.ROUND_DOWN));
             qi.setQuoteId(quote);
             qi.setItemId(loadItemOnID(itm.getItemID()));
             QuoteitemFacadeREST.createAndReturnId(qi, getEntityManager());
@@ -298,7 +299,7 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
         for (ParamDocItem itm : items) {
             Orderitem oi = new Orderitem();
             oi.setQty(itm.getQty());
-            oi.setPrice(itm.getSum().divide(BigDecimal.valueOf(itm.getQty().longValue()),2,BigDecimal.ROUND_DOWN));
+            oi.setPrice(itm.getSum().divide(BigDecimal.valueOf(itm.getQty().longValue()), 2, BigDecimal.ROUND_DOWN));
             oi.setOrderId(order);
             Item item;
             oi.setItemId(item = loadItemOnID(itm.getItemID()));
@@ -316,7 +317,7 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
         for (ParamDocItem itm : items) {
             Invoiceitem ii = new Invoiceitem();
             ii.setQty(itm.getQty());
-            ii.setPrice(itm.getSum().divide(BigDecimal.valueOf(itm.getQty().longValue()),2,BigDecimal.ROUND_DOWN));
+            ii.setPrice(itm.getSum().divide(BigDecimal.valueOf(itm.getQty().longValue()), 2, BigDecimal.ROUND_DOWN));
             ii.setInvoiceId(invoice);
             ii.setItemId(loadItemOnID(itm.getItemID()));
             InvoiceitemFacadeREST.createAndReturnId(ii, getEntityManager());
@@ -328,7 +329,7 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
     private String createTypeList(String[] documentType) {
         StringBuilder sb = new StringBuilder();
         for (String docType : documentType) {
-            if (sb.length()>0) {
+            if (sb.length() > 0) {
                 sb.append("','");
             }
             sb.append(docType);
@@ -339,7 +340,7 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
     private String createIntList(String[] poType) {
         StringBuilder sb = new StringBuilder();
         for (String docType : poType) {
-            if (sb.length()>0) {
+            if (sb.length() > 0) {
                 sb.append(",");
             }
             sb.append(docType);
@@ -352,23 +353,23 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
         User user = (User) getEntityManager()
                 .createNamedQuery("User.findByUserId")
                 .setParameter("userId", userID).getSingleResult();
-        if (user!=null) {
+        if (user != null) {
             Department dpt = user.getDepartmentId();
             for (User mngr : dpt.getUserCollection()) {
                 Collection<Usersrole> rolesCollection = mngr.getUsersroleCollection();
                 for (Usersrole ur : rolesCollection) {
                     if (ur.getRoleId().getRoleName().equalsIgnoreCase("account manager")) {
-                        sendEmail(mngr.getEmail(), "Notification on Invoice submission for "+mngr.getLogin(), 
-                                        "Attention please!\n\n" + user.getFirstName()
-                                        + " "+user.getLastName()+" ("+user.getLogin()+") has submitted Invoice# "
-                                        + invoice.getInvoiceId()+" for client "
-                                        + invoice.getCustomer().getCustomerName()
-                                        + " in the amount of $" + invoice.getSubtotal()
-                                        + " "+(invoice.getDateIn()!=null?" started on " + invoice.getDateIn().toString():"")
-                                        + " "+(invoice.getDateOut()!=null?" and completed on " + invoice.getDateOut().toString():"")
-                                        + " "+invoice.getPoType().getPoDescription()+"# "+invoice.getPoNumber()+"\n\n"
-                                        + "Please don't answer this email since it was sent by robot at "
-                                        + Calendar.getInstance().getTime().toString()
+                        sendEmail(mngr.getEmail(), "Notification on Invoice submission for " + mngr.getLogin(),
+                                "Attention please!\n\n" + user.getFirstName()
+                                + " " + user.getLastName() + " (" + user.getLogin() + ") has submitted Invoice# "
+                                + invoice.getInvoiceId() + " for client "
+                                + invoice.getCustomer().getCustomerName()
+                                + " in the amount of $" + invoice.getSubtotal()
+                                + " " + (invoice.getDateIn() != null ? " started on " + invoice.getDateIn().toString() : "")
+                                + " " + (invoice.getDateOut() != null ? " and completed on " + invoice.getDateOut().toString() : "")
+                                + " " + invoice.getPoType().getPoDescription() + "# " + invoice.getPoNumber() + "\n\n"
+                                + "Please don't answer this email since it was sent by robot at "
+                                + Calendar.getInstance().getTime().toString()
                         );
                         sent = true;
                     }
@@ -377,6 +378,33 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
         }
         return sent;
     }
-    
-    
+
+    private String createPoNullCondition(String[] isPo) {
+        if (isPo != null) {
+//            if (isPo.length == 1) {
+//                if (isPo[0].equalsIgnoreCase("YES") || isPo[0].equalsIgnoreCase("TRUE")) {
+//                    return " AND po_type_id IS NOT NULL";
+//                } else if (isPo[0].equalsIgnoreCase("NO") || isPo[0].equalsIgnoreCase("FALSE")) {
+//                    return " AND po_type_id IS NULL";
+//                }
+//            } else {
+                Boolean notNull = null;
+                Boolean isNull = null;
+                for (String s : isPo) {
+                    if (s.equalsIgnoreCase("YES") || s.equalsIgnoreCase("TRUE")) {
+                        notNull = Boolean.TRUE;
+                    } else if (s.equalsIgnoreCase("NO") || s.equalsIgnoreCase("FALSE")) {
+                        isNull = Boolean.TRUE;
+                    }
+                }
+                if (notNull == null && isNull != null) {
+                    return " AND po_type_id IS NULL";
+                } else if (isNull == null && notNull != null) {
+                    return " AND po_type_id IS NOT NULL";
+                }
+//            }
+       }         
+       return "";
+    }
+
 }

@@ -34,7 +34,7 @@ public class DocumentsParams implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date finishSecondRangeTime;
     private String[] po;
-    private String isPo;
+    private String[] isPo;
     private String poNumber;
     private Integer offset;
     private Integer limit;
@@ -272,14 +272,14 @@ public class DocumentsParams implements Serializable {
     /**
      * @return the isPo
      */
-    public String getIsPo() {
+    public String[] getIsPo() {
         return isPo;
     }
 
     /**
      * @param isPo the isPo to set
      */
-    public void setIsPo(String isPo) {
+    public void setIsPo(String[] isPo) {
         this.isPo = isPo;
     }
 
