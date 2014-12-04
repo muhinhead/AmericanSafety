@@ -109,6 +109,8 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
                             " AND created_by in (select user_id from user where department_id=" + parms.getDepartmentID()+")")
                     + (parms.getUserID() == null ? "" : " AND created_by=" + parms.getUserID())
                     + (parms.getPoNumber() == null ? "" : " AND po_number='" + parms.getPoNumber() + "'")        
+                    + (parms.getPo() == null ? (parms.getIsPo()==null?"":(parms.getIsPo().equalsIgnoreCase("Yes")?" AND po_type_id IS NOT NULL":" AND po_type_id IS NULL")) 
+                            : " AND po_type_id in (" + createIntList(parms.getPo())+")")   
                     + (parms.getDocumentType() == null || parms.getDocumentType().length==0 ? "" : " AND doc_type in ('" + createTypeList(parms.getDocumentType()) + "')")
                     + (parms.getStartFirstRangeTime() == null ? "" : " AND date_in>='" + dateFormat.format(parms.getStartFirstRangeTime()) + "'")
                     + (parms.getStartSecondRangeTime() == null ? "" : " AND date_in<='" + dateFormat.format(parms.getStartSecondRangeTime()) + "'")
@@ -328,6 +330,17 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
         for (String docType : documentType) {
             if (sb.length()>0) {
                 sb.append("','");
+            }
+            sb.append(docType);
+        }
+        return sb.toString();
+    }
+
+    private String createIntList(String[] poType) {
+        StringBuilder sb = new StringBuilder();
+        for (String docType : poType) {
+            if (sb.length()>0) {
+                sb.append(",");
             }
             sb.append(docType);
         }

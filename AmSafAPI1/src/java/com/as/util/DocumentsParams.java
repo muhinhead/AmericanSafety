@@ -33,6 +33,8 @@ public class DocumentsParams implements Serializable {
     private Date finishFirstRangeTime;
     @Temporal(TemporalType.DATE)
     private Date finishSecondRangeTime;
+    private String[] po;
+    private String isPo;
     private String poNumber;
     private Integer offset;
     private Integer limit;
@@ -251,6 +253,34 @@ public class DocumentsParams implements Serializable {
      */
     public void setPoNumber(String poNumber) {
         this.poNumber = poNumber;
+    }
+
+    /**
+     * @return the po
+     */
+    public String[] getPo() {
+        return po;
+    }
+
+    /**
+     * @param po the po to set
+     */
+    public void setPo(String po[]) {
+        this.po = po;
+    }
+
+    /**
+     * @return the isPo
+     */
+    public String getIsPo() {
+        return isPo;
+    }
+
+    /**
+     * @param isPo the isPo to set
+     */
+    public void setIsPo(String isPo) {
+        this.isPo = isPo;
     }
 
 }
