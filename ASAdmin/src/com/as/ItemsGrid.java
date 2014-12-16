@@ -21,7 +21,7 @@ class ItemsGrid extends GeneralGridPanel {
     }
 
     public ItemsGrid(IMessageSender exchanger, boolean hideBtns) throws RemoteException {
-        super(exchanger, "select item_id \"Id\", item_number \"Number\", "
+        super(exchanger, "select item_id \"Id\", item_number \"Type\", "
                 + " item_name \"Name\", item_description \"Description\", last_price \"Last Price\" "
                 + " from item", maxWidths, hideBtns);
     }

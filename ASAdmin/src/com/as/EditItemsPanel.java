@@ -36,7 +36,7 @@ class EditItemsPanel extends RecordEditPanel {
     protected void fillContent() {
         String titles[] = new String[]{
             "ID:",
-            "Item Number:",
+            "Item Type:",
             "Item Name:",
             "Item Description:",
             "Last Price",
@@ -62,7 +62,7 @@ class EditItemsPanel extends RecordEditPanel {
         JLabel itemNumLBL = null;
         JLabel itemNameLBL = null;
         for (JLabel lbl : labels) {
-            if (lbl.getText().equals("Item Number:")) {
+            if (lbl.getText().equals("Item Type:")) {
                 itemNumLBL = lbl;
             }
             if (lbl.getText().equals("Item Name:")) {

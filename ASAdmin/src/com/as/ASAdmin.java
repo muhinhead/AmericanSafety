@@ -40,7 +40,7 @@ import javax.swing.SpinnerNumberModel;
  */
 public class ASAdmin {
 
-    private static final String version = "0.6.1";
+    private static final String version = "0.6.2";
     private static Logger logger = null;
     private static FileHandler fh;
     private static Properties props;
@@ -49,7 +49,7 @@ public class ASAdmin {
     private static IMessageSender exchanger;
     public static final Color HDR_COLOR = new Color(48, 147, 0);//159, 21, 11);
     public static String protocol = "unknown";
-    public static final String defaultServerIP = "localhost";//"104.130.138.22";
+    public static final String defaultServerIP = "104.130.138.22";
     private static ConcurrentHashMap listsCached = new ConcurrentHashMap();
 
     public static Properties getProperties() {
