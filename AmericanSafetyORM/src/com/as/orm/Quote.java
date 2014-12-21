@@ -430,9 +430,9 @@ public class Quote extends DbObject implements IDocument {
     }
 
     public void setCreatedBy(Integer createdBy) throws SQLException, ForeignKeyViolationException {
-        if (createdBy!=null && !User.exists(getConnection(),"user_id = " + createdBy)) {
-            throw new ForeignKeyViolationException("Can't set created_by, foreign key violation: quote_user_fk");
-        }
+//        if (createdBy!=null && !User.exists(getConnection(),"user_id = " + createdBy)) {
+//            throw new ForeignKeyViolationException("Can't set created_by, foreign key violation: quote_user_fk");
+//        }
         setWasChanged(this.createdBy != null && !this.createdBy.equals(createdBy));
         this.createdBy = createdBy;
     }
@@ -444,9 +444,9 @@ public class Quote extends DbObject implements IDocument {
     public void setPoTypeId(Integer poTypeId) throws SQLException, ForeignKeyViolationException {
         if (null != poTypeId)
             poTypeId = poTypeId == 0 ? null : poTypeId;
-        if (poTypeId!=null && !Po.exists(getConnection(),"po_id = " + poTypeId)) {
-            throw new ForeignKeyViolationException("Can't set po_type_id, foreign key violation: quote_po_fk");
-        }
+//        if (poTypeId!=null && !Po.exists(getConnection(),"po_id = " + poTypeId)) {
+//            throw new ForeignKeyViolationException("Can't set po_type_id, foreign key violation: quote_po_fk");
+//        }
         setWasChanged(this.poTypeId != null && !this.poTypeId.equals(poTypeId));
         this.poTypeId = poTypeId;
     }
@@ -458,9 +458,9 @@ public class Quote extends DbObject implements IDocument {
     public void setContactId(Integer contactId) throws SQLException, ForeignKeyViolationException {
         if (null != contactId)
             contactId = contactId == 0 ? null : contactId;
-        if (contactId!=null && !Contact.exists(getConnection(),"contact_id = " + contactId)) {
-            throw new ForeignKeyViolationException("Can't set contact_id, foreign key violation: quote_contact_fk");
-        }
+//        if (contactId!=null && !Contact.exists(getConnection(),"contact_id = " + contactId)) {
+//            throw new ForeignKeyViolationException("Can't set contact_id, foreign key violation: quote_contact_fk");
+//        }
         setWasChanged(this.contactId != null && !this.contactId.equals(contactId));
         this.contactId = contactId;
     }
@@ -472,9 +472,9 @@ public class Quote extends DbObject implements IDocument {
     public void setCustomerId(Integer customerId) throws SQLException, ForeignKeyViolationException {
         if (null != customerId)
             customerId = customerId == 0 ? null : customerId;
-        if (customerId!=null && !Customer.exists(getConnection(),"customer_id = " + customerId)) {
-            throw new ForeignKeyViolationException("Can't set customer_id, foreign key violation: quote_customer_fk");
-        }
+//        if (customerId!=null && !Customer.exists(getConnection(),"customer_id = " + customerId)) {
+//            throw new ForeignKeyViolationException("Can't set customer_id, foreign key violation: quote_customer_fk");
+//        }
         setWasChanged(this.customerId != null && !this.customerId.equals(customerId));
         this.customerId = customerId;
     }
@@ -486,9 +486,9 @@ public class Quote extends DbObject implements IDocument {
     public void setTaxId(Integer taxId) throws SQLException, ForeignKeyViolationException {
         if (null != taxId)
             taxId = taxId == 0 ? null : taxId;
-        if (taxId!=null && !Tax.exists(getConnection(),"tax_id = " + taxId)) {
-            throw new ForeignKeyViolationException("Can't set tax_id, foreign key violation: quote_tax_fk");
-        }
+//        if (taxId!=null && !Tax.exists(getConnection(),"tax_id = " + taxId)) {
+//            throw new ForeignKeyViolationException("Can't set tax_id, foreign key violation: quote_tax_fk");
+//        }
         setWasChanged(this.taxId != null && !this.taxId.equals(taxId));
         this.taxId = taxId;
     }
@@ -500,9 +500,9 @@ public class Quote extends DbObject implements IDocument {
     public void setStampsId(Integer stampsId) throws SQLException, ForeignKeyViolationException {
         if (null != stampsId)
             stampsId = stampsId == 0 ? null : stampsId;
-        if (stampsId!=null && !Stamps.exists(getConnection(),"stamps_id = " + stampsId)) {
-            throw new ForeignKeyViolationException("Can't set stamps_id, foreign key violation: quote_stamps_fk");
-        }
+//        if (stampsId!=null && !Stamps.exists(getConnection(),"stamps_id = " + stampsId)) {
+//            throw new ForeignKeyViolationException("Can't set stamps_id, foreign key violation: quote_stamps_fk");
+//        }
         setWasChanged(this.stampsId != null && !this.stampsId.equals(stampsId));
         this.stampsId = stampsId;
     }
