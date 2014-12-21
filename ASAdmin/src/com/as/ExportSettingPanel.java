@@ -11,7 +11,12 @@ import com.as.orm.dbobject.DbObject;
 import com.as.util.EmailFocusAdapter;
 import com.as.util.RecordEditPanel;
 import static com.as.util.RecordEditPanel.getGridPanel;
+import com.as.util.TexturedPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
@@ -59,6 +64,7 @@ class ExportSettingPanel extends RecordEditPanel {
             "    E-mail for notification:",
             ""
         };
+        JPanel hdrPanel = new TexturedPanel(new FlowLayout(), "dialog_hdr.png");
         JComponent[] edits = new JComponent[]{
             new JPanel(),
             getBorderPanel(
@@ -90,7 +96,16 @@ class ExportSettingPanel extends RecordEditPanel {
                 }
             })}))
         };
+
         organizePanels(titles, edits, null);
+        
+        JLabel headerLabel = new JLabel("The Scheduled Data Export Settings", SwingConstants.CENTER);
+        headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD, 18));
+        headerLabel.setForeground(Color.WHITE);
+        //hdrPanel.setBackground(ASAdmin.HDR_COLOR);
+        hdrPanel.add(headerLabel);
+        upPanel.add(hdrPanel, BorderLayout.NORTH);
+        
         for (JLabel lbl : labels) {
             if (lbl.getText().equals("E-mail:")) {
                 emailTF.addFocusListener(new EmailFocusAdapter(lbl, emailTF));
