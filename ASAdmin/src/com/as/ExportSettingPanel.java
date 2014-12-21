@@ -22,6 +22,7 @@ import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -62,7 +63,7 @@ class ExportSettingPanel extends RecordEditPanel {
             "Schedule:", //hourly/weekly/daily
             "Orders data in files:", //one/many
             "    E-mail for notification:",
-            ""
+            "",""
         };
         JPanel hdrPanel = new TexturedPanel(new FlowLayout(), "dialog_hdr.png");
         JComponent[] edits = new JComponent[]{
@@ -94,7 +95,8 @@ class ExportSettingPanel extends RecordEditPanel {
                 public void actionPerformed(ActionEvent e) {
                     loadData();
                 }
-            })}))
+            })})),
+            new JPanel()
         };
 
         organizePanels(titles, edits, null);
@@ -105,7 +107,7 @@ class ExportSettingPanel extends RecordEditPanel {
         //hdrPanel.setBackground(ASAdmin.HDR_COLOR);
         hdrPanel.add(headerLabel);
         upPanel.add(hdrPanel, BorderLayout.NORTH);
-        
+        upPanel.setBorder(BorderFactory.createEtchedBorder());
         for (JLabel lbl : labels) {
             if (lbl.getText().equals("E-mail:")) {
                 emailTF.addFocusListener(new EmailFocusAdapter(lbl, emailTF));
