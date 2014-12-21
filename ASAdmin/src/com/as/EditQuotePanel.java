@@ -21,6 +21,7 @@ class EditQuotePanel extends EditDocumentPanel {
         super.fillContent();
         dateOutLbl.setVisible(false);
         dateOutSP.setVisible(false);
+        dateOutNullCB.setVisible(false);
     }
     
     @Override
@@ -28,4 +29,8 @@ class EditQuotePanel extends EditDocumentPanel {
         return (IDocument) new Quote(null);
     }
 
+    @Override
+    public String documentType() {
+        return "quote";
+    }
 }

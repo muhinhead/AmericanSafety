@@ -37,7 +37,7 @@ public abstract class RecordEditPanel extends JPanel {
     protected PagesPanel pagesdPanel;
     protected JComponent[] edits;
     protected JLabel[] labels;
-    protected final DbObject[] params;
+    private final DbObject[] params;
     private EditRecordDialog ownerDialog;
 
     protected static JLabel[] createLabelsArray(String[] titles) {
@@ -101,6 +101,13 @@ public abstract class RecordEditPanel extends JPanel {
      */
     public void setOwnerDialog(EditRecordDialog ownerDialog) {
         this.ownerDialog = ownerDialog;
+    }
+
+    /**
+     * @return the params
+     */
+    public DbObject[] getParams() {
+        return params;
     }
 
     protected static class EmptyValueException extends Exception {

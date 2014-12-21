@@ -25,11 +25,12 @@ public class InvoicesGrid extends GeneralGridPanel {
     private static HashMap<Integer, Integer> maxWidths = new HashMap<Integer, Integer>();
 
     static {
-        maxWidths.put(0, 40);
+        maxWidths.put(0, 80);
     }
 
     public InvoicesGrid(IMessageSender exchanger) throws RemoteException {
-        super(exchanger, "select invoice_id \"Id\","
+        super(exchanger, "select invoice_id \"Invoice Id\","
+                + "(select id from document_ids where document_type='invoice' and document_id=invoice_id) \"Doc.ID\","
                 + "DATE_FORMAT(date_in,'%m-%e-%Y %r') \"Date In\","
                 + "DATE_FORMAT(date_out,'%m-%e-%Y %r') \"Date Out\","
                 + "(select sum(qty*price) from invoiceitem where invoice_id=invoice.invoice_id) \"Sum\","

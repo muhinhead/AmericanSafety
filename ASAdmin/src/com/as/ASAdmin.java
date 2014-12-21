@@ -40,11 +40,11 @@ import javax.swing.SpinnerNumberModel;
  */
 public class ASAdmin {
 
-    private static final String version = "0.6.2";
+    private static final String version = "0.6.3";
     private static Logger logger = null;
     private static FileHandler fh;
     private static Properties props;
-    private static final String PROPERTYFILENAME = "ASAdmin.config";
+    private static final String PROPERTYFILENAME = System.getProperty("user.home") + File.separator + "ASAdmin.config";
     private static User currentUser;
     private static IMessageSender exchanger;
     public static final Color HDR_COLOR = new Color(48, 147, 0);//159, 21, 11);
@@ -164,8 +164,9 @@ public class ASAdmin {
         JTextField dbDriverField = new JTextField(getProperties()
                 .getProperty("dbDriverName", "com.mysql.jdbc.Driver"));
         JTextField dbUserField = new JTextField(getProperties()
-                .getProperty("dbUser", "root"));
-        JPasswordField dbPasswordField = new JPasswordField();
+                .getProperty("dbUser", "amsaf"));
+        JPasswordField dbPasswordField = new JPasswordField(getProperties()
+                .getProperty("dbPassword", "amsaf@2044"));
 
         JComponent[] edits = new JComponent[]{
             imageDirField, addressField, portSpinner,

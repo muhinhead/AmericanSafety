@@ -1,5 +1,6 @@
 package com.as;
 
+import com.as.orm.Document_ids;
 import com.as.orm.IDocument;
 import com.as.orm.Invoice;
 import com.as.orm.Order;
@@ -20,6 +21,7 @@ import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -74,33 +76,38 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
     private JComboBox taxCB;
     private JLabel totalLbl;
     private DocItemsGrid itemsGrid = null;
+    private JTextField docIdField;
+    protected JCheckBox dateOutNullCB;
+    private JCheckBox dateInNullCB;
 
     private class DiscountListener implements ChangeListener {
+
         private DocItemsGrid grid;
-        
+
         DiscountListener(DocItemsGrid itemsGrid) {
             this.grid = itemsGrid;
         }
-        
+
         @Override
         public void stateChanged(ChangeEvent e) {
             recalcTotal(grid);
         }
     }
-    
+
     private class TaxCbListener extends AbstractAction {
+
         private DocItemsGrid grid;
 
         TaxCbListener(DocItemsGrid itemsGrid) {
             this.grid = itemsGrid;
         }
-        
+
         @Override
         public void actionPerformed(ActionEvent e) {
             recalcTotal(grid);
-        }        
+        }
     }
-    
+
     public EditDocumentPanel(DbObject dbObject) {
         super(dbObject);
     }
@@ -113,7 +120,7 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
     @Override
     protected void fillContent() {
         String titles[] = new String[]{
-            "ID:",//"Date In:", //"Date Out:"
+            documentType() + " ID:",//"Date In:", //"Date Out:"
             "Customer:", //"Location:"
             "Contact:", //"Contractor:"
             "Rig/Tank/Equipment",
@@ -124,11 +131,22 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
             "", "", "", ""
         };
         JComponent[] edits = new JComponent[]{
-            getGridPanel(new JComponent[]{idField = new JTextField(),
+            getGridPanel(new JComponent[]{
+                getBorderPanel(
+                idField = new JTextField(),
+                new JLabel("Unique document ID:", SwingConstants.RIGHT),
+                docIdField = new JTextField()
+                ),
+                getBorderPanel(
                 new JLabel("Date In:", SwingConstants.RIGHT),
                 dateInSP = new SelectedDateSpinner(),
+                dateInNullCB = new JCheckBox("null")
+                ),
+                getBorderPanel(
                 dateOutLbl = new JLabel("Date Out:", SwingConstants.RIGHT),
-                dateOutSP = new SelectedDateSpinner()
+                dateOutSP = new SelectedDateSpinner(),
+                dateOutNullCB = new JCheckBox("null")
+                )
             }),
             getGridPanel(new JComponent[]{
                 comboPanelWithLookupBtn(customerCB = new JComboBox(ASAdmin.loadCustomers()),
@@ -226,6 +244,7 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
 
         customerCB.setSelectedIndex(0);
         idField.setEnabled(false);
+        docIdField.setEnabled(false);
         subTotalSP.setEnabled(false);
         taxBaksSP.setEnabled(false);
         totalLbl.setEnabled(false);
@@ -238,16 +257,34 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
         rigCB.setEditable(true);
         createdByCB.setEnabled(false);
         organizePanels(titles, edits, null);
+        dateInNullCB.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dateInSP.setEnabled(!dateInNullCB.isSelected());
+            }
+        });
+        dateOutNullCB.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dateOutSP.setEnabled(!dateOutNullCB.isSelected());
+            }
+        });
     }
+
+    public abstract String documentType();
 
     @Override
     public void loadData() {
         IDocument doc = (IDocument) getDbObject();
         if (doc != null) {
             idField.setText(doc.getPK_ID().toString());
+            dateInNullCB.setSelected(doc.getDateIn() == null);
             if (doc.getDateIn() != null) {
                 dateInSP.setValue(doc.getDateIn());
+            } else {
+                dateInSP.setEnabled(false);
             }
+            getDocumentAdditions4Load(doc);
             selectComboItem(customerCB, doc.getCustomerId());
             locationTF.setText(doc.getLocation());
             selectComboItem(contactCB, doc.getContactId());
@@ -273,6 +310,13 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
             imageData = (byte[]) doc.getSignature();
             setImage(imageData);
             try {
+                DbObject[] dids = ASAdmin.getExchanger().getDbObjects(Document_ids.class,
+                        "document_id=" + doc.getPK_ID().toString()
+                        + " AND document_type='" + documentType() + "'", null);
+                if (dids.length > 0) {
+                    Document_ids docIds = (Document_ids) dids[0];
+                    docIdField.setText(docIds.getPK_ID().toString());
+                }
                 if (doc instanceof Quote) {
                     itemsGrid = new QuoteItemsGrid(ASAdmin.getExchanger(), doc.getPK_ID());
                 } else if (doc instanceof Order) {
@@ -332,6 +376,9 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
     protected void setDocumentAdditionsBeforeSave(IDocument doc) throws Exception {
     }
 
+    protected void getDocumentAdditions4Load(IDocument doc) {
+    }
+
     @Override
     public boolean save() throws Exception {
         boolean isNew = false;
@@ -341,8 +388,12 @@ abstract class EditDocumentPanel extends EditPanelWithPhoto {
             doc.setPK_ID(0);
             isNew = true;
         }
-        java.util.Date ud = (java.util.Date) dateInSP.getValue();
-        doc.setDateIn(new java.sql.Date(ud.getTime()));
+        if (dateInNullCB.isSelected()) {
+            doc.setDateIn(null);
+        } else {
+            java.util.Date ud = (java.util.Date) dateInSP.getValue();
+            doc.setDateIn(new java.sql.Date(ud.getTime()));
+        }
         doc.setCustomerId(getSelectedCbItem(customerCB));
         doc.setLocation(locationTF.getText());
         doc.setContactId(getSelectedCbItem(contactCB));

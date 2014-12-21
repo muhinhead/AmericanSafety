@@ -25,11 +25,12 @@ public class OrdersGrid  extends GeneralGridPanel {
     private static HashMap<Integer, Integer> maxWidths = new HashMap<Integer, Integer>();
 
     static {
-        maxWidths.put(0, 40);
+        maxWidths.put(0, 60);
     }
     
     public OrdersGrid(IMessageSender exchanger) throws RemoteException {
-        super(exchanger, "select order_id \"Id\","
+        super(exchanger, "select order_id \"Order Id\","
+                + "(select id from document_ids where document_type='order' and document_id=order_id) \"Doc.ID\","
                 + "DATE_FORMAT(date_in,'%m-%e-%Y %r') \"Date In\","
                 + "DATE_FORMAT(date_out,'%m-%e-%Y %r') \"Date Out\","
                 + "(select sum(qty*price) from orderitem where order_id=`order`.order_id) \"Sum\","

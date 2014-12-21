@@ -6,6 +6,7 @@ import com.as.mvc.dbtable.DbTableView.MyTableModel;
 import com.as.remote.IMessageSender;
 import com.as.util.FileFilterOnExtension;
 import com.as.util.ImagePanel;
+import com.as.util.RecordEditPanel;
 import com.as.util.TexturedPanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -76,7 +77,9 @@ public class DashBoardImage extends JFrame {
             public void stateChanged(ChangeEvent e) {
                 if (e.getSource() instanceof JTabbedPane) {
                     JTabbedPane tp = (JTabbedPane) e.getSource();
-                    activatePanel((GeneralGridPanel) tp.getSelectedComponent());
+                    if (tp.getSelectedComponent() instanceof GeneralGridPanel) {
+                        activatePanel((GeneralGridPanel) tp.getSelectedComponent());
+                    }
                 }
             }
         };
@@ -358,10 +361,10 @@ public class DashBoardImage extends JFrame {
                                     JOptionPane.ERROR_MESSAGE);
                         }
                     } else {
-                            JOptionPane.showMessageDialog(rootPane,
-                                    "Can't create temporary file " + htmlFileName
-                                    + "! Check the target folder permissions", "Error!",
-                                    JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane,
+                                "Can't create temporary file " + htmlFileName
+                                + "! Check the target folder permissions", "Error!",
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (Exception ex) {
                     ASAdmin.logAndShowMessage(ex);
@@ -613,6 +616,7 @@ public class DashBoardImage extends JFrame {
                                 return new SortAction(ourInstance.stampsGrid);
                             }
                         });
+                ourInstance.setupPanel.add("Export data settings",RecordEditPanel.getBorderPanel(new ExportSettingPanel(null)));
                 ourInstance.setupPanel.addChangeListener(getChangeTabListener());
             }
             CardLayout cl = (CardLayout) ourInstance.main.getLayout();

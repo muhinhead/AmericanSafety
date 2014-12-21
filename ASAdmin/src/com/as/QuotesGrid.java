@@ -24,11 +24,12 @@ public class QuotesGrid extends GeneralGridPanel {
     private static HashMap<Integer, Integer> maxWidths = new HashMap<Integer, Integer>();
 
     static {
-        maxWidths.put(0, 40);
+        maxWidths.put(0, 80);
     }
 
     public QuotesGrid(IMessageSender exchanger) throws RemoteException {
-        super(exchanger, "select quote_id \"Id\","
+        super(exchanger, "select quote_id \"Quote Id\","
+                + "(select id from document_ids where document_type='quote' and document_id=quote_id) \"Doc.ID\","
                 + "DATE_FORMAT(date_in,'%m-%e-%Y %r') \"Date In\","
                 + "(select sum(qty*price) from quoteitem where quote_id=quote.quote_id) \"Sum\","
                 + "(select customer_name from customer where customer_id=quote.customer_id) \"Customer\","

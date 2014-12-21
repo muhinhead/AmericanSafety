@@ -41,8 +41,8 @@ public class EmailFocusAdapter extends FocusAdapter {
             }
             if (ok) {
                 if (!field.getText().matches(EMAIL_REGEX)) {
-                    JOptionPane.showMessageDialog(null, "Invalid e-mail", "Error", JOptionPane.ERROR_MESSAGE);
                     label.setForeground(Color.red);
+                    JOptionPane.showMessageDialog(null, "Invalid e-mail", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     label.setForeground(prevForeground);
                 }
