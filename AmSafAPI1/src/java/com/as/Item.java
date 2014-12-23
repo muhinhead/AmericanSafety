@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Item.findByItemNumber", query = "SELECT i FROM Item i WHERE i.itemNumber = :itemNumber"),
     @NamedQuery(name = "Item.findByItemName", query = "SELECT i FROM Item i WHERE i.itemName = :itemName"),
     @NamedQuery(name = "Item.findByItemDescription", query = "SELECT i FROM Item i WHERE i.itemDescription = :itemDescription"),
+    @NamedQuery(name = "Item.findLastModified", query = "SELECT i FROM Item i WHERE i.updatedAt >= :updatedAt"),
     @NamedQuery(name = "Item.findByLastPrice", query = "SELECT i FROM Item i WHERE i.lastPrice = :lastPrice")})
 public class Item implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -64,16 +65,12 @@ public class Item implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "last_price")
     private BigDecimal lastPrice;
-//    @Basic(optional = false)
-//    @NotNull
-//    @Column(name = "updated_at")
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private Date updatedAt;
-//    @Basic(optional = false)
-//    @NotNull
-//    @Column(name = "created_at")
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private Date createdAt;
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "itemId")
     private Collection<Invoiceitem> invoiceitemCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "itemId")
@@ -136,22 +133,6 @@ public class Item implements Serializable {
         this.lastPrice = lastPrice;
     }
 
-//    public Date getUpdatedAt() {
-//        return updatedAt;
-//    }
-//
-//    public void setUpdatedAt(Date updatedAt) {
-//        this.updatedAt = updatedAt;
-//    }
-//
-//    public Date getCreatedAt() {
-//        return createdAt;
-//    }
-//
-//    public void setCreatedAt(Date createdAt) {
-//        this.createdAt = createdAt;
-//    }
-//
     @XmlTransient
     public Collection<Invoiceitem> getInvoiceitemCollection() {
         return invoiceitemCollection;
@@ -203,5 +184,33 @@ public class Item implements Serializable {
     public String toString() {
         return "com.as.Item[ itemId=" + itemId + " ]";
     }
+
+    /**
+     * @return the updatedAt
+     */
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+//    /**
+//     * @param updatedAt the updatedAt to set
+//     */
+//    public void setUpdatedAt(Date updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
+
+    /**
+     * @return the createdAt
+     */
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+//    /**
+//     * @param createdAt the createdAt to set
+//     */
+//    public void setCreatedAt(Date createdAt) {
+//        this.createdAt = createdAt;
+//    }
     
 }

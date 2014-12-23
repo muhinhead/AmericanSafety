@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.EditUsersroleTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.EditUsersroleLabel_usersroleId}" for="usersroleId" />
+                    <h:inputText id="usersroleId" value="#{usersroleController.selected.usersroleId}" title="#{bundle.EditUsersroleTitle_usersroleId}" required="true" requiredMessage="#{bundle.EditUsersroleRequiredMessage_usersroleId}"/>
+                    <h:outputLabel value="#{bundle.EditUsersroleLabel_roleId}" for="roleId" />
+                    <h:selectOneMenu id="roleId" value="#{usersroleController.selected.roleId}" title="#{bundle.EditUsersroleTitle_roleId}" required="true" requiredMessage="#{bundle.EditUsersroleRequiredMessage_roleId}">
+                        <f:selectItems value="#{roleController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.EditUsersroleLabel_userId}" for="userId" />
+                    <h:selectOneMenu id="userId" value="#{usersroleController.selected.userId}" title="#{bundle.EditUsersroleTitle_userId}" required="true" requiredMessage="#{bundle.EditUsersroleRequiredMessage_userId}">
+                        <f:selectItems value="#{userController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                </h:panelGrid>
+                <h:commandLink action="#{usersroleController.update}" value="#{bundle.EditUsersroleSaveLink}"/>
+                <br />
+                <br />
+                <h:link outcome="View" value="#{bundle.EditUsersroleViewLink}"/>
+                <br />
+                <h:commandLink action="#{usersroleController.prepareList}" value="#{bundle.EditUsersroleShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.EditUsersroleIndexLink}" />
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

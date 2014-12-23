@@ -15,6 +15,11 @@ import javax.ws.rs.core.Application;
 @javax.ws.rs.ApplicationPath("webresources")
 public class ApplicationConfig extends Application {
 
+    public ApplicationConfig() {
+        super();
+        System.out.println("!!!!!!!CONSTRUCTOR ApplicationConfig()!!!!!!!!!!!!!!!");
+    }
+    
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new java.util.HashSet<>();
@@ -43,6 +48,7 @@ public class ApplicationConfig extends Application {
         resources.add(com.as.service.QuoteFacadeREST.class);
         resources.add(com.as.service.QuoteitemFacadeREST.class);
         resources.add(com.as.service.RoleFacadeREST.class);
+        resources.add(com.as.service.SettingsFacadeREST.class);
         resources.add(com.as.service.StampsFacadeREST.class);
         resources.add(com.as.service.TaxFacadeREST.class);
         resources.add(com.as.service.UserFacadeREST.class);

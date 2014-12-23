@@ -39,6 +39,7 @@ public class DocumentsParams implements Serializable {
     private Integer offset;
     private Integer limit;
     private Integer departmentID;
+    private Integer[] documentID;
 
     public Long getId() {
         return id;
@@ -281,6 +282,20 @@ public class DocumentsParams implements Serializable {
      */
     public void setIsPo(String[] isPo) {
         this.isPo = isPo;
+    }
+
+    /**
+     * @return the documentID
+     */
+    public Integer[] getDocumentID() {
+        return documentID;
+    }
+
+    /**
+     * @param documentID the documentID to set
+     */
+    public void setDocumentID(Integer[] documentID) {
+        this.documentID = documentID;
     }
 
 }

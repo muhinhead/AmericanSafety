@@ -90,6 +90,7 @@ public class LoginFacadeREST extends AbstractFacade<Login> {
     public ResponseLogin findByNameAndPassword(LoginParams entity) {
         String errMsg[] = null;
         Login login = null;
+        Collection<Integer> ids = null;
         try {
             login = (Login) em.createNamedQuery("Login.findByNameAndPassword")
                     .setParameter("username", entity.getUsername())
@@ -98,6 +99,9 @@ public class LoginFacadeREST extends AbstractFacade<Login> {
             if (login.getPassword() == null || login.getPassword().length() == 0) {
                 login = null;
                 errMsg = new String[]{"Unknow user or wrong password entered"};
+            } else {
+                ids = em.createNativeQuery(
+                        "select document_id from document where created_by="+login.getUserID().toString()).getResultList();
             }
         } catch (Exception e) {
             if (e.getMessage().startsWith("getSingleResult() did not retrieve any entities")) {
@@ -106,7 +110,7 @@ public class LoginFacadeREST extends AbstractFacade<Login> {
                 errMsg = new String[]{e.getMessage()};
             }
         }
-        return new ResponseLogin(login, errMsg);
+        return new ResponseLogin(login, ids, errMsg);
     }
 
     @POST
@@ -124,7 +128,7 @@ public class LoginFacadeREST extends AbstractFacade<Login> {
                 ok.setResult(true);
                 sendEmail(user.getEmail(), "Password discard",
                         "Dear " + user.getFirstName() + " " + user.getLastName() + ",\n\n"
-                        + "Your password in AmericanSafety application was discarded");
+                        + "Your password in AmericanSafety application was discarded", null);
             }
         } catch (Exception e) {
             if (e.getMessage().indexOf("did not retrieve any entities") > 0) {
@@ -151,7 +155,7 @@ public class LoginFacadeREST extends AbstractFacade<Login> {
                 ok.setResult(true);
                 sendEmail(user.getEmail(), "Your new password",
                         "Dear " + user.getFirstName() + " " + user.getLastName() + ",\n\n"
-                        + "Here is your new password in AmericanSafety application: " + par.getPassword());
+                        + "Here is your new password in AmericanSafety application: " + par.getPassword(), null);
             }
         } catch (Exception e) {
             if (e.getMessage().indexOf("did not retrieve any entities") > 0) {

@@ -26,11 +26,17 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Message;
+import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.persistence.EntityManager;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -248,7 +254,7 @@ public abstract class AbstractFacade<T> {
         }
     }
 
-    protected boolean sendEmail(String email, String subject, String body) {
+    public static boolean sendEmail(String email, String subject, String body, File attachment) {
         Properties mailProps = new Properties();
         String STARTTLS = "true";
         String AUTH = "true";
@@ -273,6 +279,16 @@ public abstract class AbstractFacade<T> {
             Session session = Session.getDefaultInstance(mailProps, null);
             MimeMessage message = new MimeMessage(session);
             message.setText(body);
+            if (attachment != null) {
+                MimeBodyPart messageBodyPart = new MimeBodyPart();
+                //String filename = attachment.getAbsolutePath();
+                DataSource source = new FileDataSource(attachment);
+                messageBodyPart.setDataHandler(new DataHandler(source));
+                messageBodyPart.setFileName(attachment.getName());
+                Multipart multipart = new MimeMultipart();
+                multipart.addBodyPart(messageBodyPart);
+                message.setContent(multipart);
+            }
             message.setSubject(SUBJECT);
             message.setFrom(new InternetAddress(FROM));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
@@ -287,7 +303,7 @@ public abstract class AbstractFacade<T> {
         }
         return false;
     }
-    
+
     public static String createContactAndReturnID(EntityManager em, Contact entity) {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();

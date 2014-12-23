@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.EditOrderitemTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.EditOrderitemLabel_orderitemId}" for="orderitemId" />
+                    <h:inputText id="orderitemId" value="#{orderitemController.selected.orderitemId}" title="#{bundle.EditOrderitemTitle_orderitemId}" required="true" requiredMessage="#{bundle.EditOrderitemRequiredMessage_orderitemId}"/>
+                    <h:outputLabel value="#{bundle.EditOrderitemLabel_qty}" for="qty" />
+                    <h:inputText id="qty" value="#{orderitemController.selected.qty}" title="#{bundle.EditOrderitemTitle_qty}" required="true" requiredMessage="#{bundle.EditOrderitemRequiredMessage_qty}"/>
+                    <h:outputLabel value="#{bundle.EditOrderitemLabel_price}" for="price" />
+                    <h:inputText id="price" value="#{orderitemController.selected.price}" title="#{bundle.EditOrderitemTitle_price}" />
+                    <h:outputLabel value="#{bundle.EditOrderitemLabel_updatedAt}" for="updatedAt" />
+                    <h:inputText id="updatedAt" value="#{orderitemController.selected.updatedAt}" title="#{bundle.EditOrderitemTitle_updatedAt}" required="true" requiredMessage="#{bundle.EditOrderitemRequiredMessage_updatedAt}">
+                        <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                    </h:inputText>
+                    <h:outputLabel value="#{bundle.EditOrderitemLabel_createdAt}" for="createdAt" />
+                    <h:inputText id="createdAt" value="#{orderitemController.selected.createdAt}" title="#{bundle.EditOrderitemTitle_createdAt}" required="true" requiredMessage="#{bundle.EditOrderitemRequiredMessage_createdAt}">
+                        <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                    </h:inputText>
+                    <h:outputLabel value="#{bundle.EditOrderitemLabel_tax}" for="tax" />
+                    <h:inputText id="tax" value="#{orderitemController.selected.tax}" title="#{bundle.EditOrderitemTitle_tax}" />
+                    <h:outputLabel value="#{bundle.EditOrderitemLabel_itemId}" for="itemId" />
+                    <h:selectOneMenu id="itemId" value="#{orderitemController.selected.itemId}" title="#{bundle.EditOrderitemTitle_itemId}" required="true" requiredMessage="#{bundle.EditOrderitemRequiredMessage_itemId}">
+                        <f:selectItems value="#{itemController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.EditOrderitemLabel_orderId}" for="orderId" />
+                    <h:selectOneMenu id="orderId" value="#{orderitemController.selected.orderId}" title="#{bundle.EditOrderitemTitle_orderId}" required="true" requiredMessage="#{bundle.EditOrderitemRequiredMessage_orderId}">
+                        <f:selectItems value="#{order1Controller.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                </h:panelGrid>
+                <h:commandLink action="#{orderitemController.update}" value="#{bundle.EditOrderitemSaveLink}"/>
+                <br />
+                <br />
+                <h:link outcome="View" value="#{bundle.EditOrderitemViewLink}"/>
+                <br />
+                <h:commandLink action="#{orderitemController.prepareList}" value="#{bundle.EditOrderitemShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.EditOrderitemIndexLink}" />
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

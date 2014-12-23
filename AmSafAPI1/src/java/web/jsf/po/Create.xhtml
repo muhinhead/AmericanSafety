@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.CreatePoTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.CreatePoLabel_poId}" for="poId" />
+                    <h:inputText id="poId" value="#{poController.selected.poId}" title="#{bundle.CreatePoTitle_poId}" required="true" requiredMessage="#{bundle.CreatePoRequiredMessage_poId}"/>
+                    <h:outputLabel value="#{bundle.CreatePoLabel_poDescription}" for="poDescription" />
+                    <h:inputText id="poDescription" value="#{poController.selected.poDescription}" title="#{bundle.CreatePoTitle_poDescription}" required="true" requiredMessage="#{bundle.CreatePoRequiredMessage_poDescription}"/>
+                    <h:outputLabel value="#{bundle.CreatePoLabel_updatedAt}" for="updatedAt" />
+                    <h:inputText id="updatedAt" value="#{poController.selected.updatedAt}" title="#{bundle.CreatePoTitle_updatedAt}" required="true" requiredMessage="#{bundle.CreatePoRequiredMessage_updatedAt}">
+                        <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                    </h:inputText>
+                    <h:outputLabel value="#{bundle.CreatePoLabel_createdAt}" for="createdAt" />
+                    <h:inputText id="createdAt" value="#{poController.selected.createdAt}" title="#{bundle.CreatePoTitle_createdAt}" required="true" requiredMessage="#{bundle.CreatePoRequiredMessage_createdAt}">
+                        <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                    </h:inputText>
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{poController.create}" value="#{bundle.CreatePoSaveLink}" />
+                <br />
+                <br />
+                <h:commandLink action="#{poController.prepareList}" value="#{bundle.CreatePoShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.CreatePoIndexLink}"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

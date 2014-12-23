@@ -22,9 +22,11 @@ import com.as.util.DocumentsParams;
 import com.as.util.ParamDocItem;
 import com.as.util.ParamDocument4Submit;
 import com.as.util.ResponseDocumentList;
+import com.as.util.ResponseProxyDocument;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -113,6 +115,7 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
                     + (parms.getPo() == null ? createPoNullCondition(parms.getIsPo())
                             : " AND po_type_id in (" + createIntList(parms.getPo()) + ")")
                     + (parms.getDocumentType() == null || parms.getDocumentType().length == 0 ? "" : " AND doc_type in ('" + createTypeList(parms.getDocumentType()) + "')")
+                    + (parms.getDocumentID() == null || parms.getDocumentID().length == 0 ? "" : " AND document_id in (" + createIntList(parms.getDocumentID()) + ")")
                     + (parms.getStartFirstRangeTime() == null ? "" : " AND date_in>='" + dateFormat.format(parms.getStartFirstRangeTime()) + "'")
                     + (parms.getStartSecondRangeTime() == null ? "" : " AND date_in<='" + dateFormat.format(parms.getStartSecondRangeTime()) + "'")
                     + (parms.getFinishFirstRangeTime() == null ? "" : " AND date_out>='" + dateFormat.format(parms.getFinishFirstRangeTime()))
@@ -120,16 +123,16 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
                     + (parms.getCustomerID() == null ? "" : " AND customer_id=" + parms.getCustomerID())
                     + " LIMIT " + (parms.getOffset() != null ? parms.getOffset().toString() + "," : "")
                     + (parms.getLimit() != null ? parms.getLimit().toString() : "9999999999999999999"));
+            //System.out.println("!!!"+sql);            
             List<String> rids = qry.getResultList();
             List<IDocument> doclist = new ArrayList<IDocument>(rids.size());
             for (String docIDtype : rids) {
                 int p = docIDtype.indexOf(' ');
-                Integer docID = Integer.parseInt(docIDtype.substring(0, p));
+                Integer uniqDocID = Integer.parseInt(docIDtype.substring(0, p));
                 String docType = docIDtype.substring(p + 1);
-//                Document doc = (Document) getEntityManager()
-//                        .createNamedQuery("Document.findByDocumentIDandType")
-//                        .setParameter("documentID", docID).setParameter("docType", docType).getSingleResult();
-                IDocument doc;
+                Integer docID = (Integer) em.createNativeQuery(
+                        "select document_id from document_ids where document_type='" + docType + "' and id=" + uniqDocID).getSingleResult();
+                IDocument doc = null;
                 if (docType.equals("order")) {
                     doc = (IDocument) getEntityManager()
                             .createNamedQuery("Order1.findByOrderId")
@@ -143,7 +146,8 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
                             .createNamedQuery("Invoice.findByInvoiceId")
                             .setParameter("invoiceId", docID).getSingleResult();
                 }
-                doclist.add(doc);
+                //System.out.println("!!original:"+doc.getDocumentId()+" new:"+uniqDocID);
+                doclist.add(new ResponseProxyDocument(doc,uniqDocID));
             }
             ResponseDocumentList rdl = new ResponseDocumentList(doclist, null);
             return rdl;
@@ -160,22 +164,29 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
         int code = 200;
         try {
             Integer docID;
+            Integer uniqID;
             IDocument doc = createDocument(pars);
             if (pars.getDocumentType().equalsIgnoreCase("quote")) {
                 Quote quote = (Quote) doc;
                 docID = QuoteFacadeREST.createAndReturnID(quote, getEntityManager());
                 quote.setQuoteitemCollection(createQuoteItemsCollection(quote, pars.getItems()));
-                output = "{\"quoteID\":\"" + String.valueOf(docID) + "\"}";
+                uniqID = (Integer) em.createNativeQuery(
+                        "select id from document_ids where document_type='quote' and document_id=" + docID.toString()).getSingleResult();
+                output = "{\"documentID\":" + uniqID.toString() + ",\"quoteID\":\"" + String.valueOf(docID) + "\"}";
             } else if (pars.getDocumentType().equalsIgnoreCase("order")) {
                 Order1 order = (Order1) doc;
                 docID = Order1FacadeREST.createAndReturnId(order, getEntityManager());
                 order.setOrderitemCollection(createOrderItemsCollection(order, pars.getItems()));
-                output = "{\"orderID\":\"" + String.valueOf(docID) + "\"}";
+                uniqID = (Integer) em.createNativeQuery(
+                        "select id from document_ids where document_type='order' and document_id=" + docID.toString()).getSingleResult();
+                output = "{\"documentID\":" + uniqID.toString() + ",\"orderID\":\"" + String.valueOf(docID) + "\"}";
             } else if (pars.getDocumentType().equalsIgnoreCase("invoice")) {
                 Invoice invoice = (Invoice) doc;
                 docID = InvoiceFacadeREST.createAndReturnId(invoice, getEntityManager());
                 invoice.setInvoiceitemCollection(createInvoiceItemsCollection(invoice, pars.getItems()));
-                output = "{\"invoiceID\":\"" + String.valueOf(docID) + "\"}";
+                uniqID = (Integer) em.createNativeQuery(
+                        "select id from document_ids where document_type='invoice' and document_id=" + docID.toString()).getSingleResult();
+                output = "{\"documentID\":" + uniqID.toString() + ",\"invoiceID\":\"" + String.valueOf(docID) + "\"}";
                 if (!notifyAccountManagers(pars.getUserID(), invoice)) {
                     Logger.getLogger(DocumentFacadeREST.class.getName()).log(Level.SEVERE, null,
                             "Warning! No account managers found to notify from userID=" + pars.getUserID());
@@ -348,6 +359,17 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
         return sb.toString();
     }
 
+    private String createIntList(Integer[] ids) {
+        StringBuilder sb = new StringBuilder();
+        for (Integer id : ids) {
+            if (sb.length() > 0) {
+                sb.append(",");
+            }
+            sb.append(id.toString());
+        }
+        return sb.toString();
+    }
+
     private boolean notifyAccountManagers(Integer userID, Invoice invoice) {
         boolean sent = false;
         User user = (User) getEntityManager()
@@ -369,7 +391,7 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
                                 + " " + (invoice.getDateOut() != null ? " and completed on " + invoice.getDateOut().toString() : "")
                                 + " " + invoice.getPoType().getPoDescription() + "# " + invoice.getPoNumber() + "\n\n"
                                 + "Please don't answer this email since it was sent by robot at "
-                                + Calendar.getInstance().getTime().toString()
+                                + Calendar.getInstance().getTime().toString(), null
                         );
                         sent = true;
                     }
@@ -388,23 +410,23 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
 //                    return " AND po_type_id IS NULL";
 //                }
 //            } else {
-                Boolean notNull = null;
-                Boolean isNull = null;
-                for (String s : isPo) {
-                    if (s.equalsIgnoreCase("YES") || s.equalsIgnoreCase("TRUE")) {
-                        notNull = Boolean.TRUE;
-                    } else if (s.equalsIgnoreCase("NO") || s.equalsIgnoreCase("FALSE")) {
-                        isNull = Boolean.TRUE;
-                    }
+            Boolean notNull = null;
+            Boolean isNull = null;
+            for (String s : isPo) {
+                if (s.equalsIgnoreCase("YES") || s.equalsIgnoreCase("TRUE")) {
+                    notNull = Boolean.TRUE;
+                } else if (s.equalsIgnoreCase("NO") || s.equalsIgnoreCase("FALSE")) {
+                    isNull = Boolean.TRUE;
                 }
-                if (notNull == null && isNull != null) {
-                    return " AND po_type_id IS NULL";
-                } else if (isNull == null && notNull != null) {
-                    return " AND po_type_id IS NOT NULL";
-                }
+            }
+            if (notNull == null && isNull != null) {
+                return " AND po_type_id IS NULL";
+            } else if (isNull == null && notNull != null) {
+                return " AND po_type_id IS NOT NULL";
+            }
 //            }
-       }         
-       return "";
+        }
+        return "";
     }
 
 }

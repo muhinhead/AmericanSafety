@@ -7,6 +7,7 @@ package com.as.util;
 
 import com.as.Login;
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -23,12 +24,14 @@ public class LoginWIthRoleList implements Serializable {
     private String url;
     private String[] roles;
     private int departmentId;
+    private Collection<Integer> documentID;
     private byte[] avatar;
 
     public LoginWIthRoleList() {}
     
-    public LoginWIthRoleList(Login login) {
+    public LoginWIthRoleList(Login login, Collection<Integer> ids) {
         setUserId(login.getUserID());
+        setDocumentID(ids);
         setUsername(login.getUsername());
         setEmail(login.getEmail());
         setUrl(login.getUrl());
@@ -164,6 +167,20 @@ public class LoginWIthRoleList implements Serializable {
 
     private String createImageUrl(Integer userID) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * @return the documentID
+     */
+    public Collection<Integer> getDocumentID() {
+        return documentID;
+    }
+
+    /**
+     * @param documentID the documentID to set
+     */
+    public void setDocumentID(Collection<Integer> documentID) {
+        this.documentID = documentID;
     }
     
 }

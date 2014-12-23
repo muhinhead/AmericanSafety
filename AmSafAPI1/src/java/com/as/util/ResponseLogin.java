@@ -7,6 +7,8 @@ package com.as.util;
 
 import com.as.Login;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,12 +40,13 @@ public class ResponseLogin implements Serializable {
     @JoinColumn(name = "login_id", referencedColumnName = "userID")
     @ManyToOne
     private LoginWIthRoleList response;
+    
 
     public ResponseLogin() {
     }
 
-    public ResponseLogin(Login login, String[] errMsg) {
-        setResponse(login!=null?new LoginWIthRoleList(login):null);
+    public ResponseLogin(Login login, Collection<Integer> docIDs, String[] errMsg) {
+        setResponse(login!=null?new LoginWIthRoleList(login,docIDs):null);
         setErrorMsg(errMsg);
     }
 
