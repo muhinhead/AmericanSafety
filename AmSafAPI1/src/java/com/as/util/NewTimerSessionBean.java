@@ -40,7 +40,7 @@ public class NewTimerSessionBean {
 
     private static final String dirname = "Export2QuickBooks";
     private static final int BUFFER = 2048;
-    private static long timeDiff = 1000 * 120;//3600; //default - hourly 
+    private static long timeDiff = 1000 * 120; //default - hourly 
     private Date lastModified = new Date(0);
     private String notifyEmail = null;
     private boolean sendEmail = false;
@@ -53,6 +53,9 @@ public class NewTimerSessionBean {
     private EntityManager em;
     private String email;
     private File zipfile;
+    private String ftpUrl;
+    private String ftpLogin;
+    private String ftpPassword;
 
     @Schedule(dayOfWeek = "*", month = "*", hour = "*", dayOfMonth = "*", year = "*", minute = "*", second = "0", persistent = false)
     public void myTimer() {
@@ -68,7 +71,12 @@ public class NewTimerSessionBean {
         if (!busy && em != null && em.isOpen()) {
             sendEmail = sendFtp = false;
             zipfile = null;
+            ftpUrl = null;
+            ftpLogin = null;
+            ftpPassword = null;
             Date now = new Date();
+            boolean ftpUploaded = false;
+            boolean emailSent = false;
             Collection<Settings> settings = em.createNamedQuery("Settings.findAll", Settings.class).getResultList();
             for (Settings s : settings) {
                 em.refresh(s);
@@ -85,6 +93,12 @@ public class NewTimerSessionBean {
                     email = s.getValue();
                 } else if (s.getName().equals("Notification")) {
                     notifyEmail = s.getValue();
+                } else if (s.getName().equals("FTP address")) {
+                    ftpUrl = s.getValue();
+                } else if (s.getName().equals("FTP login")) {
+                    ftpLogin = s.getValue();
+                } else if (s.getName().equals("FTP password")) {
+                    ftpPassword = s.getValue();
                 }
             }
             File directory = new File(dirname);
@@ -96,27 +110,37 @@ public class NewTimerSessionBean {
                 try {
                     busy = true;
                     String notification = exportData(directory, now);
+                    if (ftpUrl != null && ftpLogin != null && ftpPassword != null && filesToExport.size() > 0) {
+                        //System.out.println("!!FTP:"+ftpUrl+" login:"+ftpLogin+" password:"+ftpPassword);
+                        ftpUploaded = AbstractFacade.upload2FTP(ftpUrl, ftpLogin, ftpPassword, "FTP", zipfile);
+                    } else {
+                        ftpUploaded = true;
+                    }
                     if (sendEmail && filesToExport.size() > 0) {
-                        if (AbstractFacade.sendEmail(email, "The AmericanSafety API data export",
-                                notification + "The content in attachment", zipfile)) {
-                            zipfile.delete();
-                        }
+                        emailSent = AbstractFacade.sendEmail(email, "The AmericanSafety API data export",
+                                notification + "The content in attachment", zipfile);
+                    } else {
+                        emailSent = true;
                     }
                     if (notifyEmail != null && filesToExport.size() > 0) {
                         AbstractFacade.sendEmail(notifyEmail, "The AmericanSafety API data export notification",
-                                notification + ((sendEmail && filesToExport.size() > 0) ? "Data sent to " + email : ""), null);
+                                notification + ((sendEmail && filesToExport.size() > 0) ? "File " + zipfile.getName() + " sent to " + email : "")
+                                + ((ftpUrl != null && ftpLogin != null && ftpPassword != null && ftpUploaded) ? 
+                                        "\nFile " + zipfile.getName() + " uploaded to ftp://" + ftpUrl : ""), null);
                     }
                     if (filesToExport.size() > 0) {
                         System.out.println(notification);
                     }
                     filesToExport.clear();
+                    if (ftpUploaded && emailSent && zipfile!=null && zipfile.exists()) {
+                        zipfile.delete();
+                    }
                 } catch (Exception e) {
                     directory.setLastModified(lastModified.getTime()); //restore timestamp to try export again
                     notifyError(e);
                 } finally {
                     busy = false;
                 }
-                //directory.setLastModified(new Date().getTime());
             }
         }
     }
@@ -165,9 +189,9 @@ public class NewTimerSessionBean {
         try {
             if (users.size() > 0) {
                 out = new BufferedWriter(new FileWriter(usersExp));
-                out.write("user_id,first_name,last_name,email,login,password,department,created_at,updated_at" + lineSep);
+                out.write("\"user_id\",\"first_name\",\"last_name\",\"email\",\"login\",\"password\",\"department\",\"created_at\",\"updated_at\"" + lineSep);
                 for (User u : users) {
-                    out.write(u.getUserId().toString() + ",\"" + u.getFirstName() + "\",\"" + u.getLastName() + "\",\""
+                    out.write("\"" + u.getUserId().toString() + "\",\"" + u.getFirstName() + "\",\"" + u.getLastName() + "\",\""
                             + u.getEmail() + "\",\"" + u.getLogin() + "\",\"" + u.getPassword() + "\",\""
                             + u.getDepartmentId().getDepartmentName() + "\",\""
                             + dateFormatter.format(u.getCreatedAt()) + "\",\"" + dateFormatter.format(u.getUpdatedAt()) + "\""
@@ -190,13 +214,13 @@ public class NewTimerSessionBean {
         try {
             if (items.size() > 0) {
                 out = new BufferedWriter(new FileWriter(itemsExp));
-                out.write("item_id,item_number,item_name,item_description,last_price,created_at,updated_at" + lineSep);
+                out.write("\"item_id\",\"item_number\",\"item_name\",\"item_description\",\"last_price\",\"created_at\",\"updated_at\"" + lineSep);
                 for (Item itm : items) {
-                    out.write(itm.getItemId().toString() + ","
+                    out.write("\"" + itm.getItemId().toString() + "\","
                             + (itm.getItemNumber() == null ? "" : "\"" + itm.getItemNumber() + "\"") + ","
                             + (itm.getItemName() == null ? "" : "\"" + itm.getItemName() + "\"") + ","
                             + (itm.getItemDescription() == null ? "" : "\"" + itm.getItemDescription() + "\"") + ","
-                            + (itm.getLastPrice() == null ? "" : itm.getLastPrice().toString()) + ",\""
+                            + (itm.getLastPrice() == null ? "" : "\"" + itm.getLastPrice().toString()) + "\",\""
                             + dateFormatter.format(itm.getCreatedAt()) + "\",\"" + dateFormatter.format(itm.getUpdatedAt()) + "\""
                             + lineSep
                     );

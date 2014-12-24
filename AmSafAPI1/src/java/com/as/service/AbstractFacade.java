@@ -12,6 +12,8 @@ import com.as.Po;
 import com.as.Stamps;
 import com.as.Tax;
 import com.as.User;
+import com.enterprisedt.net.ftp.FTPConnectMode;
+import com.enterprisedt.net.ftp.FTPException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,6 +45,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import com.enterprisedt.net.ftp.FileTransferClient;
 
 /**
  *
@@ -252,6 +255,29 @@ public abstract class AbstractFacade<T> {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static boolean upload2FTP(String ftpUrl, String ftpLogin, String ftpPassword, String folder, File file) {
+        boolean ok = false;
+        try {
+            FileTransferClient ftp = null;
+            ftp = new FileTransferClient();
+            ftp.setRemoteHost(ftpUrl);
+            ftp.setUserName(ftpLogin);
+            ftp.setPassword(ftpPassword);
+            ftp.getAdvancedFTPSettings().setConnectMode(FTPConnectMode.ACTIVE);
+            ftp.connect();
+            try {
+                ftp.deleteFile(file.getName());
+            } catch (Exception eex) {
+            }
+            ftp.uploadFile(file.getAbsolutePath(), folder+"/"+file.getName());
+            ftp.disconnect();
+            ok = true;
+        } catch (Exception ex) {
+            Logger.getLogger(AbstractFacade.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ok;
     }
 
     public static boolean sendEmail(String email, String subject, String body, File attachment) {
