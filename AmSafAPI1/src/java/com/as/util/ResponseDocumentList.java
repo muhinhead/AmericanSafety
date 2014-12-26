@@ -31,6 +31,7 @@ public class ResponseDocumentList implements Serializable {
 
     public ResponseDocumentList(List<IDocument> doclist, String[] errmsg) {
         if (doclist != null) {
+//            System.out.println("!!!!!!!!!!!!!!docList.size:"+doclist.size());
             response = doclist;
 //                    new ArrayList<ResponseDoc>(doclist.size());
 //            for (Document doc : doclist) {

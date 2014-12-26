@@ -5,6 +5,10 @@
  */
 package com.as.util;
 
+import com.as.Contact;
+import com.as.Customer;
+import com.as.Document;
+import com.as.DocumentPK;
 import com.as.Item;
 import com.as.Settings;
 import com.as.User;
@@ -57,7 +61,7 @@ public class NewTimerSessionBean {
     private String ftpLogin;
     private String ftpPassword;
 
-    @Schedule(dayOfWeek = "*", month = "*", hour = "*", dayOfMonth = "*", year = "*", minute = "*", second = "0", persistent = false)
+    @Schedule(dayOfWeek = "*", month = "*", hour = "*", dayOfMonth = "*", year = "*", minute = "0", second = "0", persistent = false)
     public void myTimer() {
         System.out.println("==== Check for data to export at " + new Date().toString());
         try {
@@ -106,11 +110,11 @@ public class NewTimerSessionBean {
                 directory.mkdir();
             }
             lastModified = new Date(directory.lastModified());
-            if (now.getTime() - lastModified.getTime() >= timeDiff) {
+            if ((sendEmail || sendFtp) && now.getTime() - lastModified.getTime() >= timeDiff) {
                 try {
                     busy = true;
                     String notification = exportData(directory, now);
-                    if (ftpUrl != null && ftpLogin != null && ftpPassword != null && filesToExport.size() > 0) {
+                    if (sendFtp && ftpUrl != null && ftpLogin != null && ftpPassword != null && filesToExport.size() > 0) {
                         //System.out.println("!!FTP:"+ftpUrl+" login:"+ftpLogin+" password:"+ftpPassword);
                         ftpUploaded = AbstractFacade.upload2FTP(ftpUrl, ftpLogin, ftpPassword, "FTP", zipfile);
                     } else {
@@ -125,14 +129,14 @@ public class NewTimerSessionBean {
                     if (notifyEmail != null && filesToExport.size() > 0) {
                         AbstractFacade.sendEmail(notifyEmail, "The AmericanSafety API data export notification",
                                 notification + ((sendEmail && filesToExport.size() > 0) ? "File " + zipfile.getName() + " sent to " + email : "")
-                                + ((ftpUrl != null && ftpLogin != null && ftpPassword != null && ftpUploaded) ? 
-                                        "\nFile " + zipfile.getName() + " uploaded to ftp://" + ftpUrl : ""), null);
+                                + ((sendFtp && ftpUrl != null && ftpLogin != null && ftpPassword != null && ftpUploaded)
+                                        ? "\nFile " + zipfile.getName() + " uploaded to ftp://" + ftpUrl : ""), null);
                     }
                     if (filesToExport.size() > 0) {
                         System.out.println(notification);
                     }
                     filesToExport.clear();
-                    if (ftpUploaded && emailSent && zipfile!=null && zipfile.exists()) {
+                    if (ftpUploaded && emailSent && zipfile != null && zipfile.exists()) {
                         zipfile.delete();
                     }
                 } catch (Exception e) {
@@ -145,12 +149,19 @@ public class NewTimerSessionBean {
         }
     }
 
+    private static String dq(String s) {
+        return (s == null ? "" : s.replace("\"", "\"\""));
+    }
+
     private String exportData(File dir, Date now) throws IOException {
         StringBuilder sb = new StringBuilder();
         String lineSep = System.getProperty("line.separator");
         //export users
         exportUsers(dir, now, lineSep, sb);
         exportItems(dir, now, lineSep, sb);
+        exportCustomers(dir, now, lineSep, sb);
+        exportContacts(dir, now, lineSep, sb);
+        exportDocuments(dir, now, lineSep, sb);
 
         if (filesToExport.size() > 0) {
             zipFiles(dir, getFileName("", now).replace("-.csv", ".zip"));
@@ -182,6 +193,90 @@ public class NewTimerSessionBean {
         out.close();
     }
 
+    private void exportDocuments(File dir, Date now, String lineSep, StringBuilder sb) throws IOException {
+        Collection<Document> docs = em.createNamedQuery("Document.findLastModified").setParameter("updatedAt", lastModified).getResultList();
+        File docsExp = new File(dir, getFileName("document", now));
+        BufferedWriter out = null;
+        try {
+            if (docs.size() > 0) {
+                out = new BufferedWriter(new FileWriter(docsExp));
+                out.write("\"document_id\",\"doc_type\",\"customer_id\",\"contact_id\",\"location\",\"contractor\","
+                        + "\"rig_tank_eq\",\"discount\",\"tax_percent\",\"subtotal\",\"po_type\",\"po_number\","
+                        + "\"date_in\",\"date_out\",\"well_name\",\"afe_uww\",\"date_str\",\"cai\",\"aprvr_name\","
+                        + "\"user_id\",\"created_at\",\"updated_at\"" + lineSep);
+                for (Document d : docs) {
+                    DocumentPK pk = d.getDocumentPK();
+//                    Integer docID = (Integer) em.createNativeQuery("select id from document_ids where document_type='"
+//                            + pk.getDocType() + "' and document_id=" + pk.getDocumentID()).getSingleResult();
+                    out.write("\"" + pk.getDocumentID() + "\",\"" + dq(pk.getDocType()) + "\",\"" + d.getCustomerId().toString()
+                            + "\",\"" + d.getContactId().toString() + "\",\"" + dq(d.getLocation()) + "\",\"" + dq(d.getContractor())
+                            + "\",\"" + dq(d.getRigTankEq()) + "\",\"" + d.getDiscount().toString() + "\",\"" + d.getTaxProc().toString()
+                            + "\",\"" + (d.getSubtotal() == null ? "" : d.getSubtotal().toString()) + "\",\"" + dq(d.getPoType()) + "\",\"" + dq(d.getPoNumber())
+                            + "\",\"" + (d.getDateIn() == null ? "" : dateFormatter.format(d.getDateIn()))
+                            + "\",\"" + (d.getDateOut() == null ? "" : dateFormatter.format(d.getDateOut()))
+                            + "\",\"" + dq(d.getWellName()) + "\",\"" + dq(d.getAfeUww()) + "\",\"" + dq(d.getDateStr())
+                            + "\",\"" + dq(d.getCai()) + "\",\"" + dq(d.getAprvrName()) + "\",\"" + d.getCreatedBy()
+                            + "\",\"" + dateFormatter.format(d.getCreatedAt()) + "\",\"" + dateFormatter.format(d.getUpdatedAt()) + "\""
+                            + lineSep);
+                }
+                filesToExport.add(docsExp);
+            }
+            sb.append("Table Document:" + docs.size() + " rows exported " + lineSep);
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
+    }
+
+    private void exportCustomers(File dir, Date now, String lineSep, StringBuilder sb) throws IOException {
+        Collection<Customer> custs = em.createNamedQuery("Customer.findLastModified").setParameter("updatedAt", lastModified).getResultList();
+        File custExp = new File(dir, getFileName("customer", now));
+        BufferedWriter out = null;
+        try {
+            if (custs.size() > 0) {
+                out = new BufferedWriter(new FileWriter(custExp));
+                out.write("\"customer_id\",\"customer_name\",\"customer_address\",\"created_at\",\"updated_at\"" + lineSep);
+                for (Customer c : custs) {
+                    out.write("\"" + c.getCustomerId().toString() + "\",\"" + dq(c.getCustomerName()) + "\",\"" + dq(c.getCustomerAddress()) + "\",\""
+                            + dateFormatter.format(c.getCreatedAt()) + "\",\"" + dateFormatter.format(c.getUpdatedAt()) + "\""
+                            + lineSep);
+                }
+                filesToExport.add(custExp);
+            }
+            sb.append("Table Customer:" + custs.size() + " rows exported " + lineSep);
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
+    }
+
+    private void exportContacts(File dir, Date now, String lineSep, StringBuilder sb) throws IOException {
+        Collection<Contact> cntcs = em.createNamedQuery("Contact.findLastModified").setParameter("updatedAt", lastModified).getResultList();
+        File cntctExp = new File(dir, getFileName("contact", now));
+        BufferedWriter out = null;
+        try {
+            if (cntcs.size() > 0) {
+                out = new BufferedWriter(new FileWriter(cntctExp));
+                out.write("\"contact_id\",\"title\",\"first_name\",\"last_name\",\"email\",\"phone\",\"customer_id\",\"created_at\",\"updated_at\"" + lineSep);
+                for (Contact c : cntcs) {
+                    out.write("\"" + c.getContactId().toString() + "\",\"" + dq(c.getTitle()) + "\",\""
+                            + dq(c.getFirstName()) + "\",\"" + dq(c.getLastName()) + "\",\"" + dq(c.getEmail()) + "\",\"" + dq(c.getPhone()) + "\",\""
+                            + c.getCustomerId().getCustomerId() + "\",\""
+                            + dateFormatter.format(c.getCreatedAt()) + "\",\"" + dateFormatter.format(c.getUpdatedAt()) + "\""
+                            + lineSep);
+                }
+                filesToExport.add(cntctExp);
+            }
+            sb.append("Table Contact:" + cntcs.size() + " rows exported " + lineSep);
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
+    }
+
     private void exportUsers(File dir, Date now, String lineSep, StringBuilder sb) throws IOException {
         Collection<User> users = em.createNamedQuery("User.findLastModified").setParameter("updatedAt", lastModified).getResultList();
         File usersExp = new File(dir, getFileName("user", now));
@@ -191,9 +286,9 @@ public class NewTimerSessionBean {
                 out = new BufferedWriter(new FileWriter(usersExp));
                 out.write("\"user_id\",\"first_name\",\"last_name\",\"email\",\"login\",\"password\",\"department\",\"created_at\",\"updated_at\"" + lineSep);
                 for (User u : users) {
-                    out.write("\"" + u.getUserId().toString() + "\",\"" + u.getFirstName() + "\",\"" + u.getLastName() + "\",\""
-                            + u.getEmail() + "\",\"" + u.getLogin() + "\",\"" + u.getPassword() + "\",\""
-                            + u.getDepartmentId().getDepartmentName() + "\",\""
+                    out.write("\"" + u.getUserId().toString() + "\",\"" + dq(u.getFirstName()) + "\",\"" + dq(u.getLastName()) + "\",\""
+                            + dq(u.getEmail()) + "\",\"" + dq(u.getLogin()) + "\",\"" + dq(u.getPassword()) + "\",\""
+                            + dq(u.getDepartmentId().getDepartmentName()) + "\",\""
                             + dateFormatter.format(u.getCreatedAt()) + "\",\"" + dateFormatter.format(u.getUpdatedAt()) + "\""
                             + lineSep);
                 }
@@ -218,8 +313,8 @@ public class NewTimerSessionBean {
                 for (Item itm : items) {
                     out.write("\"" + itm.getItemId().toString() + "\","
                             + (itm.getItemNumber() == null ? "" : "\"" + itm.getItemNumber() + "\"") + ","
-                            + (itm.getItemName() == null ? "" : "\"" + itm.getItemName() + "\"") + ","
-                            + (itm.getItemDescription() == null ? "" : "\"" + itm.getItemDescription() + "\"") + ","
+                            + (itm.getItemName() == null ? "" : "\"" + dq(itm.getItemName()) + "\"") + ","
+                            + (itm.getItemDescription() == null ? "" : "\"" + dq(itm.getItemDescription()) + "\"") + ","
                             + (itm.getLastPrice() == null ? "" : "\"" + itm.getLastPrice().toString()) + "\",\""
                             + dateFormatter.format(itm.getCreatedAt()) + "\",\"" + dateFormatter.format(itm.getUpdatedAt()) + "\""
                             + lineSep

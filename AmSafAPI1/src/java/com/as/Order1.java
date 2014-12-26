@@ -212,7 +212,7 @@ public class Order1 implements Serializable, IDocument {
     }
 
     public Date getDateOut() {
-        if (dateOut.getYear() <= 70) {
+        if (dateOut != null && dateOut.getYear() <= 70) {
             return null;
         }
         return dateOut;

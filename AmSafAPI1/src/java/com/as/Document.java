@@ -52,6 +52,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Document.findByDateStr", query = "SELECT d FROM Document d WHERE d.dateStr = :dateStr"),
     @NamedQuery(name = "Document.findByCai", query = "SELECT d FROM Document d WHERE d.cai = :cai"),
     @NamedQuery(name = "Document.findByAprvrName", query = "SELECT d FROM Document d WHERE d.aprvrName = :aprvrName"),
+    @NamedQuery(name = "Document.findLastModified", query = "SELECT d FROM Document d WHERE d.updatedAt >= :updatedAt"),
     @NamedQuery(name = "Document.findByCreatedBy", query = "SELECT d FROM Document d WHERE d.createdBy = :createdBy")})
 public class Document implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -107,18 +108,18 @@ public class Document implements Serializable {
     @Size(max = 64)
     @Column(name = "aprvr_name")
     private String aprvrName;
-    @Basic(optional = false)
-    @NotNull
+//    @Basic(optional = false)
+//    @NotNull
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
-    @Basic(optional = false)
-    @NotNull
+//    @Basic(optional = false)
+//    @NotNull
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @Basic(optional = false)
-    @NotNull
+//    @Basic(optional = false)
+//    @NotNull
     @Column(name = "created_by")
     private int createdBy;
 

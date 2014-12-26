@@ -24,9 +24,7 @@ import com.as.util.ParamDocument4Submit;
 import com.as.util.ResponseDocumentList;
 import com.as.util.ResponseProxyDocument;
 import java.io.IOException;
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -96,14 +94,10 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
     @Consumes("application/json")
     @Produces("application/json")
     public ResponseDocumentList findDocuments(DocumentsParams parms) {
+//    public Response findDocuments(DocumentsParams parms) {
+        String output = null;
+        int code = 200;
         try {
-//            if (parms.getDocumentType() != null
-//                    && !parms.getDocumentType().equals("order")
-//                    && !parms.getDocumentType().equals("invoice")
-//                    && !parms.getDocumentType().equals("quote")) {
-//                return new ResponseDocumentList(null, new String[]{
-//                    "Wrong document type '" + parms.getDocumentType() + "'! Specify 'order' or 'invoice' or 'quote'"});
-//            }
             String sql;
             Query qry = getEntityManager().createNativeQuery(
                     sql = "SELECT concat(document_id,' ',doc_type) FROM document"
@@ -123,7 +117,7 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
                     + (parms.getCustomerID() == null ? "" : " AND customer_id=" + parms.getCustomerID())
                     + " LIMIT " + (parms.getOffset() != null ? parms.getOffset().toString() + "," : "")
                     + (parms.getLimit() != null ? parms.getLimit().toString() : "9999999999999999999"));
-            //System.out.println("!!!"+sql);            
+//            System.out.println("!!!"+sql);            
             List<String> rids = qry.getResultList();
             List<IDocument> doclist = new ArrayList<IDocument>(rids.size());
             for (String docIDtype : rids) {
@@ -154,8 +148,12 @@ public class DocumentFacadeREST extends AbstractFacade<Document> {
         } catch (Exception e) {
             return new ResponseDocumentList(null, new String[]{e.getMessage()});
         }
+//        return Response.status(code).entity(output).build();
+
     }
 
+    //private
+    
     @POST
     @Consumes("application/json")
     @Produces("application/json")

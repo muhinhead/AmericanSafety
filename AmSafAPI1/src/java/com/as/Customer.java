@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Customer.findAll", query = "SELECT c FROM Customer c"),
     @NamedQuery(name = "Customer.findByCustomerId", query = "SELECT c FROM Customer c WHERE c.customerId = :customerId"),
     @NamedQuery(name = "Customer.findByCustomerName", query = "SELECT c FROM Customer c WHERE c.customerName = :customerName"),
+    @NamedQuery(name = "Customer.findLastModified", query = "SELECT c FROM Customer c WHERE c.updatedAt >= :updatedAt"),
     @NamedQuery(name = "Customer.findByCustomerAddress", query = "SELECT c FROM Customer c WHERE c.customerAddress = :customerAddress")})
 public class Customer implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -53,14 +54,12 @@ public class Customer implements Serializable {
     @Size(max = 512)
     @Column(name = "customer_address")
     private String customerAddress;
-//    @Basic(optional = false)
-//    @Column(name = "updated_at")
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private Date updatedAt;
-//    @Basic(optional = false)
-//    @Column(name = "created_at")
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private Date createdAt;
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
     @OneToMany(mappedBy = "customerId")
     private Collection<Quote> quoteCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerId")
@@ -176,6 +175,34 @@ public class Customer implements Serializable {
     @Override
     public String toString() {
         return "com.as.Customer[ customerId=" + customerId + " ]";
+    }
+
+    /**
+     * @return the updatedAt
+     */
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    /**
+     * @param updatedAt the updatedAt to set
+     */
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    /**
+     * @return the createdAt
+     */
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    /**
+     * @param createdAt the createdAt to set
+     */
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
     
 }
