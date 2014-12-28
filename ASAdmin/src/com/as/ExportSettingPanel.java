@@ -48,7 +48,8 @@ class ExportSettingPanel extends RecordEditPanel {
     private JCheckBox emailCB;
     private JTextField notifyEmailTF;
     private JCheckBox ftpCB;
-    private JComboBox filesQtyCB;
+//    private JComboBox filesQtyCB;
+    private JTextField ftpFolderTF;
 
     public ExportSettingPanel(DbObject[] obs) {
         super(obs);
@@ -59,9 +60,9 @@ class ExportSettingPanel extends RecordEditPanel {
         String titles[] = new String[]{
             "",
             "Target:",
-            "E-mail:", // "FTP","login","password"
+            "E-mail:", // "FTP","Folder","login","password"
             "Schedule:", //hourly/weekly/daily
-            "Orders data in files:", //one/many
+            //"Orders data in files:", //one/many
             "    E-mail for notification:",
             "",""
         };
@@ -77,11 +78,12 @@ class ExportSettingPanel extends RecordEditPanel {
             getBorderPanel(getGridPanel(new JComponent[]{
                 emailTF = new JTextField(20),
                 getBorderPanel(new JLabel(" FTP address:", SwingConstants.RIGHT), ftpTF = new JTextField()),
+                getBorderPanel(new JLabel(" FTP folder:", SwingConstants.RIGHT), ftpFolderTF = new JTextField("./")),
                 getBorderPanel(new JLabel(" FTP login:", SwingConstants.RIGHT), ftpLoginTF = new JTextField()),
-                getBorderPanel(new JLabel(" FTP password:", SwingConstants.RIGHT), ftpPasswordTF = new JTextField())
+                getBorderPanel(new JLabel(" FTP password:", SwingConstants.RIGHT), ftpPasswordTF = new JTextField()),
             })),
             getBorderPanel(scheduleCB = new JComboBox(new String[]{"Hourly", "Weekly", "Daily"})),
-            getBorderPanel(filesQtyCB = new JComboBox(new String[]{"one", "many"})),
+            //getBorderPanel(filesQtyCB = new JComboBox(new String[]{"one", "many"})),
             getBorderPanel(notifyEmailTF = new JTextField(20)),
             getBorderPanel(getGridPanel(new JComponent[]{new JButton(new AbstractAction("Save") {
                 @Override
@@ -165,8 +167,10 @@ class ExportSettingPanel extends RecordEditPanel {
                     ftpPasswordTF.setText(setting.getValue());
                 } else if (setting.getName().equals("Schedule")) {
                     scheduleCB.setSelectedItem(setting.getValue());
-                } else if (setting.getName().equals("Files")) {
-                    filesQtyCB.setSelectedItem(setting.getValue());
+//                } else if (setting.getName().equals("Files")) {
+//                    filesQtyCB.setSelectedItem(setting.getValue());
+                } else if (setting.getName().equals("Folder")) {
+                    ftpFolderTF.setText(setting.getValue());
                 } else if (setting.getName().equals("Notification")) {
                     notifyEmailTF.setText(setting.getValue());
                 }
@@ -175,6 +179,7 @@ class ExportSettingPanel extends RecordEditPanel {
             ftpTF.setEnabled(ftpCB.isSelected());
             ftpLoginTF.setEnabled(ftpCB.isSelected());
             ftpPasswordTF.setEnabled(ftpCB.isSelected());
+            ftpFolderTF.setEnabled(ftpCB.isSelected());
         }
 
     }
@@ -187,7 +192,8 @@ class ExportSettingPanel extends RecordEditPanel {
                 && saveSetting("FTP login", ftpLoginTF.getText())
                 && saveSetting("FTP password", ftpPasswordTF.getText())
                 && saveSetting("Schedule", (String) scheduleCB.getSelectedItem())
-                && saveSetting("Files", (String) filesQtyCB.getSelectedItem())
+                //&& saveSetting("Files", (String) filesQtyCB.getSelectedItem())
+                && saveSetting("Folder", ftpFolderTF.getText())
                 && saveSetting("Notification", notifyEmailTF.getText());
     }
 
