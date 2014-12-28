@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewPoTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputText value="#{bundle.ViewPoLabel_poId}"/>
+                    <h:outputText value="#{poController.selected.poId}" title="#{bundle.ViewPoTitle_poId}"/>
+                    <h:outputText value="#{bundle.ViewPoLabel_poDescription}"/>
+                    <h:outputText value="#{poController.selected.poDescription}" title="#{bundle.ViewPoTitle_poDescription}"/>
+                    <h:outputText value="#{bundle.ViewPoLabel_updatedAt}"/>
+                    <h:outputText value="#{poController.selected.updatedAt}" title="#{bundle.ViewPoTitle_updatedAt}">
+                        <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                    </h:outputText>
+                    <h:outputText value="#{bundle.ViewPoLabel_createdAt}"/>
+                    <h:outputText value="#{poController.selected.createdAt}" title="#{bundle.ViewPoTitle_createdAt}">
+                        <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                    </h:outputText>
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{poController.destroyAndView}" value="#{bundle.ViewPoDestroyLink}"/>
+                <br />
+                <br />
+                <h:link outcome="Edit" value="#{bundle.ViewPoEditLink}"/>
+                <br />
+                <h:commandLink action="#{poController.prepareCreate}" value="#{bundle.ViewPoCreateLink}" />
+                <br />
+                <h:commandLink action="#{poController.prepareList}" value="#{bundle.ViewPoShowAllLink}"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.ViewPoIndexLink}"/>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

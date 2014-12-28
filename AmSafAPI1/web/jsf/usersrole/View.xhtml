@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewUsersroleTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputText value="#{bundle.ViewUsersroleLabel_usersroleId}"/>
+                    <h:outputText value="#{usersroleController.selected.usersroleId}" title="#{bundle.ViewUsersroleTitle_usersroleId}"/>
+                    <h:outputText value="#{bundle.ViewUsersroleLabel_roleId}"/>
+                    <h:outputText value="#{usersroleController.selected.roleId}" title="#{bundle.ViewUsersroleTitle_roleId}"/>
+                    <h:outputText value="#{bundle.ViewUsersroleLabel_userId}"/>
+                    <h:outputText value="#{usersroleController.selected.userId}" title="#{bundle.ViewUsersroleTitle_userId}"/>
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{usersroleController.destroyAndView}" value="#{bundle.ViewUsersroleDestroyLink}"/>
+                <br />
+                <br />
+                <h:link outcome="Edit" value="#{bundle.ViewUsersroleEditLink}"/>
+                <br />
+                <h:commandLink action="#{usersroleController.prepareCreate}" value="#{bundle.ViewUsersroleCreateLink}" />
+                <br />
+                <h:commandLink action="#{usersroleController.prepareList}" value="#{bundle.ViewUsersroleShowAllLink}"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.ViewUsersroleIndexLink}"/>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.CreateQuoteTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_quoteId}" for="quoteId" />
+                    <h:inputText id="quoteId" value="#{quoteController.selected.quoteId}" title="#{bundle.CreateQuoteTitle_quoteId}" required="true" requiredMessage="#{bundle.CreateQuoteRequiredMessage_quoteId}"/>
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_location}" for="location" />
+                    <h:inputText id="location" value="#{quoteController.selected.location}" title="#{bundle.CreateQuoteTitle_location}" />
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_contractor}" for="contractor" />
+                    <h:inputText id="contractor" value="#{quoteController.selected.contractor}" title="#{bundle.CreateQuoteTitle_contractor}" />
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_rigTankEq}" for="rigTankEq" />
+                    <h:inputText id="rigTankEq" value="#{quoteController.selected.rigTankEq}" title="#{bundle.CreateQuoteTitle_rigTankEq}" />
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_discount}" for="discount" />
+                    <h:inputText id="discount" value="#{quoteController.selected.discount}" title="#{bundle.CreateQuoteTitle_discount}" />
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_taxProc}" for="taxProc" />
+                    <h:inputText id="taxProc" value="#{quoteController.selected.taxProc}" title="#{bundle.CreateQuoteTitle_taxProc}" />
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_poNumber}" for="poNumber" />
+                    <h:inputText id="poNumber" value="#{quoteController.selected.poNumber}" title="#{bundle.CreateQuoteTitle_poNumber}" />
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_dateIn}" for="dateIn" />
+                    <h:inputText id="dateIn" value="#{quoteController.selected.dateIn}" title="#{bundle.CreateQuoteTitle_dateIn}" >
+                        <f:convertDateTime pattern="MM/dd/yyyy" />
+                    </h:inputText>
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_signature}" for="signature" />
+                    <h:inputTextarea rows="4" cols="30" id="signature" value="#{quoteController.selected.signature}" title="#{bundle.CreateQuoteTitle_signature}" />
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_updatedAt}" for="updatedAt" />
+                    <h:inputText id="updatedAt" value="#{quoteController.selected.updatedAt}" title="#{bundle.CreateQuoteTitle_updatedAt}" required="true" requiredMessage="#{bundle.CreateQuoteRequiredMessage_updatedAt}">
+                        <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                    </h:inputText>
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_createdAt}" for="createdAt" />
+                    <h:inputText id="createdAt" value="#{quoteController.selected.createdAt}" title="#{bundle.CreateQuoteTitle_createdAt}" required="true" requiredMessage="#{bundle.CreateQuoteRequiredMessage_createdAt}">
+                        <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                    </h:inputText>
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_subtotal}" for="subtotal" />
+                    <h:inputText id="subtotal" value="#{quoteController.selected.subtotal}" title="#{bundle.CreateQuoteTitle_subtotal}" />
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_wellName}" for="wellName" />
+                    <h:inputText id="wellName" value="#{quoteController.selected.wellName}" title="#{bundle.CreateQuoteTitle_wellName}" />
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_afeUww}" for="afeUww" />
+                    <h:inputText id="afeUww" value="#{quoteController.selected.afeUww}" title="#{bundle.CreateQuoteTitle_afeUww}" />
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_cai}" for="cai" />
+                    <h:inputText id="cai" value="#{quoteController.selected.cai}" title="#{bundle.CreateQuoteTitle_cai}" />
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_aprvrName}" for="aprvrName" />
+                    <h:inputText id="aprvrName" value="#{quoteController.selected.aprvrName}" title="#{bundle.CreateQuoteTitle_aprvrName}" />
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_dateStr}" for="dateStr" />
+                    <h:inputText id="dateStr" value="#{quoteController.selected.dateStr}" title="#{bundle.CreateQuoteTitle_dateStr}" />
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_contactId}" for="contactId" />
+                    <h:selectOneMenu id="contactId" value="#{quoteController.selected.contactId}" title="#{bundle.CreateQuoteTitle_contactId}" >
+                        <f:selectItems value="#{contactController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_customerId}" for="customerId" />
+                    <h:selectOneMenu id="customerId" value="#{quoteController.selected.customerId}" title="#{bundle.CreateQuoteTitle_customerId}" >
+                        <f:selectItems value="#{customerController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_poTypeId}" for="poTypeId" />
+                    <h:selectOneMenu id="poTypeId" value="#{quoteController.selected.poTypeId}" title="#{bundle.CreateQuoteTitle_poTypeId}" >
+                        <f:selectItems value="#{poController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_stampsId}" for="stampsId" />
+                    <h:selectOneMenu id="stampsId" value="#{quoteController.selected.stampsId}" title="#{bundle.CreateQuoteTitle_stampsId}" >
+                        <f:selectItems value="#{stampsController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_taxId}" for="taxId" />
+                    <h:selectOneMenu id="taxId" value="#{quoteController.selected.taxId}" title="#{bundle.CreateQuoteTitle_taxId}" >
+                        <f:selectItems value="#{taxController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_createdBy}" for="createdBy" />
+                    <h:selectOneMenu id="createdBy" value="#{quoteController.selected.createdBy}" title="#{bundle.CreateQuoteTitle_createdBy}" required="true" requiredMessage="#{bundle.CreateQuoteRequiredMessage_createdBy}">
+                        <f:selectItems value="#{userController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.CreateQuoteLabel_dateOut}" for="dateOut" />
+                    <h:inputText id="dateOut" value="#{quoteController.selected.dateOut}" title="#{bundle.CreateQuoteTitle_dateOut}" />
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{quoteController.create}" value="#{bundle.CreateQuoteSaveLink}" />
+                <br />
+                <br />
+                <h:commandLink action="#{quoteController.prepareList}" value="#{bundle.CreateQuoteShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.CreateQuoteIndexLink}"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
