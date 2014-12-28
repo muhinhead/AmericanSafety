@@ -9,7 +9,13 @@ import com.as.Contact;
 import com.as.Customer;
 import com.as.Document;
 import com.as.DocumentPK;
+import com.as.Invoice;
+import com.as.Invoiceitem;
 import com.as.Item;
+import com.as.Order1;
+import com.as.Orderitem;
+import com.as.Quote;
+import com.as.Quoteitem;
 import com.as.Settings;
 import com.as.User;
 import com.as.service.AbstractFacade;
@@ -44,7 +50,7 @@ public class NewTimerSessionBean {
 
     private static final String dirname = "Export2QuickBooks";
     private static final int BUFFER = 2048;
-    private static long timeDiff = 1000 * 120; //default - hourly 
+    private static long timeDiff = 1000 * 3600; //default - hourly 
     private Date lastModified = new Date(0);
     private String notifyEmail = null;
     private boolean sendEmail = false;
@@ -60,10 +66,11 @@ public class NewTimerSessionBean {
     private String ftpUrl;
     private String ftpLogin;
     private String ftpPassword;
+    private int itmCount;
+    private String ftpFolder = "./";
 
-    @Schedule(dayOfWeek = "*", month = "*", hour = "*", dayOfMonth = "*", year = "*", minute = "0", second = "0", persistent = false)
+    @Schedule(dayOfWeek = "*", month = "*", hour = "*", dayOfMonth = "*", year = "*", minute = "*", second = "0", persistent = false)
     public void myTimer() {
-        System.out.println("==== Check for data to export at " + new Date().toString());
         try {
             businessMethod();
         } catch (Exception ex) {
@@ -103,7 +110,13 @@ public class NewTimerSessionBean {
                     ftpLogin = s.getValue();
                 } else if (s.getName().equals("FTP password")) {
                     ftpPassword = s.getValue();
+                } else if (s.getName().equals("Folder")) {
+                    ftpFolder = s.getValue();
                 }
+            }
+            if (!sendEmail && !sendFtp) {
+                System.out.println("--- No export settings found, nothing to do! ---");
+                return;
             }
             File directory = new File(dirname);
             if (!directory.exists()) {
@@ -116,7 +129,7 @@ public class NewTimerSessionBean {
                     String notification = exportData(directory, now);
                     if (sendFtp && ftpUrl != null && ftpLogin != null && ftpPassword != null && filesToExport.size() > 0) {
                         //System.out.println("!!FTP:"+ftpUrl+" login:"+ftpLogin+" password:"+ftpPassword);
-                        ftpUploaded = AbstractFacade.upload2FTP(ftpUrl, ftpLogin, ftpPassword, "FTP", zipfile);
+                        ftpUploaded = AbstractFacade.upload2FTP(ftpUrl, ftpLogin, ftpPassword, ftpFolder, zipfile);
                     } else {
                         ftpUploaded = true;
                     }
@@ -164,7 +177,8 @@ public class NewTimerSessionBean {
         exportDocuments(dir, now, lineSep, sb);
 
         if (filesToExport.size() > 0) {
-            zipFiles(dir, getFileName("", now).replace("-.csv", ".zip"));
+            System.out.println("==== Data export started at " + new Date().toString());
+            zipFiles(dir, getFileName("", now).replace("-.csv", ".zip"));            
             return "Data exported at " + new Date().toString() + lineSep + sb.toString() + lineSep;
         }
         return "Nothing to export at " + new Date().toString() + lineSep;
@@ -196,36 +210,93 @@ public class NewTimerSessionBean {
     private void exportDocuments(File dir, Date now, String lineSep, StringBuilder sb) throws IOException {
         Collection<Document> docs = em.createNamedQuery("Document.findLastModified").setParameter("updatedAt", lastModified).getResultList();
         File docsExp = new File(dir, getFileName("document", now));
+        File itmsExp = new File(dir, getFileName("document_items", now));
         BufferedWriter out = null;
+        BufferedWriter itmOut = null;
+        itmCount = 0;
         try {
             if (docs.size() > 0) {
                 out = new BufferedWriter(new FileWriter(docsExp));
+                itmOut = new BufferedWriter(new FileWriter(itmsExp));
                 out.write("\"document_id\",\"doc_type\",\"customer_id\",\"contact_id\",\"location\",\"contractor\","
                         + "\"rig_tank_eq\",\"discount\",\"tax_percent\",\"subtotal\",\"po_type\",\"po_number\","
                         + "\"date_in\",\"date_out\",\"well_name\",\"afe_uww\",\"date_str\",\"cai\",\"aprvr_name\","
                         + "\"user_id\",\"created_at\",\"updated_at\"" + lineSep);
+                itmOut.write("\"document_id\",\"document_item_id\",\"item_id\",\"qty\",\"price\",\"tax\""
+                        + lineSep);
                 for (Document d : docs) {
                     DocumentPK pk = d.getDocumentPK();
-//                    Integer docID = (Integer) em.createNativeQuery("select id from document_ids where document_type='"
-//                            + pk.getDocType() + "' and document_id=" + pk.getDocumentID()).getSingleResult();
+                    Integer originalDocID = (Integer) em.createNativeQuery("select document_id from document_ids where document_type='"
+                            + pk.getDocType() + "' and id=" + pk.getDocumentID()).getSingleResult();
                     out.write("\"" + pk.getDocumentID() + "\",\"" + dq(pk.getDocType()) + "\",\"" + d.getCustomerId().toString()
                             + "\",\"" + d.getContactId().toString() + "\",\"" + dq(d.getLocation()) + "\",\"" + dq(d.getContractor())
-                            + "\",\"" + dq(d.getRigTankEq()) + "\",\"" + d.getDiscount().toString() + "\",\"" + d.getTaxProc().toString()
-                            + "\",\"" + (d.getSubtotal() == null ? "" : d.getSubtotal().toString()) + "\",\"" + dq(d.getPoType()) + "\",\"" + dq(d.getPoNumber())
+                            + "\",\"" + dq(d.getRigTankEq())
+                            + "\",\"" + (d.getDiscount() == null ? "" : d.getDiscount().toString())
+                            + "\",\"" + dq(d.getTaxProc() == null ? "" : d.getTaxProc().toString())
+                            + "\",\"" + (d.getSubtotal() == null ? "" : d.getSubtotal().toString())
+                            + "\",\"" + dq(d.getPoType()) + "\",\"" + dq(d.getPoNumber())
                             + "\",\"" + (d.getDateIn() == null ? "" : dateFormatter.format(d.getDateIn()))
                             + "\",\"" + (d.getDateOut() == null ? "" : dateFormatter.format(d.getDateOut()))
                             + "\",\"" + dq(d.getWellName()) + "\",\"" + dq(d.getAfeUww()) + "\",\"" + dq(d.getDateStr())
                             + "\",\"" + dq(d.getCai()) + "\",\"" + dq(d.getAprvrName()) + "\",\"" + d.getCreatedBy()
                             + "\",\"" + dateFormatter.format(d.getCreatedAt()) + "\",\"" + dateFormatter.format(d.getUpdatedAt()) + "\""
                             + lineSep);
+                    if (pk.getDocType().equals("quote")) {
+                        writeQuoteItemList(pk.getDocumentID(), originalDocID, itmOut, lineSep);
+                    } else if (pk.getDocType().equals("invoice")) {
+                        writeInvoiceItemList(pk.getDocumentID(), originalDocID, itmOut, lineSep);
+                    } else if (pk.getDocType().equals("order")) {
+                        writeOrderItemList(pk.getDocumentID(), originalDocID, itmOut, lineSep);
+                    }
                 }
                 filesToExport.add(docsExp);
+                filesToExport.add(itmsExp);
             }
             sb.append("Table Document:" + docs.size() + " rows exported " + lineSep);
+            sb.append("Table DocumentItems:" + itmCount + " rows exported " + lineSep);
         } finally {
             if (out != null) {
                 out.close();
             }
+            if (itmOut != null) {
+                itmOut.close();
+            }
+        }
+    }
+
+    private void writeQuoteItemList(Integer documentID, Integer quoteID, BufferedWriter itmOut, String lineSep) throws IOException {
+        Quote quote = (Quote) em.createNamedQuery("Quote.findByQuoteId").setParameter("quoteId", quoteID).getSingleResult();
+        Collection<Quoteitem> itms = em.createNamedQuery("Quoteitem.findByQuoteId")
+                .setParameter("quoteId", quote).getResultList();
+        for (Quoteitem qi : itms) {
+            itmOut.write("\"" + documentID.toString() + "\",\"" + qi.getQuoteitemId()
+                    + "\",\"" + qi.getItemId().getItemId() + "\",\"" + qi.getQty()
+                    + "\",\"" + qi.getPrice().toString() + "\",\"" + (qi.getTax() != null && qi.getTax() ? "yes" : "no") + lineSep);
+            itmCount++;
+        }
+    }
+
+    private void writeInvoiceItemList(Integer documentID, Integer invoiceID, BufferedWriter itmOut, String lineSep) throws IOException {
+        Invoice invoice = (Invoice) em.createNamedQuery("Invoice.findByInvoiceId").setParameter("invoiceId", invoiceID).getSingleResult();
+        Collection<Invoiceitem> itms = em.createNamedQuery("Invoiceitem.findByInvoiceId")
+                .setParameter("invoiceId", invoice).getResultList();
+        for (Invoiceitem ii : itms) {
+            itmOut.write("\"" + documentID.toString() + "\",\"" + ii.getInvoiceitemId()
+                    + "\",\"" + ii.getItemId().getItemId() + "\",\"" + ii.getQty()
+                    + "\",\"" + ii.getPrice().toString() + "\",\"" + (ii.getTax() != null && ii.getTax() ? "yes" : "no") + lineSep);
+            itmCount++;
+        }
+    }
+
+    private void writeOrderItemList(Integer documentID, Integer orderID, BufferedWriter itmOut, String lineSep) throws IOException {
+        Order1 order = (Order1) em.createNamedQuery("Order1.findByOrderId").setParameter("orderId", orderID).getSingleResult();
+        Collection<Orderitem> itms = em.createNamedQuery("Orderitem.findByOrderId")
+                .setParameter("orderId", order).getResultList();
+        for (Orderitem oi : itms) {
+            itmOut.write("\"" + documentID.toString() + "\",\"" + oi.getOrderitemId()
+                    + "\",\"" + oi.getItemId().getItemId() + "\",\"" + oi.getQty()
+                    + "\",\"" + oi.getPrice().toString() + "\",\"" + (oi.getTax() != null && oi.getTax() ? "yes" : "no") + lineSep);
+            itmCount++;
         }
     }
 

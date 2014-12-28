@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Quoteitem.findAll", query = "SELECT q FROM Quoteitem q"),
     @NamedQuery(name = "Quoteitem.findByQuoteitemId", query = "SELECT q FROM Quoteitem q WHERE q.quoteitemId = :quoteitemId"),
+    @NamedQuery(name = "Quoteitem.findByQuoteId", query = "SELECT q FROM Quoteitem q WHERE q.quoteId = :quoteId"),
     @NamedQuery(name = "Quoteitem.findByQty", query = "SELECT q FROM Quoteitem q WHERE q.qty = :qty"),
     @NamedQuery(name = "Quoteitem.findByPrice", query = "SELECT q FROM Quoteitem q WHERE q.price = :price"),
     @NamedQuery(name = "Quoteitem.findByTax", query = "SELECT q FROM Quoteitem q WHERE q.tax = :tax")})
